@@ -2,7 +2,7 @@ services:
     api:
         build:
             context: .
-            dockerfile: dockerfile.api
+            dockerfile: backend/dockerfile.api
         image: ats-api
         ports:
             - '5000:5000'
@@ -11,12 +11,18 @@ services:
     client:
         build:
             context: .
-            dockerfile: dockerfile.client
+            dockerfile: backend/dockerfile.client
         image: ats-client
         ports:
             - '3000:3000'
         networks:
             - ats-network
+        volumes:
+          - type: bind
+            source: /frontend
+            target: /src
+        environment:
+            - WATCHPACK_POLLING=true
 
 networks:
     ats-network:
