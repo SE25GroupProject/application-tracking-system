@@ -8,7 +8,8 @@ export default class ManageResumePage extends Component {
     super(props)
     this.state = {
       fileName: '',
-      fileuploadname:''
+      fileuploadname:'',
+      previewUrl: null
     }
 
     console.log("***");
@@ -34,9 +35,17 @@ export default class ManageResumePage extends Component {
             console.log(response.getResponseHeader('x-fileName'))
             this.setState({ fileName: response.getResponseHeader('x-fileName')});
             this.setState({ resumeDownloadContent: message});
+            this.setState({ previewUrl: URL.createObjectURL(message)});
           }
       })
 }
+
+    previewResume() {
+        if (this.state.previewUrl) {
+        window.open(this.state.previewUrl, '_blank');
+        }
+    }
+
     handleChange(event) {
     var name = event.target.files[0].name;
     console.log(`Selected file - ${event.target.files[0].name}`);
@@ -106,32 +115,39 @@ export default class ManageResumePage extends Component {
     this.getFiles()
   }
 
-  render () {
+  componentWillUnmount() {
+    if (this.state.previewUrl) {
+      URL.revokeObjectURL(this.state.previewUrl);
+    }
+  }
+  
+
+  render() {
     return (
-
-    <form class="pagelayout" id="upload-file" method="post" encType="multipart/form-data">
-        <input id = "file" name="file" type="file" onChange={this.handleChange.bind(this)}></input>
-        <button id="upload-file-btn" onClick={this.uploadResume.bind(this)} type="button">Upload</button>
-
-        <div style={{margin:2 + 'em'}}></div>
-        <div >
-
-        <h2>Uploaded Documents</h2>
-            <table>
+      <form className="pagelayout" id="upload-file" method="post" encType="multipart/form-data">
+        {/* ... existing form elements */}
+        <div style={{margin: '2em'}}></div>
+        <div>
+          <h2>Uploaded Documents</h2>
+          <table>
+            <thead>
               <tr>
-                <th class="tablecol1">Documents</th>
-                <th class="tablecol2">Actions</th>
+                <th className="tablecol1">Documents</th>
+                <th className="tablecol2">Actions</th>
               </tr>
+            </thead>
+            <tbody>
               <tr>
-                <td class="tablecol1">{this.state.fileName}</td>
-                <td class="tablecol2"><button id="download" onClick={this.downloadResume.bind(this)} type="button">Download</button></td>
+                <td className="tablecol1">{this.state.fileName}</td>
+                <td className="tablecol2">
+                  <button id="download" onClick={this.downloadResume.bind(this)} type="button">Download</button>
+                  <button id="preview" onClick={this.previewResume.bind(this)} type="button">View</button>
+                </td>
               </tr>
-            </table>
-            </div>
-
-    </form>
+            </tbody>
+          </table>
+        </div>
+      </form>
     )
-
-
   }
 }
