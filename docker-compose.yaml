@@ -1,29 +1,38 @@
 services:
-    api:
-        build:
-            context: .
-            dockerfile: backend/dockerfile.api
-        image: ats-api
-        ports:
-            - '5000:5000'
-        networks:
-            - ats-network
-    client:
-        build:
-            context: .
-            dockerfile: backend/dockerfile.client
-        image: ats-client
-        ports:
-            - '3000:3000'
-        networks:
-            - ats-network
-        volumes:
-          - type: bind
-            source: /frontend
-            target: /src
-        environment:
-            - WATCHPACK_POLLING=true
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile.api
+    image: ats-api
+    ports:
+      - '5000:5000'
+    networks:
+      - ats-network
+    depends_on:
+      - ollama
+
+  client:
+    build:
+      context: .
+      dockerfile: dockerfile.client
+    image: ats-client
+    ports:
+      - '3000:3000'
+    networks:
+      - ats-network
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - '11434:11434'
+    networks:
+      - ats-network
 
 networks:
-    ats-network:
-        driver: bridge
+  ats-network:
+    driver: bridge
+
+volumes:
+  ollama_data:

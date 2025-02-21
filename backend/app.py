@@ -26,6 +26,8 @@ import requests
 from authlib.integrations.flask_client import OAuth
 from authlib.common.security import generate_token
 
+from langchain_ollama import OllamaLLM
+
 
 existing_endpoints = ["/applications", "/resume"]
 
@@ -681,6 +683,19 @@ def create_app():
             return response, 200
         except:
             return jsonify({"error": "Internal server error"}), 500
+    
+    @app.route("/prompt", methods=["POST"])
+    def prompt_model():
+        """
+        Proof of concept with ollama/langchain usage
+
+        :return: response with prompt output
+        """
+        data = request.json
+        prompt = data.get('prompt', 'prompt not found')
+        model = OllamaLLM(base_url="http://ollama:11434", model="qwen2.5:1.5b")
+        response = model.invoke(prompt)
+        return jsonify({"response:", response}), 200
 
     return app
 

@@ -9,7 +9,10 @@ export default class ManageResumePage extends Component {
     this.state = {
       fileName: '',
       fileuploadname:'',
-      previewUrl: null
+      previewUrl: null,
+      modelResponse: '',
+      modelPrompt: 'yo',
+      loading: false
     }
 
     console.log("***");
@@ -110,6 +113,38 @@ export default class ManageResumePage extends Component {
           })
  }
 
+    promptModel = async (e) => {
+        e.preventDefault()
+        console.log("prompting model...")
+        this.setState({loading: true})
+
+        $.ajax({
+            url: 'http://127.0.0.1:5000/prompt',
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+                'Access-Control-Allow-Credentials': 'true',
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({prompt: this.state.modelPrompt}),
+            success: (response) => {
+                this.setState({
+                    modelResponse: response.response,
+                    loading: false
+                });
+            },
+            error: (xhr, status, error) => {
+                console.error("Error fetching response: ", error);
+                this.setState({
+                    modelResponse: "An error occured while fetching the response",
+                    loading: false
+                })
+            }
+
+        })
+    }
+
  componentDidMount () {
     // fetch the data only after this component is mounted
     this.getFiles()
@@ -146,6 +181,11 @@ export default class ManageResumePage extends Component {
               </tr>
             </tbody>
           </table>
+          <div>
+            <button id="sendprompt" onClick={this.promptModel} type="button">test llm</button>
+            <h3>model output:</h3>
+            <p>{this.state.modelResponse}</p>
+          </div>
         </div>
       </form>
     )
