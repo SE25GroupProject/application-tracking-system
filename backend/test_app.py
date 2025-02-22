@@ -28,11 +28,12 @@ def client():
     app = create_app()
     with open("application.yml") as f:
         info = yaml.load(f, Loader=yaml.FullLoader)
-        username = info["username"]
-        password = info["password"]
+        username = info["USERNAME"]
+        password = info["PASSWORD"]
+        cluster_url = info["CLUSTER_URL"]
         app.config["MONGODB_SETTINGS"] = {
             "db": "appTracker",
-            "host": f"mongodb+srv://{username}:{password}@applicationtracker.287am.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+            "host": f"mongodb+srv://{username}:{password}@{cluster_url}/",
         }
     db = MongoEngine()
     db.disconnect()
@@ -53,15 +54,27 @@ def user(client):
     # print(request.data)
     data = {"username": "testUser", "password": "test", "fullName": "fullName"}
 
-    user = Users.objects(username=data["username"])
-    user.first()["applications"] = []
-    user.first().save()
+    user = Users(
+        id=1,
+        fullName=data["fullName"],
+        username=data["username"],
+        password=hashlib.md5(data["password"].encode()).hexdigest(),
+        authTokens=[],
+        applications=[],
+        skills=[],
+        job_levels=[],
+        locations=[],
+        phone_number="",
+        address="",
+        institution="",
+        email=""
+    )
+    user.save()
     rv = client.post("/users/login", json=data)
     jdata = json.loads(rv.data.decode("utf-8"))
     header = {"Authorization": "Bearer " + jdata["token"]}
-    yield user.first(), header
-    user.first()["applications"] = []
-    user.first().save()
+    yield user, header
+    user.delete()
 
 
 # 1. testing if the flask app is running properly
