@@ -29,6 +29,13 @@ services:
       - '11434:11434'
     networks:
       - ats-network
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama serve &
+        sleep 10
+        ollama pull qwen2.5:1.5b
+        tail -f /dev/null
 
 networks:
   ats-network:

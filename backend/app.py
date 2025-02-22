@@ -695,7 +695,7 @@ def create_app():
         prompt = data.get('prompt', 'prompt not found')
         model = OllamaLLM(base_url="http://ollama:11434", model="qwen2.5:1.5b")
         response = model.invoke(prompt)
-        return jsonify({"response:", response}), 200
+        return jsonify({"response": response}), 200
 
     return app
 
