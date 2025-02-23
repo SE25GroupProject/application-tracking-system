@@ -1,29 +1,26 @@
 services:
-    api:
-        build:
-            context: .
-            dockerfile: backend/dockerfile.api
-        image: ats-api
-        ports:
-            - '5000:5000'
-        networks:
-            - ats-network
-    client:
-        build:
-            context: .
-            dockerfile: backend/dockerfile.client
-        image: ats-client
-        ports:
-            - '3000:3000'
-        networks:
-            - ats-network
-        volumes:
-          - type: bind
-            source: /frontend
-            target: /src
-        environment:
-            - WATCHPACK_POLLING=true
+  api:
+    build: ./backend/
+    ports:
+      - 5000:5000
+    volumes:
+      - ./backend:/app
+    environment:
+      - FLASK_DEBUG=true
+    networks:
+      - ats-network
+
+  client:
+    build: ./frontend/
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/app
+    environment:
+      - WATCHPACK_POLLING=true
+    networks:
+      - ats-network
 
 networks:
-    ats-network:
-        driver: bridge
+  ats-network:
+    driver: bridge
