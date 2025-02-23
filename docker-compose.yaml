@@ -1,23 +1,25 @@
 services:
   api:
-    build:
-      context: .
-      dockerfile: dockerfile.api
-    image: ats-api
+    build: ./backend/
     ports:
-      - '5000:5000'
+      - 5000:5000
+    volumes:
+      - ./backend:/app
+    environment:
+      - FLASK_DEBUG=true
     networks:
       - ats-network
     depends_on:
       - ollama
 
   client:
-    build:
-      context: .
-      dockerfile: dockerfile.client
-    image: ats-client
+    build: ./frontend/
     ports:
-      - '3000:3000'
+      - 3000:3000
+    volumes:
+      - ./frontend:/app
+    environment:
+      - WATCHPACK_POLLING=true
     networks:
       - ats-network
 
