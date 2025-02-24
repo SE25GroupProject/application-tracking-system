@@ -25,14 +25,14 @@ export default class App extends React.Component {
 			currentPage: <LoginPage />,
 			mapRouter: mapRouter,
 			sidebar: false,
-			userProfile: null
+			userProfile: null,
+			showLogoutModal: false // ✅ State to control the custom modal
 		};
 		this.sidebarHandler = this.sidebarHandler.bind(this);
 		this.updateProfile = this.updateProfile.bind(this);
 	}
 
 	updateProfile = (profile) => {
-		console.log('Update Request: ', profile);
 		this.setState({
 			userProfile: profile,
 			currentPage: <ProfilePage profile={profile} updateProfile={this.updateProfile} />
@@ -43,7 +43,7 @@ export default class App extends React.Component {
 		if (localStorage.getItem('token')) {
 			const userId = localStorage.getItem('userId');
 			await axios
-				.get('http://application-tracking-system-api-1:5000/getProfile', {
+				.get('http://localhost:5000/getProfile', {
 					headers: {
 						userid: userId,
 						Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -57,7 +57,6 @@ export default class App extends React.Component {
 	}
 
 	sidebarHandler = (user) => {
-		console.log(user);
 		this.setState({
 			currentPage: (
 				<ProfilePage profile={user} updateProfile={this.updateProfile.bind(this)} />
@@ -67,17 +66,29 @@ export default class App extends React.Component {
 		});
 	};
 
+	// ✅ Show Logout Modal
 	handleLogout = () => {
+		this.setState({ showLogoutModal: true });
+	};
+
+	// ✅ Confirm Logout
+	confirmLogout = () => {
 		localStorage.removeItem('token');
 		localStorage.removeItem('userId');
 		this.setState({
-			sidebar: false
+			sidebar: false,
+			showLogoutModal: false
 		});
+	};
+
+	// ✅ Cancel Logout
+	cancelLogout = () => {
+		this.setState({ showLogoutModal: false });
 	};
 
 	switchPage(pageName) {
 		const currentPage =
-			pageName == 'ProfilePage' ? (
+			pageName === 'ProfilePage' ? (
 				<ProfilePage
 					profile={this.state.userProfile}
 					updateProfile={this.updateProfile.bind(this)}
@@ -91,59 +102,116 @@ export default class App extends React.Component {
 	}
 
 	render() {
-		var app;
-		// console.log(this.state.sidebar)
-		if (this.state.sidebar) {
-			app = (
-				<div className='main-page'>
-					<Sidebar
-						switchPage={this.switchPage.bind(this)}
-						handleLogout={this.handleLogout}
-					/>
-					<div className='main'>
-						<div className='content'>
-							<div className=''>
-								<h1
-									className='text-center'
-									style={{ marginTop: '2%', fontWeight: '300' }}
-								>
+		const { showLogoutModal } = this.state;
+
+		return (
+			<div className='main-page'>
+				{this.state.sidebar ? (
+					<div className='main-page'>
+						<Sidebar
+							switchPage={this.switchPage.bind(this)}
+							handleLogout={this.handleLogout}
+						/>
+						<div className='main'>
+							<div className='content'>
+								<h1 className='text-center' style={{ marginTop: '2%', fontWeight: '300' }}>
 									Application Tracking System
 								</h1>
-								{/* <span className="btn-icon ">
-                <button className="btn btn-danger btn-icon"><i className="fas fa-plus"></i>&nbsp;New</button>
-              </span> */}
+								{this.state.currentPage}
 							</div>
-							{this.state.currentPage}
 						</div>
 					</div>
-				</div>
-			);
-		} else {
-			app = (
-				<div className='main-page'>
+				) : (
 					<div className='main'>
 						<div className='content'>
 							<h1
 								className='text-center'
 								style={{
 									marginTop: 30,
-									padding: 0.4 + 'em',
+									padding: '0.4em',
 									fontWeight: '300'
 								}}
 							>
 								Application Tracking System
 							</h1>
-							<div className=''>
-								{/* <span className="btn-icon ">
-              <button className="btn btn-danger btn-icon"><i className="fas fa-plus"></i>&nbsp;New</button>
-            </span> */}
-							</div>
 							<LoginPage side={this.sidebarHandler} />
 						</div>
 					</div>
-				</div>
-			);
-		}
-		return app;
+				)}
+
+				{/* ✅ Custom Logout Modal */}
+				{showLogoutModal && (
+					<div className='modal-overlay'>
+						<div className='custom-modal'>
+							<h2>Confirm Logout</h2>
+							<p>Are you sure you want to logout?</p>
+							<div className='modal-buttons'>
+								<button className='btn cancel-btn' onClick={this.cancelLogout}>
+									Cancel
+								</button>
+								<button className='btn logout-btn' onClick={this.confirmLogout}>
+									Logout
+								</button>
+							</div>
+						</div>
+					</div>
+				)}
+
+				{/* ✅ Modal Styling */}
+				<style>{`
+					.modal-overlay {
+						position: fixed;
+						top: 0;
+						left: 0;
+						width: 100%;
+						height: 100%;
+						background: rgba(0, 0, 0, 0.5);
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						z-index: 999;
+					}
+
+					.custom-modal {
+						background: #fff;
+						padding: 20px 30px;
+						border-radius: 8px;
+						box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+						text-align: center;
+						width: 300px;
+					}
+
+					.custom-modal h2 {
+						margin-bottom: 10px;
+					}
+
+					.modal-buttons {
+						margin-top: 20px;
+						display: flex;
+						justify-content: space-between;
+					}
+
+					.btn {
+						padding: 10px 20px;
+						border: none;
+						border-radius: 4px;
+						cursor: pointer;
+						color: #fff;
+					}
+
+					.cancel-btn {
+						background-color: #3498db;
+					}
+
+					.logout-btn {
+						background-color: #e74c3c;
+					}
+
+					.btn:hover {
+						opacity: 0.9;
+					}
+				`}</style>
+			</div>
+		);
 	}
 }
