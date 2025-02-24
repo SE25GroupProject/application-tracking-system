@@ -159,12 +159,16 @@ export default class ManageResumePage extends Component {
 
   render() {
     return (
-      <form className="pagelayout" id="upload-file" method="post" encType="multipart/form-data">
-        {/* ... existing form elements */}
+
+    <form class="pagelayout" id="upload-file" method="post" encType="multipart/form-data">
+        <input id = "file" name="file" type="file" onChange={this.handleChange.bind(this)}></input>
+        <button id="upload-file-btn" onClick={this.uploadResume.bind(this)} type="button">Upload</button>
+
         <div style={{margin: '2em'}}></div>
-        <div>
-          <h2>Uploaded Documents</h2>
-          <table>
+        <div >
+
+        <h2>Uploaded Documents</h2>
+            <table>
             <thead>
               <tr>
                 <th className="tablecol1">Documents</th>
@@ -179,7 +183,7 @@ export default class ManageResumePage extends Component {
                   <button id="preview" onClick={this.previewResume.bind(this)} type="button">View</button>
                 </td>
               </tr>
-            </tbody>
+              </tbody>
           </table>
           <div>
             <button id="sendprompt" onClick={this.promptModel} type="button">test llm</button>
