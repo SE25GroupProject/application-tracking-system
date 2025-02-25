@@ -51,6 +51,23 @@ export default class ManageResumePage extends Component {
           })
     }
 
+    deleteResume(resume_idx) {
+        $.ajax({
+            url: 'http://127.0.0.1:5000/resume/' + resume_idx,
+            method: 'DELETE',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('token'),
+              'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            success: (message, textStatus, response) => {
+                this.state.fileNames.splice(resume_idx, 1);
+                console.log(response.responseJSON.success);
+                this.getFiles();
+            }
+        })
+    }
+
   uploadResume = (e) => {
     e.preventDefault();
 
@@ -145,6 +162,13 @@ export default class ManageResumePage extends Component {
                       >
                         View
                       </button>
+                      <button
+                        id="delete-file-btn"
+                        onClick={() => this.deleteResume(index)}
+                        type="button"
+                        >
+                            Delete
+                        </button>
                     </td>
                   </tr>
                 ))}

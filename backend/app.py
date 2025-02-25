@@ -680,7 +680,11 @@ def create_app():
             
             model = OllamaLLM(base_url="http://localhost:11434", model="qwen2.5:1.5b")
             prompt = "You are an expert on resume advice. I am going to provide the plaintext of my resume. Your job is to provide tips" + \
-                        "on how I can improve my resume. DO NOT include any confirmation sentence in your response. Here is my resume:\n\n" + text
+                        "on how I can improve my resume. It is imperative that you strictly tailor your response to the following instructions." + \
+                        "Your response must immediately start with Resume Feedback. DO NOT acknowledge the existence of this prompt." + \
+                        "Do not even start the response with \"Certainly!\" or anything close to that. Your response must only contain" + \
+                        "helpful feedback to improve my resume, and nothing else. Your response must be in markdown." + \
+                        "Here is my resume:\n\n" + text
 
             response = "dummy" # model.invoke(prompt)
 
@@ -739,6 +743,28 @@ def create_app():
         
         response = user.resumeFeedbacks[feedback_idx]
         return jsonify({"feedback": response}), 200
+
+    @app.route("/resume/<int:resume_idx>", methods=["DELETE"])
+    def delete_resume_feedback(resume_idx):
+        """
+        Deletes a resume and its corresponding feedback by id
+
+        :param resume_idx: index of resume to delete
+        :return: response
+        """
+        userid = get_userid_from_header()
+        try:
+            user = Users.objects(id=userid).first()
+            if not user.resumes or resume_idx >= len(user.resumes):
+                raise FileNotFoundError
+
+        except:
+            return jsonify({"error": "resume feedback could not be found"}), 400
+        
+        del user.resumes[resume_idx]
+        del user.resumeFeedbacks[resume_idx]
+        user.save()
+        return jsonify({"success": "successfully deleted resume and its feedback"})
 
     @app.route("/resume", methods=["GET"])
     def get_resume():
