@@ -9,7 +9,6 @@ export default class ManageResumePage extends Component {
       fileNames: [],
       selectedFiles: null,
       resumeDownloadContent: null,
-      previewUrl: null,
       modelResponse: '',
       modelPrompt: 'yo',
       loading: false
@@ -18,31 +17,53 @@ export default class ManageResumePage extends Component {
 
   getFiles() {
     $.ajax({
-      url: 'http://127.0.0.1:5001/resume',
+      url: 'http://127.0.0.1:5000/resume',
       method: 'GET',
       headers: {
         'Authorization': 'Bearer ' + localStorage.getItem('token'),
         'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
         'Access-Control-Allow-Credentials': 'true'
       },
-      xhrFields: { responseType: 'blob' },
+      // xhrFields: { responseType: 'blob' },
       credentials: 'include',
       success: (message, textStatus, response) => {
-        console.log(response.getResponseHeader('x-fileName'))
+        console.log(message)
+        // this.previewUrl.push(URL.createObjectURL(message))
         this.setState({
-          fileNames: [response.getResponseHeader('x-fileName')],
-          resumeDownloadContent: message
-            this.setState({ previewUrl: URL.createObjectURL(message)});
+          fileNames: message.filenames,
+          // resumeDownloadContent: message,
+        //   previewUrl: URL.createObjectURL(message)
         })
       }
     })
   }
 
 
-    previewResume() {
-        if (this.state.previewUrl) {
-        window.open(this.state.previewUrl, '_blank');
-        }
+    previewResume(resume_idx) {
+        $.ajax({
+            url: 'http://127.0.0.1:5000/resume/' + resume_idx,
+            method: 'GET',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('token'),
+              'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            xhrFields: { responseType: 'blob' },
+            credentials: 'include',
+            success: (message, textStatus, response) => {
+              console.log(message)
+              // this.previewUrl.push(URL.createObjectURL(message))
+              this.setState({
+                fileNames: message.filenames,
+                // resumeDownloadContent: message,
+                // previewUrl: URL.createObjectURL(message)
+              })
+              window.open(URL.createObjectURL(message), '_blank');
+            }
+          })
+        // if (message) {
+        // window.open(URL.createObjectURL(message), '_blank');
+        // }
     }
 
   handleChange(event) {
@@ -87,28 +108,28 @@ export default class ManageResumePage extends Component {
     })
   }
 
-  downloadResume() {
-    $.ajax({
-      url: 'http://127.0.0.1:5001/resume',
-      method: 'GET',
-      headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-        'Access-Control-Allow-Credentials': 'true'
-      },
-      xhrFields: { responseType: 'blob' },
-      success: (message, textStatus, response) => {
-        const a = document.createElement('a')
-        const url = window.URL.createObjectURL(message)
-        a.href = url
-        a.download = 'resume.pdf'
-        document.body.append(a)
-        a.click()
-        a.remove()
-        window.URL.revokeObjectURL(url)
-      }
-    })
-  }
+//   downloadResume() {
+//     $.ajax({
+//       url: 'http://127.0.0.1:5001/resume',
+//       method: 'GET',
+//       headers: {
+//         'Authorization': 'Bearer ' + localStorage.getItem('token'),
+//         'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+//         'Access-Control-Allow-Credentials': 'true'
+//       },
+//       xhrFields: { responseType: 'blob' },
+//       success: (message, textStatus, response) => {
+//         const a = document.createElement('a')
+//         const url = window.URL.createObjectURL(message)
+//         a.href = url
+//         a.download = 'resume.pdf'
+//         document.body.append(a)
+//         a.click()
+//         a.remove()
+//         window.URL.revokeObjectURL(url)
+//       }
+//     })
+//   }
 
   componentDidMount() {
     this.getFiles()
@@ -158,11 +179,11 @@ export default class ManageResumePage extends Component {
                     <td className="tablecol1">{fileName}</td>
                     <td className="tablecol2">
                       <button
-                        id="download"
-                        onClick={this.downloadResume.bind(this)}
+                        id="preview"
+                        onClick={this.previewResume(0).bind(this)}
                         type="button"
                       >
-                        Download
+                        View
                       </button>
                     </td>
                   </tr>
