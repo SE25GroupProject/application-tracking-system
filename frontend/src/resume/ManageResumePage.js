@@ -2,46 +2,42 @@ import React, { Component } from 'react'
 import $ from 'jquery'
 import '../static/resume.css'
 
-
 export default class ManageResumePage extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
-      fileName: '',
-      fileuploadname:'',
+      fileNames: [],
+      selectedFiles: null,
+      resumeDownloadContent: null,
       previewUrl: null,
       modelResponse: '',
       modelPrompt: 'yo',
       loading: false
     }
-
-    console.log("***");
-    console.log(localStorage.getItem('token'));
-    this.getFiles.bind(this);
-
   }
 
-  getFiles () {
+  getFiles() {
     $.ajax({
-          url: 'http://127.0.0.1:5000/resume',
-          method: 'GET',
-          headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-            'Access-Control-Allow-Credentials': 'true'
-          },
-          xhrFields: {
-            responseType: 'blob'
-            },
+      url: 'http://127.0.0.1:5001/resume',
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+        'Access-Control-Allow-Credentials': 'true'
+      },
+      xhrFields: { responseType: 'blob' },
       credentials: 'include',
-          success: (message, textStatus, response) => {
-            console.log(response.getResponseHeader('x-fileName'))
-            this.setState({ fileName: response.getResponseHeader('x-fileName')});
-            this.setState({ resumeDownloadContent: message});
+      success: (message, textStatus, response) => {
+        console.log(response.getResponseHeader('x-fileName'))
+        this.setState({
+          fileNames: [response.getResponseHeader('x-fileName')],
+          resumeDownloadContent: message
             this.setState({ previewUrl: URL.createObjectURL(message)});
-          }
-      })
-}
+        })
+      }
+    })
+  }
+
 
     previewResume() {
         if (this.state.previewUrl) {
@@ -49,104 +45,72 @@ export default class ManageResumePage extends Component {
         }
     }
 
-    handleChange(event) {
-    var name = event.target.files[0].name;
-    console.log(`Selected file - ${event.target.files[0].name}`);
-    this.setState({ fileuploadname: name});
-
+  handleChange(event) {
+    const files = event.target.files
+    if (files.length > 0) {
+      const fileNames = []
+      for (let i = 0; i < files.length; i++) {
+        fileNames.push(files[i].name)
+      }
+      console.log("Selected files:", fileNames)
+      this.setState({ selectedFiles: files, fileNames })
     }
+  }
 
-    uploadResume() {
-        this.setState({ fileName: this.state.fileuploadname});
-        console.log(this.value);
-        const fileInput = document.getElementById('file').files[0];
-        //console.log(fileInput);
-
-        let formData = new FormData();
-        formData.append('file', fileInput );
-        //console.log(formData);
-
-        $.ajax({
-          url: 'http://127.0.0.1:5000/resume',
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-            'Access-Control-Allow-Credentials': 'true'
-          },
-          data: formData,
-          contentType: false,
-          cache: false,
-          processData: false,
-          success: (msg) => {
-                console.log(msg)
-          }
-          })
+  uploadResume() {
+    const files = this.state.selectedFiles
+    if (!files) {
+      console.log("No files selected")
+      return
     }
-
- downloadResume(){
-  $.ajax({
-          url: 'http://127.0.0.1:5000/resume',
-          method: 'GET',
-          headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-            'Access-Control-Allow-Credentials': 'true'
-          },
-          xhrFields: {
-            responseType: 'blob'
-        },
-          success: (message, textStatus, response) => {
-            console.log(message)
-            console.log(textStatus)
-            console.log(response)
-
-            var a = document.createElement('a');
-            var url = window.URL.createObjectURL(message);
-            a.href = url;
-            a.download = 'resume.pdf';
-            document.body.append(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
-          }
-          })
- }
-
-    promptModel = async (e) => {
-        e.preventDefault()
-        console.log("prompting model...")
-        this.setState({loading: true})
-
-        $.ajax({
-            url: 'http://127.0.0.1:5000/prompt',
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
-                'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-                'Access-Control-Allow-Credentials': 'true',
-                'Content-Type': 'application/json'
-            },
-            data: JSON.stringify({prompt: this.state.modelPrompt}),
-            success: (response) => {
-                this.setState({
-                    modelResponse: response.response,
-                    loading: false
-                });
-            },
-            error: (xhr, status, error) => {
-                console.error("Error fetching response: ", error);
-                this.setState({
-                    modelResponse: "An error occured while fetching the response",
-                    loading: false
-                })
-            }
-
-        })
+    let formData = new FormData()
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i])
     }
+    $.ajax({
+      url: 'http://127.0.0.1:5001/resume',
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+        'Access-Control-Allow-Credentials': 'true'
+      },
+      data: formData,
+      contentType: false,
+      cache: false,
+      processData: false,
+      success: (msg) => {
+        console.log("Upload successful:", msg)
+        // Optionally refresh the file list
+        this.getFiles()
+      }
+    })
+  }
 
- componentDidMount () {
-    // fetch the data only after this component is mounted
+  downloadResume() {
+    $.ajax({
+      url: 'http://127.0.0.1:5001/resume',
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+        'Access-Control-Allow-Credentials': 'true'
+      },
+      xhrFields: { responseType: 'blob' },
+      success: (message, textStatus, response) => {
+        const a = document.createElement('a')
+        const url = window.URL.createObjectURL(message)
+        a.href = url
+        a.download = 'resume.pdf'
+        document.body.append(a)
+        a.click()
+        a.remove()
+        window.URL.revokeObjectURL(url)
+      }
+    })
+  }
+
+  componentDidMount() {
     this.getFiles()
   }
 
@@ -159,39 +123,55 @@ export default class ManageResumePage extends Component {
 
   render() {
     return (
+      <div className="pagelayout">
+        {/* No extra <h1> here, since App.js already shows "Application Tracking System" */}
+        
+        <form id="upload-file" method="post" encType="multipart/form-data">
+          <input
+            id="file"
+            name="file"
+            type="file"
+            multiple
+            onChange={this.handleChange.bind(this)}
+          />
+          <button
+            id="upload-file-btn"
+            onClick={this.uploadResume.bind(this)}
+            type="button"
+          >
+            Upload
+          </button>
 
-    <form class="pagelayout" id="upload-file" method="post" encType="multipart/form-data">
-        <input id = "file" name="file" type="file" onChange={this.handleChange.bind(this)}></input>
-        <button id="upload-file-btn" onClick={this.uploadResume.bind(this)} type="button">Upload</button>
-
-        <div style={{margin: '2em'}}></div>
-        <div >
-
-        <h2>Uploaded Documents</h2>
-            <table>
-            <thead>
-              <tr>
-                <th className="tablecol1">Documents</th>
-                <th className="tablecol2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="tablecol1">{this.state.fileName}</td>
-                <td className="tablecol2">
-                  <button id="download" onClick={this.downloadResume.bind(this)} type="button">Download</button>
-                  <button id="preview" onClick={this.previewResume.bind(this)} type="button">View</button>
-                </td>
-              </tr>
-              </tbody>
-          </table>
+          <div style={{ margin: '2em' }}></div>
           <div>
-            <button id="sendprompt" onClick={this.promptModel} type="button">test llm</button>
-            <h3>model output:</h3>
-            <p>{this.state.modelResponse}</p>
+            <h2>Uploaded Documents</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th className="tablecol1">Documents</th>
+                  <th className="tablecol2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.fileNames.map((fileName, index) => (
+                  <tr key={index}>
+                    <td className="tablecol1">{fileName}</td>
+                    <td className="tablecol2">
+                      <button
+                        id="download"
+                        onClick={this.downloadResume.bind(this)}
+                        type="button"
+                      >
+                        Download
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     )
   }
 }
