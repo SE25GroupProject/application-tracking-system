@@ -38,6 +38,12 @@ services:
         sleep 10
         ollama pull qwen2.5:1.5b
         tail -f /dev/null
+  
+  selenium:
+    image: selenium/standalone-chrome:latest
+    ports:
+      - 4444:4444
+    shm_size: 2g
 
 networks:
   ats-network:

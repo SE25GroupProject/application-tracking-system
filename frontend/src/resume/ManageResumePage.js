@@ -1,13 +1,16 @@
 import React, { Component } from 'react'
+import { Modal } from 'react-bootstrap'
 import $ from 'jquery'
 import '../static/resume.css'
+import CoverLetter from '../Modals/CoverLetter'
 
 export default class ManageResumePage extends Component {
   constructor(props) {
     super(props)
     this.state = {
       fileNames: [],
-      loading: false
+      loading: false,
+      coverLetterIdx: null
     }
   }
 
@@ -29,6 +32,15 @@ export default class ManageResumePage extends Component {
       }
     })
   }
+
+  openCoverLetterModal = (idx) => {
+    this.setState({ coverLetterIdx: idx });
+  }
+
+  closeCoverLetterModal = () => {
+    this.setState({ coverLetterIdx: null });
+  }
+  
 
 
     previewResume(resume_idx) {
@@ -169,12 +181,25 @@ export default class ManageResumePage extends Component {
                         >
                             Delete
                         </button>
+                        <button
+                            id="generate-cover-letter-btn"
+                            onClick={() => this.openCoverLetterModal(index)}
+                            type="button"
+                        >
+                            Generate Cover Letter
+                        </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          {this.state.coverLetterIdx !== null && (
+        <CoverLetter
+          setState={this.closeCoverLetterModal}
+          idx={this.state.coverLetterIdx}
+        />
+      )}
         </form>
       </div>
     )

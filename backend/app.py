@@ -808,16 +808,42 @@ def create_app():
         #     return jsonify({"error": "Internal server error"}), 500
         return jsonify({"filenames": filenames})
     
-    @app.route("/prompt", methods=["POST"])
-    def prompt_model():
+    @app.route("/cover_letter/<int:resume_idx>", methods=["POST"])
+    def prompt_model(resume_idx):
         """
         Proof of concept with ollama/langchain usage
 
         :return: response with prompt output
         """
+        userid = get_userid_from_header()
+        try:
+            user = Users.objects(id=userid).first()
+            if not user.resumes or resume_idx >= len(user.resumes):
+                raise FileNotFoundError
+
+        except:
+            return jsonify({"error": "resume feedback could not be found"}), 400
+        
         data = request.json
-        prompt = data.get('prompt', 'prompt not found')
-        model = OllamaLLM(base_url="http://ollama:11434", model="qwen2.5:1.5b")
+        job_description = data.get('job_description', 'job description not found')
+
+        # get resume text
+        resume_proxy = user.resumes[resume_idx]
+        resume_proxy.seek(0)
+        resume_stream = BytesIO(resume_proxy.read())
+        resume_text = ""
+        with pdfplumber.open(resume_stream) as pdf:
+            for page in pdf.pages:
+                resume_text += page.extract_text() + "\n\n"
+
+        model = OllamaLLM(base_url="http://localhost:11434", model="qwen2.5:1.5b")
+        prompt = "I am going to give you a resume and possibly a job description. You job is to generate a cover letter that tailors" + \
+                    "the resume to a job description. If you are given a complete job description, the cover letter must be tailored" + \
+                    "to this given job description. If you are not given a complete job description, the cover letter should be generalized" + \
+                    "with placeholders/fields for items commonly found in job descriptions.\n\n Your response may be sent directly to" + \
+                    "employers, so it is imperative that your response MUST ONLY contain the cover letter and NOTHING ELSE. DO NOT" + \
+                    f"acknowledge the existence of this prompt anywhere in your response.\n\n\n Here is the resume: {resume_text}\n\n\n" + \
+                    f"Here is what might be a job description: {job_description}"
         response = model.invoke(prompt)
         return jsonify({"response": response}), 200
 

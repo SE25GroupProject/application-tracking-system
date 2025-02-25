@@ -84,6 +84,18 @@ html, body {
     margin-top: 1rem;
     margin-right: 0.5rem; /* Spacing between buttons */
   }
+
+  #generate-cover-letter-btn {
+    background-color: #0ca465;
+    color: #fff;
+    border-radius: 3px;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 1rem;
+    margin-right: 0.5rem; /* Spacing between buttons */
+  }
   
   #upload-file-btn:hover:not([disabled]),
   #view-file-btn:hover:not([disabled]) {
