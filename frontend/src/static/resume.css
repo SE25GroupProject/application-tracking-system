@@ -61,7 +61,7 @@ html, body {
      BUTTONS
   ---------------------------------- */
   #upload-file-btn,
-  #download {
+  #view-file-btn {
     background-color: #2A6E85;
     color: #fff;
     border-radius: 3px;
@@ -73,9 +73,14 @@ html, body {
     margin-right: 0.5rem; /* Spacing between buttons */
   }
   
-  #upload-file-btn:hover,
-  #download:hover {
+  #upload-file-btn:hover:not([disabled]),
+  #view-file-btn:hover:not([disabled]) {
     background-color: #1f5368;
+  }
+
+  #upload-file-btn[disabled],
+  #view-file-btn[disabled] {
+    opacity: 0.65;
   }
   
   /* ----------------------------------
@@ -97,8 +102,7 @@ html, body {
       padding: 0.5rem 0.7rem;
     }
   
-    #upload-file-btn,
-    #download {
+    #view-file-btn, #upload-file-btn {
       font-size: 0.9rem;
       padding: 0.4rem 0.8rem;
     }
@@ -112,8 +116,7 @@ html, body {
       padding: 0.4rem 0.6rem;
     }
   
-    #upload-file-btn,
-    #download {
+    #view-file-btn, #upload-file-btn {
       font-size: 0.8rem;
       padding: 0.3rem 0.6rem;
     }

@@ -665,6 +665,9 @@ def create_app():
         try:
             userid = get_userid_from_header()
             try:
+                print(request)
+                print(dir(request))
+                print(request.files)
                 file = request.files["file"]  # .read()
             except:
                 return jsonify({"error": "No resume file found in the input"}), 400
@@ -679,7 +682,7 @@ def create_app():
             prompt = "You are an expert on resume advice. I am going to provide the plaintext of my resume. Your job is to provide tips" + \
                         "on how I can improve my resume. DO NOT include any confirmation sentence in your response. Here is my resume:\n\n" + text
 
-            response = model.invoke(prompt)
+            response = "dummy" # model.invoke(prompt)
 
             user = Users.objects(id=userid).first()
             

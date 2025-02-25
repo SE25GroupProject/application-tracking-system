@@ -7,10 +7,6 @@ export default class ManageResumePage extends Component {
     super(props)
     this.state = {
       fileNames: [],
-      selectedFiles: null,
-      resumeDownloadContent: null,
-      modelResponse: '',
-      modelPrompt: 'yo',
       loading: false
     }
   }
@@ -24,15 +20,11 @@ export default class ManageResumePage extends Component {
         'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
         'Access-Control-Allow-Credentials': 'true'
       },
-      // xhrFields: { responseType: 'blob' },
       credentials: 'include',
       success: (message, textStatus, response) => {
         console.log(message)
-        // this.previewUrl.push(URL.createObjectURL(message))
         this.setState({
           fileNames: message.filenames,
-          // resumeDownloadContent: message,
-        //   previewUrl: URL.createObjectURL(message)
         })
       }
     })
@@ -52,84 +44,51 @@ export default class ManageResumePage extends Component {
             credentials: 'include',
             success: (message, textStatus, response) => {
               console.log(message)
-              // this.previewUrl.push(URL.createObjectURL(message))
-              this.setState({
-                fileNames: message.filenames,
-                // resumeDownloadContent: message,
-                // previewUrl: URL.createObjectURL(message)
-              })
-              window.open(URL.createObjectURL(message), '_blank');
+              if(message){
+                window.open(URL.createObjectURL(message), '_blank');
+              }
             }
           })
-        // if (message) {
-        // window.open(URL.createObjectURL(message), '_blank');
-        // }
     }
 
-  handleChange(event) {
-    const files = event.target.files
-    if (files.length > 0) {
-      const fileNames = []
-      for (let i = 0; i < files.length; i++) {
-        fileNames.push(files[i].name)
+  uploadResume = (e) => {
+    e.preventDefault();
+
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".pdf"; // Adjust allowed file types if needed
+
+    fileInput.addEventListener("change", (event) => {
+      if (event.target.files.length == 0) {
+        return;
       }
-      console.log("Selected files:", fileNames)
-      this.setState({ selectedFiles: files, fileNames })
-    }
-  }
 
-  uploadResume() {
-    const files = this.state.selectedFiles
-    if (!files) {
-      console.log("No files selected")
-      return
-    }
-    let formData = new FormData()
-    for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i])
-    }
-    $.ajax({
-      url: 'http://127.0.0.1:5001/resume',
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-        'Access-Control-Allow-Credentials': 'true'
-      },
-      data: formData,
-      contentType: false,
-      cache: false,
-      processData: false,
-      success: (msg) => {
-        console.log("Upload successful:", msg)
-        // Optionally refresh the file list
-        this.getFiles()
-      }
-    })
-  }
+        this.setState({loading: true});
+        let formData = new FormData()
+        const file = event.target.files[0];
+        formData.append('file', file);
+        $.ajax({
+            url: 'http://127.0.0.1:5000/resume',
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+                'Access-Control-Allow-Credentials': 'true'
+            },
+            data: formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: (msg) => {
+                console.log("Upload successful:", msg)
+                this.setState({ fileNames: [...this.state.fileNames, file.name] })
+            }
+        }).always(() => this.setState({loading: false}))
+        
+    });
 
-//   downloadResume() {
-//     $.ajax({
-//       url: 'http://127.0.0.1:5001/resume',
-//       method: 'GET',
-//       headers: {
-//         'Authorization': 'Bearer ' + localStorage.getItem('token'),
-//         'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-//         'Access-Control-Allow-Credentials': 'true'
-//       },
-//       xhrFields: { responseType: 'blob' },
-//       success: (message, textStatus, response) => {
-//         const a = document.createElement('a')
-//         const url = window.URL.createObjectURL(message)
-//         a.href = url
-//         a.download = 'resume.pdf'
-//         document.body.append(a)
-//         a.click()
-//         a.remove()
-//         window.URL.revokeObjectURL(url)
-//       }
-//     })
-//   }
+    fileInput.click();
+  }
 
   componentDidMount() {
     this.getFiles()
@@ -145,25 +104,26 @@ export default class ManageResumePage extends Component {
   render() {
     return (
       <div className="pagelayout">
-        {/* No extra <h1> here, since App.js already shows "Application Tracking System" */}
         
         <form id="upload-file" method="post" encType="multipart/form-data">
-          <input
-            id="file"
-            name="file"
-            type="file"
-            multiple
-            onChange={this.handleChange.bind(this)}
-          />
           <button
             id="upload-file-btn"
-            onClick={this.uploadResume.bind(this)}
+            onClick={(event) => {
+                if (!this.state.loading) {
+                    this.uploadResume(event)
+                }
+            }}
+            disabled={this.state.loading}
             type="button"
+            style={{
+                display: 'block',
+                margin: '0 auto'
+            }}
           >
-            Upload
+            {this.state.loading ? 'Uploading...' : 'Uploade New'}
           </button>
 
-          <div style={{ margin: '2em' }}></div>
+          <div style={{ margin: '1.5em' }}></div>
           <div>
             <h2>Uploaded Documents</h2>
             <table>
@@ -179,8 +139,8 @@ export default class ManageResumePage extends Component {
                     <td className="tablecol1">{fileName}</td>
                     <td className="tablecol2">
                       <button
-                        id="preview"
-                        onClick={this.previewResume(0).bind(this)}
+                        id="view-file-btn"
+                        onClick={() => this.previewResume(index)}
                         type="button"
                       >
                         View
