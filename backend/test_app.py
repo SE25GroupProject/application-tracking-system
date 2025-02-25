@@ -1,46 +1,41 @@
 """
 Test module for the backend
 """
+
 import hashlib
 from io import BytesIO
 
 import pytest
 import json
 import datetime
-from flask_mongoengine import MongoEngine
-import yaml
-from app import create_app, Users
+from app import create_app
+from models import Users
 
 
-# Pytest fixtures are useful tools for calling resources
-# over and over, without having to manually recreate them,
-# eliminating the possibility of carry-over from previous tests,
-# unless defined as such.
-# This fixture receives the client returned from create_app
-# in app.py
+@pytest.fixture()
+def app():
+    """
+    Creates a fixture for the application
+
+    :return: app fixture
+    """
+    app = create_app()
+    return app
+
+
 @pytest.fixture
-def client():
+def client(app):
     """
     Creates a client fixture for tests to use
 
+    :param app: the application fixture
     :return: client fixture
     """
-    app = create_app()
-    with open("application.yml") as f:
-        info = yaml.load(f, Loader=yaml.FullLoader)
-        username = info["USERNAME"]
-        password = info["PASSWORD"]
-        cluster_url = info["CLUSTER_URL"]
-        app.config["MONGODB_SETTINGS"] = {
-            "db": "appTracker",
-            "host": f"mongodb+srv://{username}:{password}@{cluster_url}/",
-        }
-    db = MongoEngine()
-    db.disconnect()
-    db.init_app(app)
     client = app.test_client()
+    ctx = app.app_context()
+    ctx.push()
     yield client
-    db.disconnect()
+    ctx.pop()
 
 
 @pytest.fixture
@@ -67,7 +62,7 @@ def user(client):
         phone_number="",
         address="",
         institution="",
-        email=""
+        email="",
     )
     user.save()
     rv = client.post("/users/login", json=data)
@@ -142,7 +137,7 @@ def test_add_application(client, mocker, user):
     """
     mocker.patch(
         # Dataset is in slow.py, but imported to main.py
-        "app.get_new_user_id",
+        "models.get_new_user_id",
         return_value=-1,
     )
     user, header = user
@@ -177,7 +172,7 @@ def test_update_application(client, user):
     :param client: mongodb client
     :param user: the test user object
     """
-    user, auth = user
+    user, header = user
     application = {
         "id": 3,
         "jobTitle": "test_edit",
@@ -195,7 +190,7 @@ def test_update_application(client, user):
     }
 
     rv = client.put(
-        "/applications/3", json={"application": new_application}, headers=auth
+        "/applications/3", json={"application": new_application}, headers=header
     )
     assert rv.status_code == 200
     jdata = json.loads(rv.data.decode("utf-8"))["jobTitle"]
@@ -210,7 +205,7 @@ def test_delete_application(client, user):
     :param client: mongodb client
     :param user: the test user object
     """
-    user, auth = user
+    user, header = user
 
     application = {
         "id": 3,
@@ -222,7 +217,7 @@ def test_delete_application(client, user):
     user["applications"] = [application]
     user.save()
 
-    rv = client.delete("/applications/3", headers=auth)
+    rv = client.delete("/applications/3", headers=header)
     jdata = json.loads(rv.data.decode("utf-8"))["jobTitle"]
     assert jdata == "fakeJob12345"
 
@@ -246,8 +241,8 @@ def test_logout(client, user):
     :param client: mongodb client
     :param user: the test user object
     """
-    user, auth = user
-    rv = client.post("/users/logout", headers=auth)
+    user, header = user
+    rv = client.post("/users/logout", headers=header)
     # assert no error occured
     assert rv.status_code == 200
 
@@ -262,7 +257,7 @@ def test_resume(client, mocker, user):
     """
     mocker.patch(
         # Dataset is in slow.py, but imported to main.py
-        "app.get_new_user_id",
+        "models.get_new_user_id",
         return_value=-1,
     )
     user, header = user
