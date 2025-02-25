@@ -1,50 +1,121 @@
-
-.upload {
-  transform: translate(10px, -5px) !important;
-}
-
-.file {
-    margin: 3%;
+/* ----------------------------------
+   GLOBAL RESET & DEFAULTS
+---------------------------------- */
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  *, *::before, *::after {
+    box-sizing: inherit;
+  }
+  
+  /* ----------------------------------
+     MAIN CONTAINER FOR ManageResumePage
+  ---------------------------------- */
+  .pagelayout {
+    max-width: 1000px;     /* Limit the container width */
+    margin: 2rem auto;     /* Center horizontally with auto left/right margins */
+    padding: 1rem;
+    margin-left:69px;
+    background-color: #fff;/* Optional background for contrast */
+    border-radius: 5px;    /* Slight corner rounding */
+  }
+  
+  /* If you want subheadings (like "Uploaded Documents") centered: */
+  .pagelayout h2 {
+    text-align: center;
+  }
+  
+  /* ----------------------------------
+     TABLE STYLING
+  ---------------------------------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    border: 1px solid #ccc;
+    background-color: transparent;
+  }
+  
+  table th,
+  table td {
+    border: 1px solid #ccc;
+    padding: 0.75rem 1rem;
+    text-align: center;
     vertical-align: middle;
-}
-
-.tablecol1 {
-    padding: 1rem;
-    border-width: 1px 0px 1px 1px;
-    border-style: solid;
-    border-color: black;
-    background-color: white;
-    width:70%;
+    font-size: 1rem;
+    white-space: normal; /* Let text wrap on larger screens */
+  }
+  
+  .tablecol1 {
+    width: 60%;
+  }
+  .tablecol2 {
+    width: 40%;
     text-align: center;
-}
-
-.tablecol2 {
-    padding: 1rem;
-    border-width: 1px 1px 1px 0px;
-    border-style: solid;
-    border-color: black;
-    background-color: white;
-    width:30%;
-    text-align: center;
-}
-
-.pagelayout{
-    margin-top:6%;
-    margin-left: 10%;
-}
-
-#download{
+  }
+  
+  /* ----------------------------------
+     BUTTONS
+  ---------------------------------- */
+  #upload-file-btn,
+  #download {
     background-color: #2A6E85;
-    padding: 5%;
-    color: white;
+    color: #fff;
     border-radius: 3px;
-    width: 150px;
-}
-
-#upload-file-btn{
-    background-color: #2A6E85;
-    padding: 0.5%;
-    color: white;
-    border-radius: 3px;
-    width: 210px;
-}
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 1rem;
+    margin-right: 0.5rem; /* Spacing between buttons */
+  }
+  
+  #upload-file-btn:hover,
+  #download:hover {
+    background-color: #1f5368;
+  }
+  
+  /* ----------------------------------
+     RESPONSIVE ADJUSTMENTS
+     (Horizontal scrolling instead of stacking)
+  ---------------------------------- */
+  @media (max-width: 768px) {
+    /* Make table scroll horizontally on smaller screens */
+    table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+  
+    /* Slightly smaller text and buttons */
+    table th,
+    table td {
+      font-size: 0.9rem;
+      padding: 0.5rem 0.7rem;
+    }
+  
+    #upload-file-btn,
+    #download {
+      font-size: 0.9rem;
+      padding: 0.4rem 0.8rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    /* Even smaller adjustments */
+    table th,
+    table td {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.6rem;
+    }
+  
+    #upload-file-btn,
+    #download {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.6rem;
+    }
+  }
+  
