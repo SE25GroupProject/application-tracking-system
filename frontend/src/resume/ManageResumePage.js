@@ -1,129 +1,158 @@
 import React, { Component } from 'react'
+import { Modal } from 'react-bootstrap'
 import $ from 'jquery'
 import '../static/resume.css'
+import CoverLetter from '../Modals/CoverLetter'
 
 export default class ManageResumePage extends Component {
   constructor(props) {
     super(props)
     this.state = {
       fileNames: [],
-      selectedFiles: null,
-      resumeDownloadContent: null
+      loading: false,
+      coverLetterIdx: null
     }
   }
 
   getFiles() {
     $.ajax({
-      url: 'http://127.0.0.1:5001/resume',
+      url: 'http://127.0.0.1:5000/resume',
       method: 'GET',
       headers: {
         'Authorization': 'Bearer ' + localStorage.getItem('token'),
         'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
         'Access-Control-Allow-Credentials': 'true'
       },
-      xhrFields: { responseType: 'blob' },
       credentials: 'include',
       success: (message, textStatus, response) => {
-        console.log(response.getResponseHeader('x-fileName'))
+        console.log(message)
         this.setState({
-          fileNames: [response.getResponseHeader('x-fileName')],
-          resumeDownloadContent: message
+          fileNames: message.filenames,
         })
       }
     })
   }
 
-  handleChange(event) {
-    const files = event.target.files
-    if (files.length > 0) {
-      const fileNames = []
-      for (let i = 0; i < files.length; i++) {
-        fileNames.push(files[i].name)
-      }
-      console.log("Selected files:", fileNames)
-      this.setState({ selectedFiles: files, fileNames })
-    }
+  openCoverLetterModal = (idx) => {
+    this.setState({ coverLetterIdx: idx });
   }
 
-  uploadResume() {
-    const files = this.state.selectedFiles
-    if (!files) {
-      console.log("No files selected")
-      return
-    }
-    let formData = new FormData()
-    for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i])
-    }
-    $.ajax({
-      url: 'http://127.0.0.1:5001/resume',
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-        'Access-Control-Allow-Credentials': 'true'
-      },
-      data: formData,
-      contentType: false,
-      cache: false,
-      processData: false,
-      success: (msg) => {
-        console.log("Upload successful:", msg)
-        // Optionally refresh the file list
-        this.getFiles()
-      }
-    })
+  closeCoverLetterModal = () => {
+    this.setState({ coverLetterIdx: null });
   }
+  
 
-  downloadResume() {
-    $.ajax({
-      url: 'http://127.0.0.1:5001/resume',
-      method: 'GET',
-      headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-        'Access-Control-Allow-Credentials': 'true'
-      },
-      xhrFields: { responseType: 'blob' },
-      success: (message, textStatus, response) => {
-        const a = document.createElement('a')
-        const url = window.URL.createObjectURL(message)
-        a.href = url
-        a.download = 'resume.pdf'
-        document.body.append(a)
-        a.click()
-        a.remove()
-        window.URL.revokeObjectURL(url)
+
+    previewResume(resume_idx) {
+        $.ajax({
+            url: 'http://127.0.0.1:5000/resume/' + resume_idx,
+            method: 'GET',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('token'),
+              'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            xhrFields: { responseType: 'blob' },
+            credentials: 'include',
+            success: (message, textStatus, response) => {
+              console.log(message)
+              if(message){
+                window.open(URL.createObjectURL(message), '_blank');
+              }
+            }
+          })
+    }
+
+    deleteResume(resume_idx) {
+        $.ajax({
+            url: 'http://127.0.0.1:5000/resume/' + resume_idx,
+            method: 'DELETE',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('token'),
+              'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            success: (message, textStatus, response) => {
+                this.state.fileNames.splice(resume_idx, 1);
+                console.log(response.responseJSON.success);
+                this.getFiles();
+            }
+        })
+    }
+
+  uploadResume = (e) => {
+    e.preventDefault();
+
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".pdf"; // Adjust allowed file types if needed
+
+    fileInput.addEventListener("change", (event) => {
+      if (event.target.files.length == 0) {
+        return;
       }
-    })
+
+        this.setState({loading: true});
+        let formData = new FormData()
+        const file = event.target.files[0];
+        formData.append('file', file);
+        $.ajax({
+            url: 'http://127.0.0.1:5000/resume',
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+                'Access-Control-Allow-Credentials': 'true'
+            },
+            data: formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: (msg) => {
+                console.log("Upload successful:", msg)
+                this.setState({ fileNames: [...this.state.fileNames, file.name] })
+            }
+        }).always(() => this.setState({loading: false}))
+        
+    });
+
+    fileInput.click();
   }
 
   componentDidMount() {
     this.getFiles()
   }
 
+  componentWillUnmount() {
+    if (this.state.previewUrl) {
+      URL.revokeObjectURL(this.state.previewUrl);
+    }
+  }
+  
+
   render() {
     return (
       <div className="pagelayout">
-        {/* No extra <h1> here, since App.js already shows "Application Tracking System" */}
         
         <form id="upload-file" method="post" encType="multipart/form-data">
-          <input
-            id="file"
-            name="file"
-            type="file"
-            multiple
-            onChange={this.handleChange.bind(this)}
-          />
           <button
             id="upload-file-btn"
-            onClick={this.uploadResume.bind(this)}
+            onClick={(event) => {
+                if (!this.state.loading) {
+                    this.uploadResume(event)
+                }
+            }}
+            disabled={this.state.loading}
             type="button"
+            style={{
+                display: 'block',
+                margin: '0 auto'
+            }}
           >
-            Upload
+            {this.state.loading ? 'Uploading...' : 'Uploade New'}
           </button>
 
-          <div style={{ margin: '2em' }}></div>
+          <div style={{ margin: '1.5em' }}></div>
           <div>
             <h2>Uploaded Documents</h2>
             <table>
@@ -139,18 +168,38 @@ export default class ManageResumePage extends Component {
                     <td className="tablecol1">{fileName}</td>
                     <td className="tablecol2">
                       <button
-                        id="download"
-                        onClick={this.downloadResume.bind(this)}
+                        id="view-file-btn"
+                        onClick={() => this.previewResume(index)}
                         type="button"
                       >
-                        Download
+                        View
                       </button>
+                      <button
+                        id="delete-file-btn"
+                        onClick={() => this.deleteResume(index)}
+                        type="button"
+                        >
+                            Delete
+                        </button>
+                        <button
+                            id="generate-cover-letter-btn"
+                            onClick={() => this.openCoverLetterModal(index)}
+                            type="button"
+                        >
+                            Generate Cover Letter
+                        </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          {this.state.coverLetterIdx !== null && (
+        <CoverLetter
+          setState={this.closeCoverLetterModal}
+          idx={this.state.coverLetterIdx}
+        />
+      )}
         </form>
       </div>
     )

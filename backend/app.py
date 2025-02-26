@@ -10,6 +10,7 @@ import random
 from flask import Flask, jsonify, request, send_file, redirect, url_for, session
 from flask_mongoengine import MongoEngine
 from flask_cors import CORS, cross_origin
+from io import BytesIO
 
 from bs4 import BeautifulSoup
 
@@ -18,13 +19,15 @@ import pandas as pd
 
 
 import yaml
-
+import pdfplumber
 
 
 import requests
 
 from authlib.integrations.flask_client import OAuth
 from authlib.common.security import generate_token
+
+from langchain_ollama import OllamaLLM
 
 
 existing_endpoints = ["/applications", "/resume"]
@@ -225,42 +228,44 @@ def create_app():
 
         :return: JSON object
         """
+        # try:
+        # print(request.data)
+        data = json.loads(request.data)
+        print(data)
         try:
-            # print(request.data)
-            data = json.loads(request.data)
-            print(data)
-            try:
-                _ = data["username"]
-                _ = data["password"]
-                _ = data["fullName"]
-            except:
-                return jsonify({"error": "Missing fields in input"}), 400
-
-            username_exists = Users.objects(username=data["username"])
-            if len(username_exists) != 0:
-                return jsonify({"error": "Username already exists"}), 400
-            password = data["password"]
-            password_hash = hashlib.md5(password.encode())
-            user = Users(
-                id=get_new_user_id(),
-                fullName=data["fullName"],
-                username=data["username"],
-                password=password_hash.hexdigest(),
-                authTokens=[],
-                applications=[],
-                skills=[],
-                job_levels=[],
-                locations=[],
-                phone_number="",
-                address="",
-                institution="",
-                email=""
-            )
-            user.save()
-            # del user.to_json()["password", "authTokens"]
-            return jsonify(user.to_json()), 200
+            _ = data["username"]
+            _ = data["password"]
+            _ = data["fullName"]
         except:
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": "Missing fields in input"}), 400
+
+        username_exists = Users.objects(username=data["username"])
+        if len(username_exists) != 0:
+            return jsonify({"error": "Username already exists"}), 400
+        password = data["password"]
+        password_hash = hashlib.md5(password.encode())
+        user = Users(
+            id=get_new_user_id(),
+            fullName=data["fullName"],
+            username=data["username"],
+            password=password_hash.hexdigest(),
+            authTokens=[],
+            applications=[],
+            skills=[],
+            job_levels=[],
+            locations=[],
+            resumes=[],
+            resumeFeedbacks=[],
+            phone_number="",
+            address="",
+            institution="",
+            email="",
+        )
+        user.save()
+        # del user.to_json()["password", "authTokens"]
+        return jsonify(user.to_json()), 200
+        # except:
+        #     return jsonify({"error": "Internal server error"}), 500
 
     @app.route("/getProfile", methods=["GET"])
     def get_profile_data():
@@ -399,7 +404,7 @@ def create_app():
                 "address": user.address,
                 "locations": user.locations,
                 "jobLevels": user.job_levels,
-                "email": user.email
+                "email": user.email,
             }
             return jsonify({"profile": profileInfo, "token": token, "expiry": expiry_str})
         except:
@@ -617,6 +622,38 @@ def create_app():
             return jsonify(app_to_delete), 200
         except:
             return jsonify({"error": "Internal server error"}), 500
+        
+    @app.route("/resume/<int:resume_idx>", methods=["GET"])
+    def get_resume_file(resume_idx):
+        """
+        Returns a resume file by index
+
+        :param resume_idx: index of requested resume
+        :return: response with resume file attached
+        """
+        userid = get_userid_from_header()
+        try:
+            user = Users.objects(id=userid).first()
+            if not user.resumes or resume_idx >= len(user.resumes):
+                raise FileNotFoundError
+
+        except:
+            return jsonify({"error": "resume could not be found"}), 400
+        
+        resume = user.resumes[resume_idx]
+        resume.seek(0)
+        filename = resume.filename or f"resume_{resume_idx}.pdf"
+
+        response = send_file(
+            resume,
+            mimetype="application/pdf",
+            download_name=filename,
+            as_attachment=True
+        )
+        response.headers["x-filename"] = filename
+        response.headers["Access-Control-Expose-Headers"] = "x-filename"
+        return response, 200
+
 
     @app.route("/resume", methods=["POST"])
     def upload_resume():
@@ -628,26 +665,106 @@ def create_app():
         try:
             userid = get_userid_from_header()
             try:
+                print(request)
+                print(dir(request))
+                print(request.files)
                 file = request.files["file"]  # .read()
             except:
                 return jsonify({"error": "No resume file found in the input"}), 400
 
+            text = ""
+            with pdfplumber.open(file.stream) as pdf:
+                for page in pdf.pages:
+                    text += page.extract_text()
+                    text += "\n\n[PAGE BREAK]\n\n"
+            
+            model = OllamaLLM(base_url="http://localhost:11434", model="qwen2.5:1.5b")
+            prompt = "You are an expert on resume advice. I am going to provide the plaintext of my resume. Your job is to provide tips" + \
+                        "on how I can improve my resume. It is imperative that you strictly tailor your response to the following instructions." + \
+                        "Your response must immediately start with Resume Feedback. DO NOT acknowledge the existence of this prompt." + \
+                        "Do not even start the response with \"Certainly!\" or anything close to that. Your response must only contain" + \
+                        "helpful feedback to improve my resume, and nothing else. Your response must be in markdown." + \
+                        "Here is my resume:\n\n" + text
+
+            response = "dummy" # model.invoke(prompt)
+
             user = Users.objects(id=userid).first()
-            if not user.resume.read():
-                # There is no file
-                user.resume.put(file, filename=file.filename,
-                                content_type="application/pdf")
-                user.save()
-                return jsonify({"message": "resume successfully uploaded"}), 200
-            else:
-                # There is a file, we are replacing it
-                user.resume.replace(
-                    file, filename=file.filename, content_type="application/pdf")
-                user.save()
-                return jsonify({"message": "resume successfully replaced"}), 200
+            
+            # Reset the file pointer in case it has been read
+            file.seek(0)
+
+            # Create a new GridFSProxy instance and use put() to store the file
+            new_file = db.GridFSProxy()
+            new_file.put(
+                file,
+                filename=file.filename,
+                content_type="application/pdf"
+            )
+            user.resumes.append(new_file)
+
+            user.resumeFeedbacks.append(response)
+            user.save()
+            return jsonify({"message": "resume successfully added"}), 200
+                
+
         except Exception as e:
             print(e)
             return jsonify({"error": "Internal server error"}), 500
+
+    @app.route("/resume-feedback", methods=["GET"])
+    def get_resume_feedback():
+        """
+        Retrieves the resume feedback for the user
+
+        :return: response with resume feedback
+        """
+        userid = get_userid_from_header()
+        user = Users.objects(id=userid).first()
+        resumeFeedbacks = user.resumeFeedbacks
+        response = jsonify({"response": resumeFeedbacks})
+        return response, 200
+    
+    @app.route("/resume-feedback/<int:feedback_idx>", methods=["GET"])
+    def get_resume_feedback_by_idx(feedback_idx):
+        """
+        Retrieves a specific resume feedback given an id
+
+        :param feedback_idx: index of feedback
+        :return: response with feedback
+        """
+        userid = get_userid_from_header()
+        try:
+            user = Users.objects(id=userid).first()
+            if not user.resumeFeedbacks or feedback_idx >= len(user.resumeFeedbacks):
+                raise FileNotFoundError
+
+        except:
+            return jsonify({"error": "resume feedback could not be found"}), 400
+        
+        response = user.resumeFeedbacks[feedback_idx]
+        return jsonify({"feedback": response}), 200
+
+    @app.route("/resume/<int:resume_idx>", methods=["DELETE"])
+    def delete_resume_feedback(resume_idx):
+        """
+        Deletes a resume and its corresponding feedback by id
+
+        :param resume_idx: index of resume to delete
+        :return: response
+        """
+        userid = get_userid_from_header()
+        try:
+            user = Users.objects(id=userid).first()
+            if not user.resumes or resume_idx >= len(user.resumes):
+                raise FileNotFoundError
+
+        except:
+            return jsonify({"error": "resume feedback could not be found"}), 400
+        
+        del user.resumes[resume_idx]
+        del user.resumeFeedbacks[resume_idx]
+        user.save()
+        return jsonify({"success": "successfully deleted resume and its feedback"})
 
     @app.route("/resume", methods=["GET"])
     def get_resume():
@@ -656,31 +773,79 @@ def create_app():
 
         :return: response with file
         """
+        # try:
+        userid = get_userid_from_header()
         try:
-            userid = get_userid_from_header()
-            try:
-                user = Users.objects(id=userid).first()
-                if len(user.resume.read()) == 0:
-                    raise FileNotFoundError
-                else:
-                    user.resume.seek(0)
+            user = Users.objects(id=userid).first()
+            if not user.resumes:
+                raise FileNotFoundError
 
-            except:
-                return jsonify({"error": "resume could not be found"}), 400
-
-            filename = user.resume.filename
-            content_type = user.resume.contentType
-            response = send_file(
-                user.resume,
-                mimetype=content_type,
-                download_name=filename,
-                as_attachment=True,
-            )
-            response.headers["x-filename"] = filename
-            response.headers["Access-Control-Expose-Headers"] = "x-filename"
-            return response, 200
         except:
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": "resume could not be found"}), 400
+        
+        # resume = user.resumes[-1]
+        # resume.seek(0)
+
+        # response = send_file(
+        #     resume,
+        #     mimetype="application/pdf",
+        #     download_name=resume.filename or "PLACEHOLDER",
+        #     as_attachment=True
+        # )
+
+        # response.headers["x-filename"] = resume.filename or "PLACEHOLDER"
+        # response.headers["Access-Control-Expose-Headers"] = "x-filename"
+        # return response, 200
+
+        filenames = [
+            resume.filename or f"resume_{index}.pdf" for index, resume in enumerate(user.resumes)
+        ]
+
+        # response.headers["x-filename"] = filename
+        # response.headers["Access-Control-Expose-Headers"] = "x-filename"
+        # return response, 200
+        # except:
+        #     return jsonify({"error": "Internal server error"}), 500
+        return jsonify({"filenames": filenames})
+    
+    @app.route("/cover_letter/<int:resume_idx>", methods=["POST"])
+    def prompt_model(resume_idx):
+        """
+        Proof of concept with ollama/langchain usage
+
+        :return: response with prompt output
+        """
+        userid = get_userid_from_header()
+        try:
+            user = Users.objects(id=userid).first()
+            if not user.resumes or resume_idx >= len(user.resumes):
+                raise FileNotFoundError
+
+        except:
+            return jsonify({"error": "resume feedback could not be found"}), 400
+        
+        data = request.json
+        job_description = data.get('job_description', 'job description not found')
+
+        # get resume text
+        resume_proxy = user.resumes[resume_idx]
+        resume_proxy.seek(0)
+        resume_stream = BytesIO(resume_proxy.read())
+        resume_text = ""
+        with pdfplumber.open(resume_stream) as pdf:
+            for page in pdf.pages:
+                resume_text += page.extract_text() + "\n\n"
+
+        model = OllamaLLM(base_url="http://localhost:11434", model="qwen2.5:1.5b")
+        prompt = "I am going to give you a resume and possibly a job description. You job is to generate a cover letter that tailors" + \
+                    "the resume to a job description. If you are given a complete job description, the cover letter must be tailored" + \
+                    "to this given job description. If you are not given a complete job description, the cover letter should be generalized" + \
+                    "with placeholders/fields for items commonly found in job descriptions.\n\n Your response may be sent directly to" + \
+                    "employers, so it is imperative that your response MUST ONLY contain the cover letter and NOTHING ELSE. DO NOT" + \
+                    f"acknowledge the existence of this prompt anywhere in your response.\n\n\n Here is the resume: {resume_text}\n\n\n" + \
+                    f"Here is what might be a job description: {job_description}"
+        response = model.invoke(prompt)
+        return jsonify({"response": response}), 200
 
     return app
 
@@ -714,7 +879,8 @@ class Users(db.Document):
     authTokens = db.ListField()
     email = db.StringField()
     applications = db.ListField()
-    resume = db.FileField()
+    resumes = db.ListField(db.FileField())
+    resumeFeedbacks = db.ListField(db.StringField())
     skills = db.ListField()
     job_levels = db.ListField()
     locations = db.ListField()
@@ -778,4 +944,4 @@ def get_new_application_id(user_id):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
