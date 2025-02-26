@@ -39,7 +39,7 @@ Using Ollama, Qwen2.5 (1.5b) has been integrated into the system to support diff
 
 ### Application Demo video
 
-🎥[Phase-4 Demo Video](TODO - ADD LINK)
+🎥[Phase-4 Demo Video](https://github.com/CSC-510-G7/application-tracking-system/blob/ba6bae11a56878c46ec1d5e70d32e976c29c533d/resources/CSC-510-G7-jTracker.mp4)
 
 ## Table of contents
 
