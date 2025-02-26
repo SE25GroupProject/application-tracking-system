@@ -6,6 +6,7 @@ from flask import Blueprint, jsonify, request
 import json
 from models import Users, get_new_application_id
 from utils import get_userid_from_header
+from datetime import datetime
 
 applications_bp = Blueprint("applications", __name__)
 
@@ -27,20 +28,21 @@ def add_application():
         userid = get_userid_from_header()
         request_data = json.loads(request.data)["application"]
         try:
-            assert "jobTitle" in request_data
-            assert "companyName" in request_data
+            assert "title" in request_data
+            assert "company" in request_data
         except:
             return jsonify({"error": "Missing fields in input"}), 400
 
         user = Users.objects(id=userid).first()
         current_application = {
-            "id": get_new_application_id(userid),
-            "jobTitle": request_data["jobTitle"],
-            "companyName": request_data["companyName"],
-            "date": request_data.get("date"),
-            "jobLink": request_data.get("jobLink"),
+            "id": request_data.get("id", get_new_application_id(userid)),
+            "title": request_data["title"],
+            "company": request_data["company"],
+            "link": request_data.get("link"),
             "location": request_data.get("location"),
+            "type": request_data.get("type"),
             "status": request_data.get("status", "1"),
+            "date": datetime.now().strftime("%m/%d/%Y"),
         }
         applications = user["applications"] + [current_application]
         user.update(applications=applications)
@@ -49,7 +51,7 @@ def add_application():
         return jsonify({"error": "Internal server error"}), 500
 
 
-@applications_bp.route("/applications/<int:application_id>", methods=["PUT"])
+@applications_bp.route("/applications/<application_id>", methods=["PUT"])
 def update_application(application_id):
     try:
         userid = get_userid_from_header()
@@ -79,7 +81,7 @@ def update_application(application_id):
         return jsonify({"error": "Internal server error"}), 500
 
 
-@applications_bp.route("/applications/<int:application_id>", methods=["DELETE"])
+@applications_bp.route("/applications/<application_id>", methods=["DELETE"])
 def delete_application(application_id):
     try:
         userid = get_userid_from_header()

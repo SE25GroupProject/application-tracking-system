@@ -30,10 +30,7 @@ def get_new_user_id():
     if len(user_objects) == 0:
         return 1
 
-    new_id = 0
-    for a in user_objects:
-        new_id = max(new_id, a["id"])
-
+    new_id = max(u["id"] for u in user_objects)
     return new_id + 1
 
 
@@ -43,8 +40,6 @@ def get_new_application_id(user_id):
     if len(user["applications"]) == 0:
         return 1
 
-    new_id = 0
-    for a in user["applications"]:
-        new_id = max(new_id, a["id"])
-
-    return new_id + 1
+    new_id = max(a["id"] for a in user["applications"])
+    # String field so it is compatible with ids from career builder
+    return str(int(new_id) + 1)

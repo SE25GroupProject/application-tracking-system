@@ -3,6 +3,7 @@ This module contains utility functions for the application.
 """
 
 from flask import request, jsonify
+from functools import wraps
 from datetime import datetime
 from models import Users
 
@@ -28,6 +29,42 @@ def delete_auth_token(token_to_delete, user_id):
     user.update(authTokens=auth_tokens)
 
 
+def authorized(f):
+    """
+    Decorator to enforce the request is from an authorized user.
+    The User object is passed as the last positional argument to the route.
+    """
+
+    @wraps(f)
+    def authorized_route(*args, **kwargs):
+        headers = request.headers
+        try:
+            userid = get_userid_from_header(headers)
+            user = Users.objects(id=id).first()
+            assert user is not None
+
+            token = get_token_from_header(headers)
+            valid_flag = False
+            for tokens in user["authTokens"]:
+                if tokens["token"] == token:
+                    expiry = tokens["expiry"]
+                    expiry_time_object = datetime.strptime(expiry, "%m/%d/%Y, %H:%M:%S")
+                    if datetime.now() <= expiry_time_object:
+                        valid_flag = True
+                    else:
+                        delete_auth_token(tokens["token"], userid)
+                    break
+
+            assert valid_flag
+        except:
+            return jsonify({"error": "Unauthorized"}), 401
+
+        return f(*args, user, **kwargs)
+
+    return authorized_route
+
+
+# TODO: remove
 def middleware(authorized_endpoints):
     """
     Checks for user authorization tokens and returns message
