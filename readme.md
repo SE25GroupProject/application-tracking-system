@@ -13,40 +13,38 @@ The process of applying for jobs and internships is not a cakewalk. Managing job
 
 Our application keeps track of the jobs you've added to your wish list. It also keeps track of the companies you've already applied to and keeps a list of any rejections. Rather than having the user browse each company's site for potential prospects, our application allows the applicant to search for them directly using basic keywords. Any prospective work offers can then be added to the applicant's wishlist.
 
-## New Features in Phase 3
-🎥[Phase-2 Demo Video](https://www.youtube.com/watch?v=VKTob1N19ug)
+## New Features in Phase 4
 
-## ⭐ Highlight of Phase 3 ⭐
-### Dockerization 🗃️
-Containerizing the application with docker has helped us achieve 2 prominent things
-1. Significantly increasing the speed in which one would be able to setup the project on their machines.
-2. Automation of the entire run of the application including running the tests!
+### ⭐ Highlight - LLM Integration ⭐
+Using Ollama, Qwen2.5 (1.5b) has been integrated into the system to support different language-heavy tasks:
+
+1. Resume Tip Generation - Users can now get automated feedback on their resumes
+2. Cover Letter Generation - Users can now get auto-generated cover letters, based on any uploaded resume and tailored to any given job description.
 
 ### Other new features
-1. Upload Resume versions
-2. Bookmark option for the job recommendations
-3. Enhanced Search to fetch latest job opportunities
-4. Updated country list that now supports 120+ countries
-5. Updated skills list so that you can present your profile without missing on any skill
-6. Refactorization of Class components into functional components which makes the code more maintainable
+1. Upload and store multiple resumes for different purposes
+2. Resume Viewer
+3. UI Overhaul - Improved responsiveness, Navbar, Added logout confirmation, Added option to delete resume
+4. Restructuring of backend - the single, massive backend file has been separated and organized by function
+5. Restructured Docker-related files to simplify deployment
+6. +60 More test cases
 
 #### Bug fixes
-1. Undefined profile image.
-2. Authentication into the application randomly not working.
-3. Unable to load matched jobs
-4. Application screen throwing null pointer randomly
+1. Migrated job posting web scraper away from Google Jobs due to an update with Google's system preventing web scraping
+  1a. Integrated headless browser using Selenium and ChromeDriver to scrape CareerBuilder instead
+2. Users now stay logged in when refreshing the page
+3. Support for Google Account logins has been fixed
 
 ---
 
 ### Application Demo video
 
-https://user-images.githubusercontent.com/89501363/144725439-5d9191f8-df13-4814-aa15-99cd752ab0cc.mp4
+🎥[Phase-4 Demo Video](TODO - ADD LINK)
 
 ## Table of contents
 
 - [Basic Design](#basic-design)
 - [Samples](#samples)
-- [New Features In Phase 3](#new-features-in-phase-3)
 - [Future Scope](#future-scope)
 - [Explanation](#explanation)
 - [Technologies Used](#technologies-used)
@@ -57,6 +55,7 @@ https://user-images.githubusercontent.com/89501363/144725439-5d9191f8-df13-4814-
   - [Local MongoDB](#local-mongodb)
   - [Hosted database with MongoDB Atlas](#hosted-database-with-mongodb-atlas)
 - [License](#license)
+- [Funding](#funding)
 - [How to Contribute](#how-to-contribute)
 - [Team Members](#team-members)
 
@@ -108,22 +107,31 @@ On this page, user can see different jobs that would be recommended to them base
 
 ## Future Scope:
 
-- Include deadline reminders for the application and interview.
-- Add a feature that allows users to attach these reminders to their Google calendar.
-- Incorporate notifications for upcoming deadlines.
-- Include a link to the university’s career fair page.
+**Short Term: 3 Months**
+- Include links to university career fairs.
 - Direct connection to Linkedin, allowing for the addition of job opportunities to the wishlist.
+- Add cover letters to database.
+
+**Medium Term: 6 Months**
+- Add a notification system for important application releases and deadlines.
+- Add a feature that allows users to attach these reminders to their Google calendar.
 - An option to maintain separate profiles for job tracking.
-- Integrate the database into docker
+- Use recently added LLM to autofill profile fields.
+
+**Long Term: 12 Months**
+- Integrate the database into docker.
+- Add a chrome extension to track external job search progress.
+- Add Recruiter log-in and home page to interact with job-seekers.
 
 ## Explanation:
 
-Currently, we have four fundamental steps in our project:
+Currently, we have five fundamental items in our project:
 
 1. The SearchPage where users can search about the Job Postings
 2. The MatchesPage where users get recommendation about the jobs according to their preferences
 3. The ApplicationsPage where users can add and see the position they applied to and can update/delete the the information. Any details in any table can be modified at any time during the process
 4. The ProfilePage where user can add his skills, experience level and preffered location. This information is used to recommend user jobs that require similar skillsets
+5. The ManageResumePage where users can upload resumes and get automated LLM-powered feedback, as well as cover letter generation tailored to any job description.
 
 ## Technologies Used:
 
@@ -133,6 +141,9 @@ Currently, we have four fundamental steps in our project:
 - MongoDB
 - React
 - Docker
+- Ollama
+- Langchain
+- Selenium
 
 ## Installation:
 
@@ -152,21 +163,12 @@ Currently, we have four fundamental steps in our project:
     - Ensure that Docker is installed on your system. If not, you can download it from the official Docker website.
     - Start the Docker engine on your machine. The command varies based on your operating system.
 
-3. **Build Images**
-    - Navigate to the backend folder and build the image for the API using the following command:
+3. **Build Images and Start Program with Docker Compose**
+    - Navigate to the project's root directory and build/start the system with the following command:
         ```
-        docker build -f dockerfile.api -t ats-api .
+        docker compose up -d --build
         ```
-    - Similarly, navigate to the frontend folder and build the image for the client using the following command:
-        ```
-        docker build -f dockerfile.client -t ats-client .
-        ```
-
-4. **Run Docker Compose**
-    - Finally, run the following command to start the application:
-        ```
-        docker-compose up
-        ```
+    _(note: Although supporting Qwen2.5:1.5b doesn't require a GPU, it still occupies lots of memory when running locally, so be sure to minimize other processes for optimal performance)_
 
 ## Hosting the Database:
 
@@ -181,7 +183,7 @@ mongodb
 
 - Recommended: Use a GUI such as [Studio 3T](https://studio3t.com/download/) to more easily interact with the database
 
-### Hosted database with MongoDB Atlas:
+### Hosted database with MongoDB Atlas (RECOMMENDED):
 
 1. [Create account](https://account.mongodb.com/account/register) for MongoDB
 
@@ -199,7 +201,7 @@ mongodb
    CLUSTER_URL : <MongoDB Cluster URL>
    ```
 4. In app.py set 'host' string to your MongoDB Atlas connection string. Replace the username and password with {username} and {password} respectively
-6. For testing through CI to function as expected, repository secrets will need to be added through the settings. Create individual secrets with the following keys/values:
+5. For testing through CI to function as expected, repository secrets will need to be added through the settings. Create individual secrets with the following keys/values:
 
 MONGO_USER: <MongoDB Atlas cluster username>
 MONGO_PASS: <MongoDB Atlas cluster password>
@@ -208,16 +210,19 @@ MONGO_PASS: <MongoDB Atlas cluster password>
 
 The project is licensed under the [MIT](https://choosealicense.com/licenses/mit/) license.
 
+## Funding
+
+This is an open source project that is free for use. Our team has not been sponsored in any way, nor are there any future plans for sponsorship.
+
 ## How to Contribute?
 
 Please see our CONTRIBUTING.md for instructions on how to contribute to the repository and assist us in improving the project.
 
 ## Team Members
 
-- Akhilesh Neeruganti
-- Jash Gopani
-- Hemil Mehta
-- Rohan Ajmera
+- Christopher Elchik
+- Brandon Troy
+- Kanchana Dhana Sadasivan
 
 ## Contact Info
 For any questions, please email neerua08@gmail.com.
