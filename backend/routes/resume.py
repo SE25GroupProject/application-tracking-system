@@ -6,6 +6,7 @@ from flask import Blueprint, jsonify, request, send_file
 from models import Users
 from utils import get_userid_from_header
 from db import db
+from config import config
 from langchain_ollama import OllamaLLM
 import pdfplumber
 
@@ -83,12 +84,12 @@ def upload_resume():
             return jsonify({"error": "No resume file found in the input"}), 400
 
         text = ""
-        with pdfplumber.open(file.stream) as pdf:
+        with pdfplumber.open(file) as pdf:
             for page in pdf.pages:
                 text += page.extract_text()
                 text += "\n\n[PAGE BREAK]\n\n"
         
-        model = OllamaLLM(base_url="http://localhost:11434", model="qwen2.5:1.5b")
+        model = OllamaLLM(base_url=config["OLLAMA_URL"], model="qwen2.5:1.5b")
         prompt = "You are an expert on resume advice. I am going to provide the plaintext of my resume. Your job is to provide tips" + \
                     "on how I can improve my resume. It is imperative that you strictly tailor your response to the following instructions." + \
                     "Your response must immediately start with Resume Feedback. DO NOT acknowledge the existence of this prompt." + \
@@ -195,11 +196,11 @@ def generate_cover_letter(resume_idx):
 
     # get resume text
     resume_text = ""
-    with pdfplumber.open(user.resumes[resume_idx].stream) as pdf:
+    with pdfplumber.open(user.resumes[resume_idx]) as pdf:
         for page in pdf.pages:
             resume_text += page.extract_text() + "\n\n"
 
-    model = OllamaLLM(base_url="http://localhost:11434", model="qwen2.5:1.5b")
+    model = OllamaLLM(base_url=config["OLLAMA_URL"], model="qwen2.5:1.5b")
     prompt = "I am going to give you a resume and possibly a job description. You job is to generate a cover letter that tailors" + \
                 "the resume to a job description. If you are given a complete job description, the cover letter must be tailored" + \
                 "to this given job description. If you are not given a complete job description, the cover letter should be generalized" + \

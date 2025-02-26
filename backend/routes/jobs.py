@@ -5,6 +5,7 @@ This module contains the routes for the job searching functionality.
 from flask import Blueprint, jsonify, request
 from models import Users
 from utils import get_userid_from_header
+from config import config
 from fake_useragent import UserAgent
 import random
 
@@ -33,7 +34,7 @@ def scrape_careerbuilder_jobs(keywords: str, company: str, location: str):
     results = []
 
     print("Starting Chrome WebDriver...")
-    with webdriver.Remote("http://localhost:4444/wd/hub", options=options) as driver:
+    with webdriver.Remote(config["SELENIUM_URL"] + ":4444/wd/hub", options=options) as driver:
 
         wait = WebDriverWait(driver, 3)
         print("Chrome WebDriver started.")

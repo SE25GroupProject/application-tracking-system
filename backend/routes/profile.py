@@ -41,4 +41,5 @@ def update_profile():
         user.save()
         return jsonify(user.to_json()), 200
     except Exception as err:
+        print(err)
         return jsonify({"error": "Internal server error"}), 500
