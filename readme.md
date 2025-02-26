@@ -105,6 +105,14 @@ On this page, user can see different jobs that would be recommended to them base
 
 <p align="center"><img width="700" src="./resources/Recommendjobspage.png"></p>
 
+### ManageResumePage
+
+This page now allows for users to upload multiple resumes, get automated, LLM-powered feedback, and get auto-generated cover letters when given any job description.
+
+<p align="center"><img width="700" src="./resources/resume management page.png"></p>
+<p align="center"><img width="700" src="./resources/resume management page feedback.png"></p>
+<p align="center"><img width="700" src="./resources/resume management page cover letter.png"></p>
+
 ## Future Scope:
 
 **Short Term: 3 Months**
