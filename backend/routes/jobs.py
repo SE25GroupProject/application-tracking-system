@@ -73,6 +73,210 @@ def search():
         keywords = request.args.get("keywords")
         company = request.args.get("company")
         location = request.args.get("location")
+        
+        return [
+            {
+              "company": "Scale AI",
+              "id": "J3R5G06ZWMK43M198Z2",
+              "link": "https://www.careerbuilder.com/job/J3R5G06ZWMK43M198Z2",
+              "location": "New York, NY (Onsite)",
+              "title": "Mission Software Engineer, Federal",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3R0QM763R58690DWZX",
+              "link": "https://www.careerbuilder.com/job/J3R0QM763R58690DWZX",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Software Engineer, iOS",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3P1GR6L0P737L84WRR",
+              "link": "https://www.careerbuilder.com/job/J3P1GR6L0P737L84WRR",
+              "location": "New York, NY (Onsite)",
+              "title": "Lead Software Engineer, Full Stack (Python, Spark, AWS)",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3N0XJ60LS9410VNCN3",
+              "link": "https://www.careerbuilder.com/job/J3N0XJ60LS9410VNCN3",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Software Engineer (JavaScript)",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3W5Y25W8PN4WR9JNR1",
+              "link": "https://www.careerbuilder.com/job/J3W5Y25W8PN4WR9JNR1",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Lead Software Engineer (Full Stack)",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3W0RM6V98VJLPB6S6N",
+              "link": "https://www.careerbuilder.com/job/J3W0RM6V98VJLPB6S6N",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Software Engineer, Full Stack",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3P5PH6H8H28202GHDM",
+              "link": "https://www.careerbuilder.com/job/J3P5PH6H8H28202GHDM",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Software Engineer, Full Stack (Enterprise Platforms Technology)",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3R7YJ6W8JRZFRZCWNM",
+              "link": "https://www.careerbuilder.com/job/J3R7YJ6W8JRZFRZCWNM",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Lead Software Engineer, Full Stack (Java/Python)",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3N45F68YQB5S9NQX4B",
+              "link": "https://www.careerbuilder.com/job/J3N45F68YQB5S9NQX4B",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Software Engineer",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3W1PF69V1Y7M7Y9QYK",
+              "link": "https://www.careerbuilder.com/job/J3W1PF69V1Y7M7Y9QYK",
+              "location": "New York, NY (Onsite)",
+              "title": "Lead Software Engineer, Full Stack (Java/Python)",
+              "type": "Full-Time"
+            },
+            {
+              "company": "BAE Systems",
+              "id": "J3Q0VG78V1YF31M32RR",
+              "link": "https://www.careerbuilder.com/job/J3Q0VG78V1YF31M32RR",
+              "location": "Paterson, NJ (Onsite)",
+              "title": "Software Engineer- All Levels with Security Clearance",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3N3LV723SD1BD1VZ48",
+              "link": "https://www.careerbuilder.com/job/J3N3LV723SD1BD1VZ48",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Software Engineer, Full Stack (Python, ML, JavaScript, AWS)",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3N0QW7199L9XL8PMBK",
+              "link": "https://www.careerbuilder.com/job/J3N0QW7199L9XL8PMBK",
+              "location": "New York, NY (Onsite)",
+              "title": "Lead Software Engineer, Backend",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3S4HH73ZVZVSYVJP8X",
+              "link": "https://www.careerbuilder.com/job/J3S4HH73ZVZVSYVJP8X",
+              "location": "New York, NY (Onsite)",
+              "title": "Lead Software Engineer (Python)",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3M3B86VZJL8DHZBFP7",
+              "link": "https://www.careerbuilder.com/job/J3M3B86VZJL8DHZBFP7",
+              "location": "New York, NY (Onsite)",
+              "title": "Lead, Software Engineer (Backend) Python/AWS",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3R0YQ6NP6JQCK7S28R",
+              "link": "https://www.careerbuilder.com/job/J3R0YQ6NP6JQCK7S28R",
+              "location": "New York, NY (Onsite)",
+              "title": "Lead Software Engineer (Python)",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3R0RC5WY9LBW1R7QK4",
+              "link": "https://www.careerbuilder.com/job/J3R0RC5WY9LBW1R7QK4",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Software Engineer, Back End (Python, Go, AWS)",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3W0J963R6N41NH74YZ",
+              "link": "https://www.careerbuilder.com/job/J3W0J963R6N41NH74YZ",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Software Engineer",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3V7T16BXCT65K4D612",
+              "link": "https://www.careerbuilder.com/job/J3V7T16BXCT65K4D612",
+              "location": "New York, NY (Onsite)",
+              "title": "Lead Software Engineer, Back End",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3T2XW6527568BM3KHD",
+              "link": "https://www.careerbuilder.com/job/J3T2XW6527568BM3KHD",
+              "location": "New York, NY (Onsite)",
+              "title": "Lead Software Engineer, DevOps",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3S65P61X01NX8TPPTC",
+              "link": "https://www.careerbuilder.com/job/J3S65P61X01NX8TPPTC",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Software Engineer, Back End",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3R1W16BR4ZS5VXSNBP",
+              "link": "https://www.careerbuilder.com/job/J3R1W16BR4ZS5VXSNBP",
+              "location": "New York, NY (Onsite)",
+              "title": "Lead Software Engineer, iOS",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Google",
+              "id": "J3T6VT65GVRNC0CGCTJ",
+              "link": "https://www.careerbuilder.com/job/J3T6VT65GVRNC0CGCTJ",
+              "location": "New York, NY (Onsite)",
+              "title": "Senior Software Engineer, AI/ML Natural Language Processing, Google Cloud Platforms",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3P6BW6FZ0VCM59GH3Z",
+              "link": "https://www.careerbuilder.com/job/J3P6BW6FZ0VCM59GH3Z",
+              "location": "New York, NY (Onsite)",
+              "title": "Lead Software Engineer, Back End (Java)",
+              "type": "Full-Time"
+            },
+            {
+              "company": "Capital One",
+              "id": "J3P3X46H8P66TWM8THD",
+              "link": "https://www.careerbuilder.com/job/J3P3X46H8P66TWM8THD",
+              "location": "New York, NY (Onsite)",
+              "title": "Lead Software Engineer, Python",
+              "type": "Full-Time"
+            }
+        ]
+
         return scrape_careerbuilder_jobs(keywords, company, location)
     
     except Exception as err:

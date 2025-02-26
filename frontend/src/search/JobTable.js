@@ -44,7 +44,7 @@ export default class JobTable extends Component {
         "Access-Control-Allow-Credentials": "true",
       },
       success: (data) => {
-        this.setState({ savedList: data.map(d => d.id) });
+        this.setState({ savedList: data.map(d => d.externalId) });
       },
       error: () => {
         window.alert("Error while fetching saved applications. Please try again later");
@@ -106,10 +106,6 @@ export default class JobTable extends Component {
             className="table my-4"
             style={{
               boxShadow: "0px 5px 12px 0px rgba(0,0,0,0.1)",
-              marginTop: 30,
-              marginLeft: "10%",
-              width: "95%",
-              paddingRight: 10,
             }}
           >
             <thead>
@@ -140,7 +136,7 @@ export default class JobTable extends Component {
                       const value = row[column.id];
                       if (column.id !== "link") {
                         return (
-                          <td className="p-3" key={column.id}>
+                          <td className="p-2" key={column.id}>
                             {value}
                           </td>
                         );
@@ -150,7 +146,7 @@ export default class JobTable extends Component {
                       ) ? (
                         <button
                           type="button"
-                          className="btn btn-outline-secondary"
+                          className="btn btn-secondary"
                           onClick={this.unsaveJob.bind(this, row)}
                         >
                           Saved
@@ -165,7 +161,7 @@ export default class JobTable extends Component {
                         </button>
                       )
                       return (
-                        <td key={row.id + "_func"} className="p-2">
+                        <td key={row.id + "_func"} className="p-3">
                           <div className="d-flex gap-2">
                             <a
                               type="button"
@@ -186,7 +182,7 @@ export default class JobTable extends Component {
             </tbody>
           </table>
           {this.props.rows.length === 0 &&
-            <div className="text-center" style={{ marginLeft: '9%' }}>No jobs found. {this.props.emptyMessage}</div>
+            <div className="text-center">No jobs found. {this.props.emptyMessage}</div>
           }
         </>) : (
           // Loading spinner

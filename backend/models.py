@@ -42,5 +42,4 @@ def get_new_application_id(user_id):
         return 1
 
     new_id = max(a["id"] for a in user["applications"])
-    # String field so it is compatible with ids from career builder
-    return str(int(new_id) + 1)
+    return new_id + 1

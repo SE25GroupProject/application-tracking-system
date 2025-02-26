@@ -45,7 +45,7 @@ def add_application():
 
         user = Users.objects(id=userid).first()
         current_application = {
-            "id": request_data.get("id", get_new_application_id(userid)),
+            "id": get_new_application_id(userid),
             "title": request_data["title"],
             "company": request_data["company"],
             "link": request_data.get("link"),
@@ -53,15 +53,17 @@ def add_application():
             "type": request_data.get("type"),
             "status": request_data.get("status", "1"),
             "date": datetime.now().strftime("%m/%d/%Y"),
+            "externalId": request_data.get("id"),
         }
         applications = user["applications"] + [current_application]
         user.update(applications=applications)
         return jsonify(current_application), 200
-    except:
+    except Exception as err:
+        print(err)
         return jsonify({"error": "Internal server error"}), 500
 
 
-@applications_bp.route("/applications/<application_id>", methods=["PUT"])
+@applications_bp.route("/applications/<int:application_id>", methods=["PUT"])
 def update_application(application_id):
     """
     Updates the existing job application for the user
@@ -97,7 +99,7 @@ def update_application(application_id):
         return jsonify({"error": "Internal server error"}), 500
 
 
-@applications_bp.route("/applications/<application_id>", methods=["DELETE"])
+@applications_bp.route("/applications/<int:application_id>", methods=["DELETE"])
 def delete_application(application_id):
     """
     Deletes the given job application for the user
