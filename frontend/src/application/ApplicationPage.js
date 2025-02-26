@@ -25,7 +25,7 @@ const ApplicationsList = ({ applicationList, handleCardClick, selectedApplicatio
     <>
       <Button
         style={{
-          marginLeft: "11%",
+          marginLeft: "1rem",
           marginTop: "4%",
           backgroundColor: "#296E85",
           borderRadius: "8px",
@@ -53,25 +53,22 @@ const ApplicationsList = ({ applicationList, handleCardClick, selectedApplicatio
             <Col key={jobListing.id} md={12} style={{ marginBottom: "20px" }}>
               <Card
                 style={{
-                  marginLeft: "10%",
                   borderColor: "#e0e0e0",
                   borderRadius: "12px",
                   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
                   transition: "0.3s",
                   cursor: "pointer",
-                  width:"103%",
                   padding: "15px",
-              
                 }}
                 onClick={() => {
                   handleCardClick(jobListing);
                   setCloseModal(false);
-                  setJob(jobListing?.jobTitle);
-                  setCompany(jobListing?.companyName);
+                  setJob(jobListing?.title);
+                  setCompany(jobListing?.company);
                   setLocation(jobListing?.location);
                   setStatus(jobListing?.status);
                   setDate(jobListing?.date);
-                  setJobLink(jobListing?.jobLink);
+                  setJobLink(jobListing?.link);
                   setIsCreate(false);
                 }}
               >
@@ -81,70 +78,70 @@ const ApplicationsList = ({ applicationList, handleCardClick, selectedApplicatio
                     {/* Left Side - Job Title & Company */}
                     <Col sm={3}>
                       <Card.Title style={{ fontSize: "20px", fontWeight: "bold", color: "#34495e", marginBottom: "4px" }}>
-                        {jobListing?.jobTitle || "N/A"}
+                        {jobListing?.title || "N/A"}
                       </Card.Title>
                       <Card.Subtitle style={{ fontSize: "16px", color: "#7f8c8d" }}>
-                        {jobListing?.companyName || "N/A"}
+                        {jobListing?.company || "N/A"}
                       </Card.Subtitle>
                     </Col>
 
                     {/* Right Side - Location, Date, Status in One Row */}
                     <Col sm={9}>
-  <div style={{ 
-    display: "flex", 
-    justifyContent: "space-between", 
-    alignItems: "center", 
-    width: "100%", 
-    gap: "20px", 
-    flexWrap: "nowrap", // ❌ Prevents wrapping
-    overflow: "hidden"
-  }}>
-    {/* Location */}
-    <div style={{ 
-      display: "flex", 
-      alignItems: "center", 
-      minWidth: "277px", 
-      maxWidth: "277px", 
-      whiteSpace: "nowrap", 
-      overflow: "hidden", 
-      textOverflow: "ellipsis" 
-    }}>
-      <span role="img" aria-label="location">📍</span>
-      <strong style={{ marginLeft: "5px" }}>Location:</strong>
-      <span style={{ marginLeft: "5px" }}>{jobListing?.location || "N/A"}</span>
-    </div>
+                      <div style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        width: "100%",
+                        gap: "20px",
+                        flexWrap: "nowrap", // ❌ Prevents wrapping
+                        overflow: "hidden"
+                      }}>
+                        {/* Location */}
+                        <div style={{
+                          display: "flex",
+                          alignItems: "center",
+                          minWidth: "277px",
+                          maxWidth: "277px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}>
+                          <span role="img" aria-label="location">📍</span>
+                          <strong style={{ marginLeft: "5px" }}>Location:</strong>
+                          <span style={{ marginLeft: "5px" }}>{jobListing?.location || "N/A"}</span>
+                        </div>
 
-    {/* Date */}
-    <div style={{ 
-      display: "flex", 
-      alignItems: "center", 
-      minWidth: "200px", 
-      maxWidth: "150px", 
-      whiteSpace: "nowrap", 
-      overflow: "hidden", 
-      textOverflow: "ellipsis" 
-    }}>
-      <span role="img" aria-label="calendar">📅</span>
-      <strong style={{ marginLeft: "5px" }}>Date:</strong>
-      <span style={{ marginLeft: "5px" }}>{jobListing?.date || "N/A"}</span>
-    </div>
+                        {/* Date */}
+                        <div style={{
+                          display: "flex",
+                          alignItems: "center",
+                          minWidth: "200px",
+                          maxWidth: "150px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}>
+                          <span role="img" aria-label="calendar">📅</span>
+                          <strong style={{ marginLeft: "5px" }}>Date:</strong>
+                          <span style={{ marginLeft: "5px" }}>{jobListing?.date || "N/A"}</span>
+                        </div>
 
-    {/* Status */}
-    <div style={{ 
-      display: "flex", 
-      alignItems: "center", 
-      minWidth: "290px", 
-      maxWidth: "290px", 
-      whiteSpace: "nowrap", 
-      overflow: "hidden", 
-      textOverflow: "ellipsis" 
-    }}>
-      <span role="img" aria-label="status">📊</span>
-      <strong style={{ marginLeft: "5px" }}>Status:</strong>
-      <span style={{ marginLeft: "5px" }}>{findStatus(jobListing?.status) || "N/A"}</span>
-    </div>
-  </div>
-</Col>
+                        {/* Status */}
+                        <div style={{
+                          display: "flex",
+                          alignItems: "center",
+                          minWidth: "290px",
+                          maxWidth: "290px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}>
+                          <span role="img" aria-label="status">📊</span>
+                          <strong style={{ marginLeft: "5px" }}>Status:</strong>
+                          <span style={{ marginLeft: "5px" }}>{findStatus(jobListing?.status) || "N/A"}</span>
+                        </div>
+                      </div>
+                    </Col>
 
                   </Row>
                 </Card.Body>
@@ -159,31 +156,31 @@ const ApplicationsList = ({ applicationList, handleCardClick, selectedApplicatio
           <Modal.Title>{isCreate ? 'Add New Application' : 'Update Details'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="form-group">
+          <div className="form-group mb-2">
             <label className='col-form-label'>Job Title</label>
             <input type="text" className="form-control" placeholder="Job Title" value={job} onChange={(e) => setJob(e.target.value)} />
           </div>
-          <div className="form-group">
+          <div className="form-group mb-2">
             <label className='col-form-label'>Company Name</label>
             <input type="text" className="form-control" placeholder="Company Name" value={company} onChange={(e) => setCompany(e.target.value)} />
           </div>
-          <div className='form-group'>
+          <div className='form-group mb-2'>
             <label className='col-form-label'>Date</label>
             <input type='date' className='form-control' value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
-          <div className='form-group'>
+          <div className='form-group mb-2'>
             <label className='col-form-label'>Job Link</label>
             <input type='text' className='form-control' placeholder='Job Link' value={jobLink} onChange={(e) => setJobLink(e.target.value)} />
           </div>
-          <div className='form-group'>
-            <label className='col-form-label'>Location</label>
+          <div className='form-group mb-3'>
+            <label className='col-form-label pb-1'>Location</label>
             <input type='text' className='form-control' placeholder='Location' value={location} onChange={(e) => setLocation(e.target.value)} />
           </div>
           <div className='input-group mb-3'>
             <div className='input-group-prepend'>
               <label className='input-group-text'>Application Type</label>
             </div>
-            <select className='custom-select' value={status} onChange={(e) => setStatus(e.target.value)}>
+            <select className='form-control' value={status} onChange={(e) => setStatus(e.target.value)}>
               <option>Choose...</option>
               <option value='1'>Wish list</option>
               <option value='2'>Waiting Referral</option>
@@ -233,7 +230,7 @@ const ApplicationPage = () => {
   const handleCardClick = (jobListing) => setSelectedApplication(jobListing);
 
   const handleUpdateDetails = useCallback((id, job, company, location, date, status, jobLink) => {
-    let application = { id: id || null, jobTitle: job, companyName: company, location, date, status, jobLink };
+    let application = { id: id || null, title: job, company: company, location, date, status, jobLink };
 
     const url = id ? `http://127.0.0.1:5000/applications/${id}` : 'http://127.0.0.1:5000/applications';
     const method = id ? 'PUT' : 'POST';

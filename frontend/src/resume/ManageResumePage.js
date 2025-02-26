@@ -46,47 +46,47 @@ export default class ManageResumePage extends Component {
   openResumeFeedbackModal = (idx) => {
     this.setState({ resumeFeedbackIdx: idx });
   }
-  
+
   closeResumeFeedbackModal = () => {
     this.setState({ resumeFeedbackIdx: null });
   }
 
-    previewResume(resume_idx) {
-        $.ajax({
-            url: 'http://127.0.0.1:5000/resume/' + resume_idx,
-            method: 'GET',
-            headers: {
-              'Authorization': 'Bearer ' + localStorage.getItem('token'),
-              'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-              'Access-Control-Allow-Credentials': 'true'
-            },
-            xhrFields: { responseType: 'blob' },
-            credentials: 'include',
-            success: (message, textStatus, response) => {
-              console.log(message)
-              if(message){
-                window.open(URL.createObjectURL(message), '_blank');
-              }
-            }
-          })
-    }
+  previewResume(resume_idx) {
+    $.ajax({
+      url: 'http://127.0.0.1:5000/resume/' + resume_idx,
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+        'Access-Control-Allow-Credentials': 'true'
+      },
+      xhrFields: { responseType: 'blob' },
+      credentials: 'include',
+      success: (message, textStatus, response) => {
+        console.log(message)
+        if (message) {
+          window.open(URL.createObjectURL(message), '_blank');
+        }
+      }
+    })
+  }
 
-    deleteResume(resume_idx) {
-        $.ajax({
-            url: 'http://127.0.0.1:5000/resume/' + resume_idx,
-            method: 'DELETE',
-            headers: {
-              'Authorization': 'Bearer ' + localStorage.getItem('token'),
-              'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-              'Access-Control-Allow-Credentials': 'true'
-            },
-            success: (message, textStatus, response) => {
-                this.state.fileNames.splice(resume_idx, 1);
-                console.log(response.responseJSON.success);
-                this.getFiles();
-            }
-        })
-    }
+  deleteResume(resume_idx) {
+    $.ajax({
+      url: 'http://127.0.0.1:5000/resume/' + resume_idx,
+      method: 'DELETE',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+        'Access-Control-Allow-Credentials': 'true'
+      },
+      success: (message, textStatus, response) => {
+        this.state.fileNames.splice(resume_idx, 1);
+        console.log(response.responseJSON.success);
+        this.getFiles();
+      }
+    })
+  }
 
   uploadResume = (e) => {
     e.preventDefault();
@@ -100,28 +100,28 @@ export default class ManageResumePage extends Component {
         return;
       }
 
-        this.setState({loading: true});
-        let formData = new FormData()
-        const file = event.target.files[0];
-        formData.append('file', file);
-        $.ajax({
-            url: 'http://127.0.0.1:5000/resume',
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
-                'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-                'Access-Control-Allow-Credentials': 'true'
-            },
-            data: formData,
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: (msg) => {
-                console.log("Upload successful:", msg)
-                this.setState({ fileNames: [...this.state.fileNames, file.name] })
-            }
-        }).always(() => this.setState({loading: false}))
-        
+      this.setState({ loading: true });
+      let formData = new FormData()
+      const file = event.target.files[0];
+      formData.append('file', file);
+      $.ajax({
+        url: 'http://127.0.0.1:5000/resume',
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + localStorage.getItem('token'),
+          'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+          'Access-Control-Allow-Credentials': 'true'
+        },
+        data: formData,
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: (msg) => {
+          console.log("Upload successful:", msg)
+          this.setState({ fileNames: [...this.state.fileNames, file.name] })
+        }
+      }).always(() => this.setState({ loading: false }))
+
     });
 
     fileInput.click();
@@ -136,28 +136,28 @@ export default class ManageResumePage extends Component {
       URL.revokeObjectURL(this.state.previewUrl);
     }
   }
-  
+
 
   render() {
     return (
       <div className="pagelayout">
-        
+
         <form id="upload-file" method="post" encType="multipart/form-data">
           <button
             id="upload-file-btn"
             onClick={(event) => {
-                if (!this.state.loading) {
-                    this.uploadResume(event)
-                }
+              if (!this.state.loading) {
+                this.uploadResume(event)
+              }
             }}
             disabled={this.state.loading}
             type="button"
             style={{
-                display: 'block',
-                margin: '0 auto'
+              display: 'block',
+              margin: '0 auto'
             }}
           >
-            {this.state.loading ? 'Uploading...' : 'Uploade New'}
+            {this.state.loading ? 'Uploading...' : 'Upload New'}
           </button>
 
           <div style={{ margin: '1.5em' }}></div>
@@ -166,43 +166,43 @@ export default class ManageResumePage extends Component {
             <table>
               <thead>
                 <tr>
-                  <th className="tablecol1">Documents</th>
-                  <th className="tablecol2">Actions</th>
+                  <th>Documents</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {this.state.fileNames.map((fileName, index) => (
                   <tr key={index}>
-                    <td className="tablecol1">{fileName}</td>
-                    <td className="tablecol2">
+                    <td>{fileName}</td>
+                    <td>
                       <button
                         id="view-file-btn"
                         onClick={() => this.previewResume(index)}
                         type="button"
                       >
-                        View
+                        Preview
+                      </button>
+                      <button
+                        id="view-file-btn"
+                        onClick={() => this.openResumeFeedbackModal(index)}
+                        type="button"
+                      >
+                        View Feedback
+                      </button>
+                      <button
+                        id="view-file-btn"
+                        onClick={() => this.openCoverLetterModal(index)}
+                        type="button"
+                      >
+                        Generate Cover Letter
                       </button>
                       <button
                         id="delete-file-btn"
                         onClick={() => this.deleteResume(index)}
                         type="button"
-                        >
-                            Delete
-                        </button>
-                        <button
-                            id="view-file-btn"
-                            onClick={() => this.openCoverLetterModal(index)}
-                            type="button"
-                        >
-                            Generate Cover Letter
-                        </button>
-                        <button
-                            id="view-file-btn"
-                            onClick={() => this.openResumeFeedbackModal(index)}
-                            type="button"
-                        >
-                            View Feedback
-                        </button>
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -210,17 +210,17 @@ export default class ManageResumePage extends Component {
             </table>
           </div>
           {this.state.coverLetterIdx !== null && (
-        <CoverLetter
-          setState={this.closeCoverLetterModal}
-          idx={this.state.coverLetterIdx}
-        />
-      )}
-      {this.state.resumeFeedbackIdx !== null && (
-        <ResumeFeedback
-          setState={this.closeResumeFeedbackModal}
-          idx={this.state.resumeFeedbackIdx}
-        />
-      )}
+            <CoverLetter
+              setState={this.closeCoverLetterModal}
+              idx={this.state.coverLetterIdx}
+            />
+          )}
+          {this.state.resumeFeedbackIdx !== null && (
+            <ResumeFeedback
+              setState={this.closeResumeFeedbackModal}
+              idx={this.state.resumeFeedbackIdx}
+            />
+          )}
         </form>
       </div>
     )

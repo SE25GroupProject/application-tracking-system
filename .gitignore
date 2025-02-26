@@ -1,3 +1,7 @@
+# Backend configuration file
+backend/application.yml
+
+
 #--------------------------------------JAVA--------------------------------------
 # Compiled class file
 *.class
@@ -23,9 +27,6 @@ frontend/yarn.lock
 *.zip
 *.tar.gz
 *.rar
-
-#.yml file
-backend/application.yml
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
@@ -563,7 +564,3 @@ FodyWeavers.xsd
 # JetBrains Rider
 .idea/
 *.sln.iml
-
-*.yml
-
-backend/application.yml
