@@ -15,6 +15,19 @@ export default class SearchPage extends Component {
     };
   }
 
+  componentDidMount() {
+    const lastSearchResults = localStorage.getItem('lastSearchResults');
+    if (lastSearchResults) {
+      const lastSearchFilters = JSON.parse(localStorage.getItem('lastSearchFilters'));
+      this.setState({
+        rows: JSON.parse(lastSearchResults),
+        searchKeywords: lastSearchFilters.keywords,
+        searchCompany: lastSearchFilters.company,
+        searchLocation: lastSearchFilters.location
+      });
+		}
+  }
+
   search() {
     if (!this.state.searchKeywords && !this.state.searchCompany && !this.state.searchLocation) {
       window.alert("Search queries cannot be empty!");
@@ -45,6 +58,12 @@ export default class SearchPage extends Component {
           loading: false,
           rows: res,
         });
+        localStorage.setItem('lastSearchResults', JSON.stringify(res));
+        localStorage.setItem('lastSearchFilters', JSON.stringify({
+          keywords: this.state.searchKeywords,
+          company: this.state.searchCompany,
+          location: this.state.searchLocation
+        }));
       },
       error: () => {
         window.alert("Error while fetching jobs. Please try again later");
@@ -62,7 +81,7 @@ export default class SearchPage extends Component {
   render() {
     return (
       <div>
-        <div className="d-flex justify-content-center my-5 ml-48 container" style={{ marginLeft: "9%" }}>
+        <div className="d-flex justify-content-center my-5 ml-48 container">
           <input
             type="text"
             id="searchKeywords"
@@ -71,7 +90,7 @@ export default class SearchPage extends Component {
             aria-label="Keywords"
             value={this.state.searchKeywords}
             onChange={this.handleChange.bind(this)}
-            style={{ fontSize: 18, marginRight: 20 }}
+            style={{ fontSize: 18, marginRight: 20, border: '1px solid grey' }}
           />
           <input
             type="text"
@@ -81,7 +100,7 @@ export default class SearchPage extends Component {
             aria-label="Company"
             value={this.state.searchCompany}
             onChange={this.handleChange.bind(this)}
-            style={{ fontSize: 18, marginRight: 20 }}
+            style={{ fontSize: 18, marginRight: 20, border: '1px solid grey' }}
           />
           <input
             type="text"
@@ -91,7 +110,7 @@ export default class SearchPage extends Component {
             aria-label="Location"
             value={this.state.searchLocation}
             onChange={this.handleChange.bind(this)}
-            style={{ fontSize: 18, marginRight: 20 }}
+            style={{ fontSize: 18, marginRight: 20, border: '1px solid grey' }}
           />
           <button
             type="button"

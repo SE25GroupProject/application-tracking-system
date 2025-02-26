@@ -43,8 +43,8 @@ const ProfilePage = (props) => {
 	}
 
 	return (
-		<div className='container' style={{ marginLeft: '8%', marginTop: '4%' }}>
-			<div className='row gx-5'>
+		<div className='container' style={{ marginTop: '2.5rem' }}>
+			<div className='row ---gx-5'>
 				<div className='col-sm-12 col-lg-4 my-3'>
 					<div
 						className='card p-4'
@@ -63,8 +63,9 @@ const ProfilePage = (props) => {
 							<div
 								className='text-center mt-3 d-inline-flex justify-content-center align-items-center'
 								style={{
-									height: '200px',
-									width: '200px',
+                  width: '10rem',
+                  maxWidth: '100%',
+                  aspectRatio: '1',
 									borderRadius: '100%',
 									backgroundColor: '#296E85',
 									color: '#fff',
@@ -90,7 +91,7 @@ const ProfilePage = (props) => {
 						<div className='row gy-4'>
 							<div className='col-12 d-flex align-items-center'>
 								<FontAwesomeIcon icon={faEnvelope} size='1x' />
-								<span className='mx-2'>
+								<span className='mx-2 profile-detail'>
 									{profile[CONSTANTS.PROFILE.EMAIL]
 										? profile[CONSTANTS.PROFILE.EMAIL]
 										: ''}
@@ -98,7 +99,7 @@ const ProfilePage = (props) => {
 							</div>
 							<div className='col-12 d-flex align-items-center'>
 								<FontAwesomeIcon icon={faPhone} size='1x' />
-								<span className='mx-2'>
+								<span className='mx-2 profile-detail'>
 									{profile[CONSTANTS.PROFILE.CONTACT]
 										? profile[CONSTANTS.PROFILE.CONTACT]
 										: ''}
@@ -106,7 +107,7 @@ const ProfilePage = (props) => {
 							</div>
 							<div className='col-12 d-flex align-items-center'>
 								<FontAwesomeIcon icon={faLocationDot} size='1x' />
-								<span className='mx-2'>
+								<span className='mx-2 profile-detail'>
 									{profile[CONSTANTS.PROFILE.ADDRESS]
 										? profile[CONSTANTS.PROFILE.ADDRESS]
 										: ''}

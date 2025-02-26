@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import JobTable from '../search/JobTable';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+
 
 const Recommendations = () => {
 	const [recommendedJobs, setRecommendedJobs] = useState([]);
 	const [isFetchingJobs, setIsFetchingJobs] = useState(true);
 
 	useEffect(() => {
-    fetchRecommendations();
+    const lastMatchResults = localStorage.getItem('lastMatchResults');
+    const lastMatchTime = localStorage.getItem('lastMatchTime');
+		if (lastMatchResults && new Date().getTime() - lastMatchTime < 1000 * 60 * 60) {
+			setRecommendedJobs(JSON.parse(lastMatchResults));
+			setIsFetchingJobs(false);
+		} else {
+			fetchRecommendations();
+		}
 	}, []);
 
 	const fetchRecommendations = async () => {
@@ -24,8 +34,8 @@ const Recommendations = () => {
 			if (data && data['error']) {
 				throw new Error(data['error']);
 			} else {
-				localStorage.setItem('lastJobFetch', new Date().getTime());
-				localStorage.setItem('lastJobFetchResults', JSON.stringify(data));
+				localStorage.setItem('lastMatchTime', new Date().getTime());
+				localStorage.setItem('lastMatchResults', JSON.stringify(data));
 				setRecommendedJobs(data);
 			}
 		} catch (error) {
@@ -35,9 +45,14 @@ const Recommendations = () => {
 		}
 	};
 
-	return (
-		<div>
-			<h2 class='d-flex justify-content-center my-5' style={{marginLeft: '9%'}}>Recommended Jobs</h2>
+  return (
+  <div className='container'>
+    <h2 class='d-flex align-items-center justify-content-center mt-4 mb-5'>
+    Recommended Jobs &nbsp;
+    <button className='btn btn-secondary' onClick={fetchRecommendations}>
+      <FontAwesomeIcon icon={faSyncAlt} />
+    </button>
+    </h2>
       <JobTable rows={recommendedJobs} loading={isFetchingJobs} emptyMessage="Make sure you've filled out your profile." />
 		</div>
 	);

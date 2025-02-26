@@ -105,7 +105,7 @@ export default class App extends React.Component {
 		const { showLogoutModal } = this.state;
 
 		return (
-			<div className='main-page'>
+			<div>
 				{this.state.sidebar ? (
 					<div className='main-page'>
 						<Sidebar
@@ -113,8 +113,8 @@ export default class App extends React.Component {
 							handleLogout={this.handleLogout}
 						/>
 						<div className='main'>
-							<div className='content'>
-								<h1 className='text-center' style={{ marginTop: '2%', fontWeight: '300', marginLeft:'2%'}}>
+							<div className='container'>
+								<h1 className='text-center' style={{ marginTop: '2%', fontWeight: '300'}}>
 									Application Tracking System
 								</h1>
 								{this.state.currentPage}
