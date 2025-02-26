@@ -114,7 +114,7 @@ export default class App extends React.Component {
 						/>
 						<div className='main'>
 							<div className='content'>
-								<h1 className='text-center' style={{ marginTop: '2%', fontWeight: '300' }}>
+								<h1 className='text-center' style={{ marginTop: '2%', fontWeight: '300', marginLeft:'2%'}}>
 									Application Tracking System
 								</h1>
 								{this.state.currentPage}

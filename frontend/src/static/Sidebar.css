@@ -1,5 +1,5 @@
 .left-nav {
-  position: fixed;
+  /* position: fixed; */
   width: 9%;
   background-color: #296E85;
   height: 100vh;
@@ -26,16 +26,16 @@
   padding: 10px;
 }
 
-.nav-item:hover {
+/* .nav-item:hover {
   background-color: #1d1d1d;
-}
+} */
 
 .nav-item:hover .left-nav-icon {
-  color: #007bff;
+  color: #ffd000
 }
 
 .nav-item:hover .left-nav-label {
-  color: #007bff;
+  color: #ffd000
 }
 
 .left-nav-icon {
