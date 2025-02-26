@@ -225,47 +225,12 @@ const ProfilePage = (props) => {
 							</div>
 						</div>
 					</div>
-					{/* <div
-            className="card my-3 p-2"
-            style={{
-              boxShadow: "0px 5px 12px 0px rgba(0,0,0,0.1)",
-            }}
-          >
-            <div className="card-body">
-              <div className="d-flex justify-content-between px-0 mb-3">
-                <h4 className="card-title mb-0 mx-1">Mode of job</h4>
-                <FontAwesomeIcon
-                  icon={faPenToSquare}
-                  size="1x"
-                  onClick={() => setJobModeModalOpen(true)}
-                  cursor="pointer"
-                />
-              </div>
-              <div className="d-flex flex-wrap">
-                {profile.modes.map((ele, index) => (
-                  <span
-                    className="badge rounded-pill m-1 py-2 px-3"
-                    style={{
-                      border: "2px solid",
-                      // backgroundColor: "#0096c7",
-                      backgroundColor: "#296e85",
-                      fontSize: 16,
-                      fontWeight: "normal",
-                    }}
-                    key={index}
-                  >
-                    {ele.label}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div> */}
 				</div>
 			</div>
 			{locationModalOpen && (
 				<LocationModal
 					name={CONSTANTS.PROFILE.PREFERRED_LOCATIONS}
-					options={CONSTANTS.COUNTRIES}
+					options={CONSTANTS.CITIES}
 					profile={props.profile}
 					// setProfile={setProfile}
 					setModalOpen={setLocationModalOpen}
