@@ -22,6 +22,12 @@ services:
     networks:
       - ats-network
 
+  selenium:
+    image: selenium/standalone-chrome:latest
+    ports:
+      - 4444:4444
+    shm_size: 2g
+
 networks:
   ats-network:
     driver: bridge
