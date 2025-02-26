@@ -13,6 +13,11 @@ applications_bp = Blueprint("applications", __name__)
 
 @applications_bp.route("/applications", methods=["GET"])
 def get_data():
+    """
+    Gets user's applications data from the database
+
+    :return: JSON object with application data
+    """
     try:
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()
@@ -24,6 +29,11 @@ def get_data():
 
 @applications_bp.route("/applications", methods=["POST"])
 def add_application():
+    """
+    Add a new job application for the user
+
+    :return: JSON object with status and message
+    """
     try:
         userid = get_userid_from_header()
         request_data = json.loads(request.data)["application"]
@@ -53,6 +63,12 @@ def add_application():
 
 @applications_bp.route("/applications/<application_id>", methods=["PUT"])
 def update_application(application_id):
+    """
+    Updates the existing job application for the user
+
+    :param application_id: Application id to be modified
+    :return: JSON object with status and message
+    """
     try:
         userid = get_userid_from_header()
         request_data = json.loads(request.data)["application"]
@@ -83,6 +99,12 @@ def update_application(application_id):
 
 @applications_bp.route("/applications/<application_id>", methods=["DELETE"])
 def delete_application(application_id):
+    """
+    Deletes the given job application for the user
+
+    :param application_id: Application id to be modified
+    :return: JSON object with status and message
+    """
     try:
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()

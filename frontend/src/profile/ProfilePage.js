@@ -45,7 +45,7 @@ const ProfilePage = (props) => {
 	return (
 		<div className='container' style={{ marginLeft: '8%', marginTop: '4%' }}>
 			<div className='row gx-5'>
-				<div className='col-4 my-3'>
+				<div className='col-sm-12 col-lg-4 my-3'>
 					<div
 						className='card p-4'
 						style={{
@@ -115,7 +115,7 @@ const ProfilePage = (props) => {
 						</div>
 					</div>
 				</div>
-				<div className='col-8'>
+				<div className='col-sm-12 col-lg-8'>
 					<div
 						className='card my-3 p-2'
 						style={{

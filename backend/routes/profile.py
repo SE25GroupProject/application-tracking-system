@@ -15,7 +15,7 @@ def get_profile_data():
     try:
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()
-        profileInformation = {
+        profile_information = {
             "skills": user["skills"],
             "job_levels": user["job_levels"],
             "locations": user["locations"],
@@ -25,13 +25,13 @@ def get_profile_data():
             "email": user["email"],
             "fullName": user["fullName"],
         }
-        return jsonify(profileInformation)
+        return jsonify(profile_information)
     except:
         return jsonify({"error": "Internal server error"}), 500
 
 
 @profile_bp.route("/updateProfile", methods=["POST"])
-def updateProfilePreferences():
+def update_profile():
     try:
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()

@@ -90,7 +90,7 @@ def getRecommendations():
     try:
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()
-        print(user["skills"])
+
         skill_sets = [x["value"] for x in user["skills"]]
         job_levels_sets = [x["value"] for x in user["job_levels"]]
         locations_set = [x["value"] for x in user["locations"]]

@@ -10,6 +10,9 @@ services:
       - PYTHONUNBUFFERED=1
     networks:
       - ats-network
+    depends_on:
+      - ollama
+      - selenium
 
   client:
     build: ./frontend/
@@ -22,6 +25,22 @@ services:
     networks:
       - ats-network
 
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - '11434:11434'
+    networks:
+      - ats-network
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama serve &
+        sleep 10
+        ollama pull qwen2.5:1.5b
+        tail -f /dev/null
+
   selenium:
     image: selenium/standalone-chrome:latest
     ports:
@@ -31,3 +50,6 @@ services:
 networks:
   ats-network:
     driver: bridge
+
+volumes:
+  ollama_data:

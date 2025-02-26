@@ -1,117 +1,133 @@
 import React, { Component } from 'react'
+import { Modal } from 'react-bootstrap'
 import $ from 'jquery'
 import '../static/resume.css'
-
+import CoverLetter from '../Modals/CoverLetter'
+import ResumeFeedback from '../Modals/ResumeFeedback'
 
 export default class ManageResumePage extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
-      fileName: '',
-      fileuploadname:'',
-      previewUrl: null
+      fileNames: [],
+      loading: false,
+      coverLetterIdx: null,
+      resumeFeedbackIdx: null
     }
-
-    console.log("***");
-    console.log(localStorage.getItem('token'));
-    this.getFiles.bind(this);
-
   }
 
-  getFiles () {
+  getFiles() {
     $.ajax({
-          url: 'http://127.0.0.1:5000/resume',
-          method: 'GET',
-          headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-            'Access-Control-Allow-Credentials': 'true'
-          },
-          xhrFields: {
-            responseType: 'blob'
-            },
+      url: 'http://127.0.0.1:5000/resume',
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
+        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+        'Access-Control-Allow-Credentials': 'true'
+      },
       credentials: 'include',
-          success: (message, textStatus, response) => {
-            console.log(response.getResponseHeader('x-fileName'))
-            this.setState({ fileName: response.getResponseHeader('x-fileName')});
-            this.setState({ resumeDownloadContent: message});
-            this.setState({ previewUrl: URL.createObjectURL(message)});
-          }
-      })
-}
+      success: (message, textStatus, response) => {
+        console.log(message)
+        this.setState({
+          fileNames: message.filenames,
+        })
+      }
+    })
+  }
 
-    previewResume() {
-        if (this.state.previewUrl) {
-        window.open(this.state.previewUrl, '_blank');
-        }
-    }
+  openCoverLetterModal = (idx) => {
+    this.setState({ coverLetterIdx: idx });
+  }
 
-    handleChange(event) {
-    var name = event.target.files[0].name;
-    console.log(`Selected file - ${event.target.files[0].name}`);
-    this.setState({ fileuploadname: name});
+  closeCoverLetterModal = () => {
+    this.setState({ coverLetterIdx: null });
+  }
 
-    }
+  openResumeFeedbackModal = (idx) => {
+    this.setState({ resumeFeedbackIdx: idx });
+  }
+  
+  closeResumeFeedbackModal = () => {
+    this.setState({ resumeFeedbackIdx: null });
+  }
 
-    uploadResume() {
-        this.setState({ fileName: this.state.fileuploadname});
-        console.log(this.value);
-        const fileInput = document.getElementById('file').files[0];
-        //console.log(fileInput);
-
-        let formData = new FormData();
-        formData.append('file', fileInput );
-        //console.log(formData);
-
+    previewResume(resume_idx) {
         $.ajax({
-          url: 'http://127.0.0.1:5000/resume',
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-            'Access-Control-Allow-Credentials': 'true'
-          },
-          data: formData,
-          contentType: false,
-          cache: false,
-          processData: false,
-          success: (msg) => {
-                console.log(msg)
-          }
+            url: 'http://127.0.0.1:5000/resume/' + resume_idx,
+            method: 'GET',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('token'),
+              'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            xhrFields: { responseType: 'blob' },
+            credentials: 'include',
+            success: (message, textStatus, response) => {
+              console.log(message)
+              if(message){
+                window.open(URL.createObjectURL(message), '_blank');
+              }
+            }
           })
     }
 
- downloadResume(){
-  $.ajax({
-          url: 'http://127.0.0.1:5000/resume',
-          method: 'GET',
-          headers: {
-            'Authorization': 'Bearer ' + localStorage.getItem('token'),
-            'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-            'Access-Control-Allow-Credentials': 'true'
-          },
-          xhrFields: {
-            responseType: 'blob'
-        },
-          success: (message, textStatus, response) => {
-            console.log(message)
-            console.log(textStatus)
-            console.log(response)
+    deleteResume(resume_idx) {
+        $.ajax({
+            url: 'http://127.0.0.1:5000/resume/' + resume_idx,
+            method: 'DELETE',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('token'),
+              'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            success: (message, textStatus, response) => {
+                this.state.fileNames.splice(resume_idx, 1);
+                console.log(response.responseJSON.success);
+                this.getFiles();
+            }
+        })
+    }
 
-            var a = document.createElement('a');
-            var url = window.URL.createObjectURL(message);
-            a.href = url;
-            a.download = 'resume.pdf';
-            document.body.append(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
-          }
-          })
- }
+  uploadResume = (e) => {
+    e.preventDefault();
 
- componentDidMount () {
-    // fetch the data only after this component is mounted
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".pdf"; // Adjust allowed file types if needed
+
+    fileInput.addEventListener("change", (event) => {
+      if (event.target.files.length == 0) {
+        return;
+      }
+
+        this.setState({loading: true});
+        let formData = new FormData()
+        const file = event.target.files[0];
+        formData.append('file', file);
+        $.ajax({
+            url: 'http://127.0.0.1:5000/resume',
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
+                'Access-Control-Allow-Credentials': 'true'
+            },
+            data: formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: (msg) => {
+                console.log("Upload successful:", msg)
+                this.setState({ fileNames: [...this.state.fileNames, file.name] })
+            }
+        }).always(() => this.setState({loading: false}))
+        
+    });
+
+    fileInput.click();
+  }
+
+  componentDidMount() {
     this.getFiles()
   }
 
@@ -124,30 +140,89 @@ export default class ManageResumePage extends Component {
 
   render() {
     return (
-      <form className="pagelayout" id="upload-file" method="post" encType="multipart/form-data">
-        {/* ... existing form elements */}
-        <div style={{margin: '2em'}}></div>
-        <div>
-          <h2>Uploaded Documents</h2>
-          <table>
-            <thead>
-              <tr>
-                <th className="tablecol1">Documents</th>
-                <th className="tablecol2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="tablecol1">{this.state.fileName}</td>
-                <td className="tablecol2">
-                  <button id="download" onClick={this.downloadResume.bind(this)} type="button">Download</button>
-                  <button id="preview" onClick={this.previewResume.bind(this)} type="button">View</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </form>
+      <div className="pagelayout">
+        
+        <form id="upload-file" method="post" encType="multipart/form-data">
+          <button
+            id="upload-file-btn"
+            onClick={(event) => {
+                if (!this.state.loading) {
+                    this.uploadResume(event)
+                }
+            }}
+            disabled={this.state.loading}
+            type="button"
+            style={{
+                display: 'block',
+                margin: '0 auto'
+            }}
+          >
+            {this.state.loading ? 'Uploading...' : 'Uploade New'}
+          </button>
+
+          <div style={{ margin: '1.5em' }}></div>
+          <div>
+            <h2>Uploaded Documents</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th className="tablecol1">Documents</th>
+                  <th className="tablecol2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.fileNames.map((fileName, index) => (
+                  <tr key={index}>
+                    <td className="tablecol1">{fileName}</td>
+                    <td className="tablecol2">
+                      <button
+                        id="view-file-btn"
+                        onClick={() => this.previewResume(index)}
+                        type="button"
+                      >
+                        View
+                      </button>
+                      <button
+                        id="delete-file-btn"
+                        onClick={() => this.deleteResume(index)}
+                        type="button"
+                        >
+                            Delete
+                        </button>
+                        <button
+                            id="view-file-btn"
+                            onClick={() => this.openCoverLetterModal(index)}
+                            type="button"
+                        >
+                            Generate Cover Letter
+                        </button>
+                        <button
+                            id="view-file-btn"
+                            onClick={() => this.openResumeFeedbackModal(index)}
+                            type="button"
+                        >
+                            View Feedback
+                        </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {this.state.coverLetterIdx !== null && (
+        <CoverLetter
+          setState={this.closeCoverLetterModal}
+          idx={this.state.coverLetterIdx}
+        />
+      )}
+      {this.state.resumeFeedbackIdx !== null && (
+        <ResumeFeedback
+          setState={this.closeResumeFeedbackModal}
+          idx={this.state.resumeFeedbackIdx}
+        />
+      )}
+        </form>
+      </div>
     )
   }
 }

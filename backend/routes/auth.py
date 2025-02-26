@@ -46,6 +46,8 @@ def authorized_google():
                 email=users_email,
                 authTokens=[],
                 applications=[],
+                resumes=[],
+                resumeFeedbacks=[],
                 skills=[],
                 job_levels=[],
                 locations=[],
@@ -73,6 +75,11 @@ def authorized_google():
 
 @auth_bp.route("/users/signup", methods=["POST"])
 def sign_up():
+    """
+    Creates a new user profile and adds the user to the database and returns the message
+
+    :return: JSON object
+    """
     try:
         data = json.loads(request.data)
         try:
@@ -94,6 +101,8 @@ def sign_up():
             password=password_hash.hexdigest(),
             authTokens=[],
             applications=[],
+            resumes=[],
+            resumeFeedbacks=[],
             skills=[],
             job_levels=[],
             locations=[],
@@ -110,41 +119,57 @@ def sign_up():
 
 @auth_bp.route("/users/login", methods=["POST"])
 def login():
-    # try:
-    data = json.loads(request.data)
-    print(data)
+    """
+    Logs in the user and creates a new authorization token and stores in the database
+
+    :return: JSON object with status and message
+    """
     try:
-        assert "username" in data
-        assert "password" in data
-    except:
-        return jsonify({"error": "Username or password missing"}), 400
-    password_hash = hashlib.md5(data["password"].encode()).hexdigest()
-    user = Users.objects(username=data["username"], password=password_hash).first()
-    if user is None:
-        return jsonify({"error": "Wrong username or password"})
-    token = str(user["id"]) + "." + str(uuid.uuid4())
-    expiry = datetime.now() + timedelta(days=1)
-    expiry_str = expiry.strftime("%m/%d/%Y, %H:%M:%S")
-    auth_tokens_new = user["authTokens"] + [{"token": token, "expiry": expiry_str}]
-    user.update(authTokens=auth_tokens_new)
-    profileInfo = {
-        "id": user.id,
-        "fullName": user.fullName,
-        "institution": user.institution,
-        "skills": user.skills,
-        "phone_number": user.phone_number,
-        "address": user.address,
-        "locations": user.locations,
-        "jobLevels": user.job_levels,
-        "email": user.email,
-    }
-    return jsonify({"profile": profileInfo, "token": token, "expiry": expiry_str})
-    # except:
-    #     return jsonify({"error": "Internal server error"}), 500
+        data = json.loads(request.data)
+        try:
+            assert "username" in data
+            assert "password" in data
+        except:
+            return jsonify({"error": "Username or password missing"}), 400
+        
+        password_hash = hashlib.md5(data["password"].encode()).hexdigest()
+        user = Users.objects(username=data["username"], password=password_hash).first()
+        
+        if user is None:
+            return jsonify({"error": "Wrong username or password"})
+        
+        token = str(user["id"]) + "." + str(uuid.uuid4())
+        expiry = datetime.now() + timedelta(days=1)
+        expiry_str = expiry.strftime("%m/%d/%Y, %H:%M:%S")
+        auth_tokens_new = user["authTokens"] + [{"token": token, "expiry": expiry_str}]
+        
+        user.update(authTokens=auth_tokens_new)
+        profileInfo = {
+            "id": user.id,
+            "fullName": user.fullName,
+            "institution": user.institution,
+            "skills": user.skills,
+            "phone_number": user.phone_number,
+            "address": user.address,
+            "locations": user.locations,
+            "jobLevels": user.job_levels,
+            "email": user.email,
+        }
+        
+        return jsonify({"profile": profileInfo, "token": token, "expiry": expiry_str})
+    
+    except Exception as err:
+        print(err)
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @auth_bp.route("/users/logout", methods=["POST"])
 def logout():
+    """
+    Logs out the user and deletes the existing token from the database
+
+    :return: JSON object with status and message
+    """
     try:
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()

@@ -60,6 +60,13 @@
   small-content-text
   */
 
+  .card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px);
+    transition: all 0.2s ease-in-out;
+  }
+  
+
 .delet-btn {
   visibility: visible;
   opacity: 1;
