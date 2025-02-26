@@ -1,10 +1,10 @@
 # J-Tracker - Your Job Tracking Assistant
 
-[![GitHub license](https://img.shields.io/github/license/jashgopani/application-tracking-system)](https://github.com/jashgopani/application-tracking-system/blob/main/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/jashgopani/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/blob/63bc5b12d117220fc678f563f6fa8e6dc0074f1d/LICENSE)
 [![DOI](https://zenodo.org/badge/426259091.svg)](https://zenodo.org/badge/latestdoi/426259091)
 [![codecov](https://codecov.io/gh/jashgopani/application-tracking-system/branch/main/graph/badge.svg)](https://codecov.io/gh/kingan1/application-tracking-system)
-[![GitHub issues](https://img.shields.io/github/issues/jashgopani/application-tracking-system)](https://github.com/jashgopani/application-tracking-system/issues)
-[![Github closes issues](https://img.shields.io/github/issues-closed-raw/jashgopani/application-tracking-system)](https://github.com/jashgopani/application-tracking-system/issues?q=is%3Aissue+is%3Aclosed)
+[![GitHub issues](https://img.shields.io/github/issues/jashgopani/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/issues)
+[![Github closes issues](https://img.shields.io/github/issues-closed-raw/jashgopani/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/issues?q=is%3Aissue%20state%3Aclosed)
 ![GitHub top language](https://img.shields.io/github/languages/top/jashgopani/application-tracking-system)
 
 <p align="center"><img width="700" src="./resources/ApplicationTrackingAnimation.gif"></p>
