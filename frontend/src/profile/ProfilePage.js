@@ -43,9 +43,9 @@ const ProfilePage = (props) => {
 	}
 
 	return (
-		<div className='container' style={{ marginLeft: '8%', marginTop: '4%' }}>
-			<div className='row gx-5'>
-				<div className='col-4 my-3'>
+		<div className='container' style={{ marginTop: '2.5rem' }}>
+			<div className='row ---gx-5'>
+				<div className='col-sm-12 col-lg-4 my-3'>
 					<div
 						className='card p-4'
 						style={{
@@ -63,8 +63,9 @@ const ProfilePage = (props) => {
 							<div
 								className='text-center mt-3 d-inline-flex justify-content-center align-items-center'
 								style={{
-									height: '200px',
-									width: '200px',
+                  width: '10rem',
+                  maxWidth: '100%',
+                  aspectRatio: '1',
 									borderRadius: '100%',
 									backgroundColor: '#296E85',
 									color: '#fff',
@@ -90,7 +91,7 @@ const ProfilePage = (props) => {
 						<div className='row gy-4'>
 							<div className='col-12 d-flex align-items-center'>
 								<FontAwesomeIcon icon={faEnvelope} size='1x' />
-								<span className='mx-2'>
+								<span className='mx-2 profile-detail'>
 									{profile[CONSTANTS.PROFILE.EMAIL]
 										? profile[CONSTANTS.PROFILE.EMAIL]
 										: ''}
@@ -98,7 +99,7 @@ const ProfilePage = (props) => {
 							</div>
 							<div className='col-12 d-flex align-items-center'>
 								<FontAwesomeIcon icon={faPhone} size='1x' />
-								<span className='mx-2'>
+								<span className='mx-2 profile-detail'>
 									{profile[CONSTANTS.PROFILE.CONTACT]
 										? profile[CONSTANTS.PROFILE.CONTACT]
 										: ''}
@@ -106,7 +107,7 @@ const ProfilePage = (props) => {
 							</div>
 							<div className='col-12 d-flex align-items-center'>
 								<FontAwesomeIcon icon={faLocationDot} size='1x' />
-								<span className='mx-2'>
+								<span className='mx-2 profile-detail'>
 									{profile[CONSTANTS.PROFILE.ADDRESS]
 										? profile[CONSTANTS.PROFILE.ADDRESS]
 										: ''}
@@ -115,7 +116,7 @@ const ProfilePage = (props) => {
 						</div>
 					</div>
 				</div>
-				<div className='col-8'>
+				<div className='col-sm-12 col-lg-8'>
 					<div
 						className='card my-3 p-2'
 						style={{
@@ -225,47 +226,12 @@ const ProfilePage = (props) => {
 							</div>
 						</div>
 					</div>
-					{/* <div
-            className="card my-3 p-2"
-            style={{
-              boxShadow: "0px 5px 12px 0px rgba(0,0,0,0.1)",
-            }}
-          >
-            <div className="card-body">
-              <div className="d-flex justify-content-between px-0 mb-3">
-                <h4 className="card-title mb-0 mx-1">Mode of job</h4>
-                <FontAwesomeIcon
-                  icon={faPenToSquare}
-                  size="1x"
-                  onClick={() => setJobModeModalOpen(true)}
-                  cursor="pointer"
-                />
-              </div>
-              <div className="d-flex flex-wrap">
-                {profile.modes.map((ele, index) => (
-                  <span
-                    className="badge rounded-pill m-1 py-2 px-3"
-                    style={{
-                      border: "2px solid",
-                      // backgroundColor: "#0096c7",
-                      backgroundColor: "#296e85",
-                      fontSize: 16,
-                      fontWeight: "normal",
-                    }}
-                    key={index}
-                  >
-                    {ele.label}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div> */}
 				</div>
 			</div>
 			{locationModalOpen && (
 				<LocationModal
 					name={CONSTANTS.PROFILE.PREFERRED_LOCATIONS}
-					options={CONSTANTS.COUNTRIES}
+					options={CONSTANTS.CITIES}
 					profile={props.profile}
 					// setProfile={setProfile}
 					setModalOpen={setLocationModalOpen}
