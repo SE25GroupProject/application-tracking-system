@@ -57,7 +57,7 @@ def scrape_careerbuilder_jobs(keywords: str, company: str, location: str):
             link = job.find_element(
                 By.CSS_SELECTOR, "a.data-results-content"
             ).get_attribute("href")
-            results.append({"title": title, "company": company, "location": location, "type": job_type, "link": link, id: link.split("/")[-1]})
+            results.append({"title": title, "company": company, "location": location, "type": job_type, "link": link, "id": link.split("/")[-1]})
         
         return results
 

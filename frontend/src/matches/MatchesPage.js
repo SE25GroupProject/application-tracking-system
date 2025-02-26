@@ -6,13 +6,7 @@ const Recommendations = () => {
 	const [isFetchingJobs, setIsFetchingJobs] = useState(true);
 
 	useEffect(() => {
-		const lastJobFetchResults = localStorage.getItem('lastJobFetchResults');
-		if (lastJobFetchResults) {
-			setRecommendedJobs(JSON.parse(localStorage.getItem('lastJobFetchResults')));
-			setIsFetchingJobs(false);
-		} else {
-			fetchRecommendations();
-		}
+    fetchRecommendations();
 	}, []);
 
 	const fetchRecommendations = async () => {
