@@ -3,6 +3,7 @@ import { Modal } from 'react-bootstrap'
 import $ from 'jquery'
 import '../static/resume.css'
 import CoverLetter from '../Modals/CoverLetter'
+import ResumeFeedback from '../Modals/ResumeFeedback'
 
 export default class ManageResumePage extends Component {
   constructor(props) {
@@ -10,7 +11,8 @@ export default class ManageResumePage extends Component {
     this.state = {
       fileNames: [],
       loading: false,
-      coverLetterIdx: null
+      coverLetterIdx: null,
+      resumeFeedbackIdx: null
     }
   }
 
@@ -40,8 +42,14 @@ export default class ManageResumePage extends Component {
   closeCoverLetterModal = () => {
     this.setState({ coverLetterIdx: null });
   }
-  
 
+  openResumeFeedbackModal = (idx) => {
+    this.setState({ resumeFeedbackIdx: idx });
+  }
+  
+  closeResumeFeedbackModal = () => {
+    this.setState({ resumeFeedbackIdx: null });
+  }
 
     previewResume(resume_idx) {
         $.ajax({
@@ -182,11 +190,18 @@ export default class ManageResumePage extends Component {
                             Delete
                         </button>
                         <button
-                            id="generate-cover-letter-btn"
+                            id="view-file-btn"
                             onClick={() => this.openCoverLetterModal(index)}
                             type="button"
                         >
                             Generate Cover Letter
+                        </button>
+                        <button
+                            id="view-file-btn"
+                            onClick={() => this.openResumeFeedbackModal(index)}
+                            type="button"
+                        >
+                            View Feedback
                         </button>
                     </td>
                   </tr>
@@ -198,6 +213,12 @@ export default class ManageResumePage extends Component {
         <CoverLetter
           setState={this.closeCoverLetterModal}
           idx={this.state.coverLetterIdx}
+        />
+      )}
+      {this.state.resumeFeedbackIdx !== null && (
+        <ResumeFeedback
+          setState={this.closeResumeFeedbackModal}
+          idx={this.state.resumeFeedbackIdx}
         />
       )}
         </form>

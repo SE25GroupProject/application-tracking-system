@@ -686,7 +686,7 @@ def create_app():
                         "helpful feedback to improve my resume, and nothing else. Your response must be in markdown." + \
                         "Here is my resume:\n\n" + text
 
-            response = "dummy" # model.invoke(prompt)
+            response = model.invoke(prompt)
 
             user = Users.objects(id=userid).first()
             

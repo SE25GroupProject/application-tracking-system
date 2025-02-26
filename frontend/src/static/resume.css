@@ -96,10 +96,26 @@ html, body {
     margin-top: 1rem;
     margin-right: 0.5rem; /* Spacing between buttons */
   }
+
+  #view-feedback-btn {
+    background-color: #f300be;
+    color: #fff;
+    border-radius: 3px;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 1rem;
+    margin-right: 0.5rem; /* Spacing between buttons */
+  }
   
   #upload-file-btn:hover:not([disabled]),
   #view-file-btn:hover:not([disabled]) {
     background-color: #1f5368;
+  }
+
+  #delete-file-btn:hover:not([disabled]) {
+    background-color: #8e131b;
   }
 
   #upload-file-btn[disabled],
