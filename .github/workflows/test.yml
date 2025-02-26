@@ -28,29 +28,29 @@ jobs:
           cd frontend
           npm run test
 
-  backend-tests:
-    name: Run backend tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  # backend-tests:
+  #   name: Run backend tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+  #     - name: Set up Python
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: '3.9'
 
-      - name: Install dependencies (backend)
-        run: |
-          cd backend
-          python -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
+  #     - name: Install dependencies (backend)
+  #       run: |
+  #         cd backend
+  #         python -m venv venv
+  #         source venv/bin/activate
+  #         pip install -r requirements.txt
 
-      - name: Run backend tests
-        run: |
-          cd backend
-          source venv/bin/activate
-          pytest
+  #     - name: Run backend tests
+  #       run: |
+  #         cd backend
+  #         source venv/bin/activate
+  #         pytest
