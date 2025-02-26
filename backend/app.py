@@ -4,10 +4,10 @@ The flask application for our program
 
 from flask import Flask, jsonify
 from flask_cors import CORS, cross_origin
+from authlib.integrations.flask_client import OAuth
 from config import config
 from db import db
 from utils import middleware
-from authlib.integrations.flask_client import OAuth
 
 from routes.auth import auth_bp
 from routes.profile import profile_bp
@@ -49,6 +49,7 @@ def create_app():
 
     @app.route("/")
     @cross_origin()
+    # pylint: disable=unused-variable
     def health_check():
         return jsonify({"message": "Server up and running"}), 200
 
