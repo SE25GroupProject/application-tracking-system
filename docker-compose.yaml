@@ -47,6 +47,8 @@ services:
     image: selenium/standalone-chrome:latest
     ports:
       - 4444:4444
+    networks:
+      - ats-network
     shm_size: 2g
 
 networks:
