@@ -44,21 +44,11 @@ export default class SearchPage extends Component {
       },
       contentType: "application/json",
       success: (data) => {
-        const res = data.map((d, i) => {
-          return {
-            id: i,
-            title: d.title,
-            company: d.company,
-            location: d.location,
-            type: d.type,
-            link: d.link,
-          };
-        });
         this.setState({
           loading: false,
-          rows: res,
+          rows: data,
         });
-        localStorage.setItem('lastSearchResults', JSON.stringify(res));
+        localStorage.setItem('lastSearchResults', JSON.stringify(data));
         localStorage.setItem('lastSearchFilters', JSON.stringify({
           keywords: this.state.searchKeywords,
           company: this.state.searchCompany,

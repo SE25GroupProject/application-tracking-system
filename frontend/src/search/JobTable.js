@@ -29,7 +29,8 @@ export default class JobTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      savedList: [],
+      /** Map of external IDs to internal IDs of saved jobs */
+      savedApps: {},
     };
   }
 
@@ -44,7 +45,11 @@ export default class JobTable extends Component {
         "Access-Control-Allow-Credentials": "true",
       },
       success: (data) => {
-        this.setState({ savedList: data.map(d => d.externalId) });
+        const savedApps = {};
+        data.forEach(d => {
+          savedApps[d.externalId] = d.id;
+        });
+        this.setState({ savedApps });
       },
       error: () => {
         window.alert("Error while fetching saved applications. Please try again later");
@@ -65,35 +70,31 @@ export default class JobTable extends Component {
         "Access-Control-Allow-Credentials": "true",
       },
       contentType: "application/json",
-      success: (msg) => {
-        console.log(msg);
+      success: (data) => {
+        this.setState({
+          savedApps: { ...this.state.savedApps, [job.externalId]: data.id },
+        });
       },
-    });
-    this.setState({
-      savedList: [...this.state.savedList, job.id],
     });
   }
 
   unsaveJob(job) {
+    const internalId = this.state.savedApps[job.externalId];
     $.ajax({
-      url: "http://127.0.0.1:5000/applications/" + job.id,
+      url: "http://127.0.0.1:5000/applications/" + internalId,
       method: "DELETE",
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
         "Access-Control-Allow-Origin": "http://127.0.0.1:3000",
         "Access-Control-Allow-Credentials": "true",
       },
-      success: (msg) => {
-        console.log(msg);
+      success: (data) => {
+        const { [job.externalId]: _, ...remainingApps } = this.state.savedApps;
+        this.setState({
+          savedApps: remainingApps,
+        });
       },
     });
-    this.setState({
-      savedList: this.state.savedList.filter(v => v !== job.id),
-    });
-  }
-
-  handleChange(event) {
-    this.setState({ [event.target.id]: event.target.value });
   }
 
   render() {
@@ -141,8 +142,8 @@ export default class JobTable extends Component {
                           </td>
                         );
                       }
-                      const addButton = this.state.savedList.includes(
-                        row.id
+                      const addButton = this.state.savedApps.hasOwnProperty(
+                        row.externalId
                       ) ? (
                         <button
                           type="button"
