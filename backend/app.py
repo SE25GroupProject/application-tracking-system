@@ -15,6 +15,8 @@ from routes.applications import applications_bp
 from routes.resume import resume_bp
 from routes.jobs import jobs_bp
 
+import os
+
 
 def create_app():
     """
@@ -28,11 +30,14 @@ def create_app():
     oauth = OAuth(app)
     auth_bp.oauth = oauth
 
+    db_username = os.getenv("MONGO_INITDB_ROOT_USERNAME", "empty")
+    db_password = os.getenv("MONGO_INITDB_ROOT_PASSWORD", "empty")
+
     # Set configuration
     app.secret_key = config["SECRET_KEY"]
     app.config["MONGODB_SETTINGS"] = {
         "db": "appTracker",
-        "host": f"mongodb+srv://{config['USERNAME']}:{config['PASSWORD']}@{config['CLUSTER_URL']}/",
+        "host": f"mongodb://{db_username}:{db_password}@mongodb/",
     }
 
     db.init_app(app)

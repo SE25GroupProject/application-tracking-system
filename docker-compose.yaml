@@ -5,6 +5,8 @@ services:
       - 5000:5000
     volumes:
       - ./backend:/app
+    env_file:
+      - .env
     environment:
       - FLASK_DEBUG=true
       - PYTHONUNBUFFERED=1
@@ -18,15 +20,24 @@ services:
       - mongodb
 
   mongodb:
-    ports: 27017:27017
-    image: mongodb/mongodb-community-server:6.0-ubi8
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=user
-      - MONGO_INITDB_ROOT_PASSWORD=pass
+    env_file:
+      - .env
+    image: mongo:6-jammy
+    ports:
+      - "27017:27017"
     volumes:
-      - type: bind
-        source: ./data
-        target: /data/db
+      - db_data:/data/db
+      - db_log:/var/log/mongodb
+    networks:
+      - ats-network
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    env_file:
+      - .env
     networks:
       - ats-network
 
@@ -72,3 +83,7 @@ networks:
 volumes:
   ollama_data:
   db_data:
+    name: mongo-db
+  db_log:
+    driver: local
+    name: mongo-log
