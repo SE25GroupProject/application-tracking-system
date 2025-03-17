@@ -32,12 +32,13 @@ def create_app():
 
     db_username = os.getenv("MONGO_INITDB_ROOT_USERNAME", "empty")
     db_password = os.getenv("MONGO_INITDB_ROOT_PASSWORD", "empty")
+    db_cluster_url = os.getenv("CLUSTER_URL", "empty")
 
     # Set configuration
     app.secret_key = config["SECRET_KEY"]
     app.config["MONGODB_SETTINGS"] = {
         "db": "appTracker",
-        "host": f"mongodb://{db_username}:{db_password}@mongodb/",
+        "host": f"mongodb://{db_username}:{db_password}@{db_cluster_url}/",
     }
 
     db.init_app(app)
