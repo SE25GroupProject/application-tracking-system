@@ -15,6 +15,20 @@ services:
     depends_on:
       - ollama
       - selenium
+      - mongodb
+
+  mongodb:
+    ports: 27017:27017
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+    volumes:
+      - type: bind
+        source: ./data
+        target: /data/db
+    networks:
+      - ats-network
 
   client:
     build: ./frontend/
@@ -32,7 +46,7 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     ports:
-      - '11434:11434'
+      - "11434:11434"
     networks:
       - ats-network
     entrypoint: ["/bin/sh", "-c"]
@@ -57,3 +71,4 @@ networks:
 
 volumes:
   ollama_data:
+  db_data:
