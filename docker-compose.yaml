@@ -5,6 +5,8 @@ services:
       - 5000:5000
     volumes:
       - ./backend:/app
+    env_file:
+      - .env
     environment:
       - FLASK_DEBUG=true
       - PYTHONUNBUFFERED=1
@@ -15,6 +17,29 @@ services:
     depends_on:
       - ollama
       - selenium
+      - mongodb
+
+  mongodb:
+    env_file:
+      - .env
+    image: mongo:6-jammy
+    ports:
+      - "27017:27017"
+    volumes:
+      - db_data:/data/db
+      - db_log:/var/log/mongodb
+    networks:
+      - ats-network
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    env_file:
+      - .env
+    networks:
+      - ats-network
 
   client:
     build: ./frontend/
@@ -32,7 +57,7 @@ services:
     volumes:
       - ollama_data:/root/.ollama
     ports:
-      - '11434:11434'
+      - "11434:11434"
     networks:
       - ats-network
     entrypoint: ["/bin/sh", "-c"]
@@ -47,6 +72,8 @@ services:
     image: selenium/standalone-chrome:latest
     ports:
       - 4444:4444
+    networks:
+      - ats-network
     shm_size: 2g
 
 networks:
@@ -55,3 +82,8 @@ networks:
 
 volumes:
   ollama_data:
+  db_data:
+    name: mongo-db
+  db_log:
+    driver: local
+    name: mongo-log

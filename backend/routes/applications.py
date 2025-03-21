@@ -53,7 +53,7 @@ def add_application():
             "type": request_data.get("type"),
             "status": request_data.get("status", "1"),
             "date": datetime.now().strftime("%m/%d/%Y"),
-            "externalId": request_data.get("id"),
+            "externalId": request_data.get("externalId"),
         }
         applications = user["applications"] + [current_application]
         user.update(applications=applications)
@@ -99,7 +99,7 @@ def update_application(application_id):
         return jsonify({"error": "Internal server error"}), 500
 
 
-@applications_bp.route("/applications/<application_id>", methods=["DELETE"])
+@applications_bp.route("/applications/<int:application_id>", methods=["DELETE"])
 def delete_application(application_id):
     """
     Deletes the given job application for the user
@@ -116,7 +116,7 @@ def delete_application(application_id):
         updated_applications = []
         app_to_delete = None
         for application in current_applications:
-            if application["id"] != application_id and application["externalId"] != application_id:
+            if application["id"] != application_id:
                 updated_applications += [application]
             else:
                 app_to_delete = application

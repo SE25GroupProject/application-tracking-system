@@ -34,14 +34,14 @@ def scrape_careerbuilder_jobs(keywords: str, company: str, location: str):
     results = []
 
     print("Starting Chrome WebDriver...")
-    with webdriver.Remote(config["SELENIUM_URL"] + ":4444/wd/hub", options=options) as driver:
+    with webdriver.Remote(config["SELENIUM_URL"] + "/wd/hub", options=options) as driver:
 
-        wait = WebDriverWait(driver, 3)
         print("Chrome WebDriver started.")
 
         driver.get(
             f"https://www.careerbuilder.com/jobs?&company_name={company}&keywords={keywords}&location={location.replace(' ', '+')}"
         )
+        # wait = WebDriverWait(driver, 3)
         # job_listings = wait.until(
         #     EC.presence_of_all_elements_located(
         #         (By.CSS_SELECTOR, "li.data-results-content-parent")
@@ -58,7 +58,14 @@ def scrape_careerbuilder_jobs(keywords: str, company: str, location: str):
             link = job.find_element(
                 By.CSS_SELECTOR, "a.data-results-content"
             ).get_attribute("href")
-            results.append({"title": title, "company": company, "location": location, "type": job_type, "link": link, "id": link.split("/")[-1]})
+            results.append({
+                "title": title,
+                "company": company,
+                "location": location,
+                "type": job_type,
+                "link": link,
+                "externalId": link.split("/")[-1],
+            })
         
         return results
 
