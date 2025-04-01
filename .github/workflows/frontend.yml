@@ -3,6 +3,8 @@
 
 name: Frontend NodeJS
 
+on: [push]
+
 jobs:
   build:
     runs-on: ubuntu-latest
