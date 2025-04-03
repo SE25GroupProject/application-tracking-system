@@ -9,37 +9,69 @@ from utils import get_userid_from_header
 
 profile_bp = Blueprint("profile", __name__)
 
-
 @profile_bp.route("/getProfile", methods=["GET"])
-def get_profile_data():
+@profile_bp.route("/getProfile/<int:profileid>", methods=["GET"])
+def get_profile_data(profileid=None):
     try:
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        if profileid is not None:
+            if profileid < 0 or profileid >= len(user.profiles):
+                return jsonify({"error": "Invalid profile ID"}), 400
+            selected_profile = user.profiles[profileid]
+        else:
+            selected_profile = user.profiles[user.default_profile] if user.profiles else None
+        if not selected_profile:
+            return jsonify({"error": "No profile available"}), 404
         profile_information = {
-            "skills": user["skills"],
-            "job_levels": user["job_levels"],
-            "locations": user["locations"],
-            "institution": user["institution"],
-            "phone_number": user["phone_number"],
-            "address": user["address"],
-            "email": user["email"],
-            "fullName": user["fullName"],
+            "skills": selected_profile.skills,
+            "job_levels": selected_profile.job_levels,
+            "locations": selected_profile.locations,
+            "institution": selected_profile.institution,
+            "phone_number": selected_profile.phone_number,
+            "address": selected_profile.address,
+            "email": user.email,
+            "fullName": user.fullName,
+            "profileName": selected_profile.profileName,
+            "profileid": profileid if profileid is not None else user.default_profile
         }
-        return jsonify(profile_information)
-    except:
+        return jsonify(profile_information), 200
+    except Exception as err:
+        print(err)
         return jsonify({"error": "Internal server error"}), 500
 
-
 @profile_bp.route("/updateProfile", methods=["POST"])
-def update_profile():
+@profile_bp.route("/updateProfile/<int:profileid>", methods=["POST"])
+def update_profile(profileid=None):
     try:
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()
+        if not user:
+            return jsonify({"error": "User not found"}), 404
         data = json.loads(request.data)
+        if profileid is not None:
+            if profileid < 0 or profileid >= len(user.profiles):
+                return jsonify({"error": "Invalid profile ID"}), 400
+            selected_profile = user.profiles[profileid]
+        else:
+            if not user.profiles:
+                from models import Profile
+                selected_profile = Profile()
+                user.profiles.append(selected_profile)
+            else:
+                selected_profile = user.profiles[user.default_profile]
         for key in data.keys():
-            user[key] = data[key]
+            if hasattr(selected_profile, key):
+                setattr(selected_profile, key, data[key])
+            elif hasattr(user, key):
+                setattr(user, key, data[key])
+            else:
+                return jsonify({"error": f"Invalid field: {key}"}), 400
         user.save()
         return jsonify(user.to_json()), 200
     except Exception as err:
         print(err)
         return jsonify({"error": "Internal server error"}), 500
+    
