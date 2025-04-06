@@ -14,6 +14,7 @@ class Users(db.Document):
     email = db.StringField()
     applications = db.ListField()
     resumes = db.ListField(db.FileField())
+    coverletters = db.ListField(db.FileField())
     resumeFeedbacks = db.ListField()
     skills = db.ListField()
     job_levels = db.ListField()
