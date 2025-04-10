@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, request, redirect, url_for, session
 from authlib.common.security import generate_token
 from datetime import datetime, timedelta
 import hashlib, uuid, json
-from models import Users, get_new_user_id
+from models import Users, get_new_user_id, Profile
 from config import config
 from utils import get_token_from_header, get_userid_from_header
 
@@ -40,6 +40,16 @@ def authorized_google():
 
     if user["email_verified"]:
         if user_exists is None:
+            # Create an empty default profile
+            default_profile = Profile(
+                profileName="default",
+                skills=[],
+                job_levels=[],
+                locations=[],
+                institution="",
+                phone_number="",
+                address=""
+            )
             userSave = Users(
                 id=get_new_user_id(),
                 fullName=full_name,
@@ -48,11 +58,8 @@ def authorized_google():
                 applications=[],
                 resumes=[],
                 resumeFeedbacks=[],
-                skills=[],
-                job_levels=[],
-                locations=[],
-                phone_number="",
-                address="",
+                profiles=[default_profile],  # Initialize with one empty profile
+                default_profile=0
             )
             userSave.save()
             unique_id = userSave["id"]
@@ -92,8 +99,19 @@ def sign_up():
         username_exists = Users.objects(username=data["username"])
         if len(username_exists) != 0:
             return jsonify({"error": "Username already exists"}), 400
+        
         password = data["password"]
         password_hash = hashlib.md5(password.encode())
+        # Create an empty default profile
+        default_profile = Profile(
+            profileName="default",
+            skills=[],
+            job_levels=[],
+            locations=[],
+            institution="",
+            phone_number="",
+            address=""
+        )
         user = Users(
             id=get_new_user_id(),
             fullName=data["fullName"],
@@ -103,13 +121,9 @@ def sign_up():
             applications=[],
             resumes=[],
             resumeFeedbacks=[],
-            skills=[],
-            job_levels=[],
-            locations=[],
-            phone_number="",
-            address="",
-            institution="",
-            email="",
+            profiles=[default_profile],  # Initialize with one empty profile
+            default_profile=0,
+            email=""
         )
         user.save()
         return jsonify(user.to_json()), 200
@@ -144,15 +158,16 @@ def login():
         auth_tokens_new = user["authTokens"] + [{"token": token, "expiry": expiry_str}]
         
         user.update(authTokens=auth_tokens_new)
+        default_profile = user.profiles[user.default_profile] if user.profiles else None
         profileInfo = {
             "id": user.id,
             "fullName": user.fullName,
-            "institution": user.institution,
-            "skills": user.skills,
-            "phone_number": user.phone_number,
-            "address": user.address,
-            "locations": user.locations,
-            "job_levels": user.job_levels,
+            "institution": default_profile.institution if default_profile else "",
+            "skills": default_profile.skills if default_profile else [],
+            "phone_number": default_profile.phone_number if default_profile else "",
+            "address": default_profile.address if default_profile else "",
+            "locations": default_profile.locations if default_profile else [],
+            "job_levels": default_profile.job_levels if default_profile else [],
             "email": user.email,
         }
         

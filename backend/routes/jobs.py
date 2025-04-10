@@ -92,7 +92,7 @@ def search():
 @jobs_bp.route("/getRecommendations", methods=["GET"])
 def getRecommendations():
     """
-    Scrapes jobs based on user's skills, job levels, and locations
+    Scrapes jobs based on user's skills, job levels, and locations from the selected profile
     
     :return: JSON object with job results
     """
@@ -100,14 +100,24 @@ def getRecommendations():
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()
 
-        skill_sets = [x["value"] for x in user["skills"]]
-        job_levels_sets = [x["value"] for x in user["job_levels"]]
-        locations_set = [x["value"] for x in user["locations"]]
+        # Get the selected profile index from query parameter, default to user's default_profile
+        selected_profile_idx = request.args.get("selected_profile", type=int, default=user.default_profile)
+
+        # Validate the selected profile index
+        if not user.profiles or selected_profile_idx < 0 or selected_profile_idx >= len(user.profiles):
+            return jsonify({"error": "Invalid or no profile selected"}), 400
+
+        # Get the selected profile
+        selected_profile = user.profiles[selected_profile_idx]
+        
+        skill_sets = selected_profile.skills
+        job_levels_sets = selected_profile.job_levels
+        locations_set = selected_profile.locations
         
         if not skill_sets or not locations_set:
-            return jsonify({"error": "No skills and/or locations found"}), 400
+            return jsonify({"error": "No skills and/or locations found in selected profile"}), 400
         
-        keywords = random.choice(skill_sets) + ' ' + (random.choice(job_levels_sets) if len(job_levels_sets) > 0 else '')
+        keywords = random.choice(skill_sets) + ' ' + (random.choice(job_levels_sets) if job_levels_sets else '')
         location = random.choice(locations_set)
         
         return scrape_careerbuilder_jobs(keywords, '', location)
