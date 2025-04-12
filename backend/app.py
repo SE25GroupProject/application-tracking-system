@@ -2,6 +2,8 @@
 The flask application for our program
 """
 
+import os
+
 from flask import Flask, jsonify
 from flask_cors import CORS, cross_origin
 from authlib.integrations.flask_client import OAuth
@@ -15,7 +17,6 @@ from routes.applications import applications_bp
 from routes.resume import resume_bp
 from routes.jobs import jobs_bp
 
-import os
 
 
 def create_app():
