@@ -78,14 +78,18 @@ def search():
     :return: JSON object with job results
     """
     try:
-        keywords = request.args.get("keywords")
-        company = request.args.get("company")
-        location = request.args.get("location")
+        keywords = request.args.get("keywords", "")
+        company = request.args.get("company", "")
+        location = request.args.get("location", "")
+        
+        if not any([keywords, company, location]):
+            return jsonify({"error": "At least one search parameter (keywords, company, or location) is required"}), 400
 
-        return scrape_careerbuilder_jobs(keywords, company, location)
+        results = scrape_careerbuilder_jobs(keywords, company, location)
+        return jsonify(results), 200
     
     except Exception as err:
-        print(err)
+        print(f"Search error: {err}")
         return jsonify({"error": "Internal server error"}), 500
     
 
