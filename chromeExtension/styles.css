@@ -1,0 +1,13 @@
+body {
+    width: 350px;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+  }
+  input, button {
+    margin: 5px;
+    padding: 5px;
+    width: calc(100% - 12px);
+  }
+  button {
+    cursor: pointer;
+  }

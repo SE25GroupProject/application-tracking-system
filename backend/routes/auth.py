@@ -199,3 +199,23 @@ def logout():
 
     except:
         return jsonify({"error": "Internal server error"}), 500
+
+@auth_bp.route("/protected-endpoint", methods=["GET"])
+def protected_endpoint():
+    try:
+        token = get_token_from_header()
+        user_id = get_userid_from_header()
+        user = Users.objects(id=user_id).first()
+        if not user or not any(t["token"] == token for t in user["authTokens"]):
+            return jsonify({"error": "Invalid or expired token"}), 401
+        
+        return jsonify({
+            "message": "Protected data accessed",
+            "user": {
+                "id": user.id,
+                "fullName": user.fullName,
+                "email": user.email
+            }
+        }), 200
+    except:
+        return jsonify({"error": "Internal server error"}), 500

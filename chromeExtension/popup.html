@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Extension</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="auth-section">
+    <h2>Authenticate</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <input type="text" id="fullName" placeholder="Full Name (for signup)">
+    <button id="login-btn">Login</button>
+    <button id="signup-btn">Sign Up</button>
+    <button id="google-btn">Sign in with Google</button>
+  </div>
+  <div id="content-section" style="display:none;">
+    <h2>Welcome, <span id="user-name"></span></h2>
+    <button id="fetch-data-btn">Fetch Protected Data</button>
+    <button id="logout-btn">Logout</button>
+    <pre id="api-result"></pre>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
