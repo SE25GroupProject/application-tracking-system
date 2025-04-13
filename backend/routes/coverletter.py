@@ -26,7 +26,7 @@ def create_coverletter():
         user.save()
 
         return jsonify({"message": "Cover letter created successfully"}), 201
-    except Exception as e:
+    except ValueError as e:
         print(e)
         return jsonify({"error": "Internal server error"}), 500
 
@@ -41,7 +41,7 @@ def get_all_coverletters():
         user = Users.objects(id=userid).first()
 
         return jsonify({"coverletters": user.coverletters}), 200
-    except Exception as e:
+    except ValueError as e:
         print(e)
         return jsonify({"error": "Internal server error"}), 500
 
@@ -59,7 +59,7 @@ def get_coverletter(coverletter_idx):
             return jsonify({"error": "Cover letter not found"}), 404
 
         return jsonify({"coverletter": user.coverletters[coverletter_idx]}), 200
-    except Exception as e:
+    except ValueError as e:
         print(e)
         return jsonify({"error": "Internal server error"}), 500
 
@@ -85,7 +85,7 @@ def update_coverletter(coverletter_idx):
         user.save()
 
         return jsonify({"message": "Cover letter updated successfully"}), 200
-    except Exception as e:
+    except ValueError as e:
         print(e)
         return jsonify({"error": "Internal server error"}), 500
 
@@ -106,6 +106,6 @@ def delete_coverletter(coverletter_idx):
         user.save()
 
         return jsonify({"message": "Cover letter deleted successfully"}), 200
-    except Exception as e:
+    except ValueError as e:
         print(e)
         return jsonify({"error": "Internal server error"}), 500
