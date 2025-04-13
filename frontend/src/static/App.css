@@ -205,6 +205,21 @@ input:focus-visible {
   opacity: 50%;
 }
 
+.custom-btn.alt {
+  color: #296e85;
+  border: solid 1px #296e85;
+  border-radius: 5px;
+  transition: all ease-in-out 0.3s;
+  background-color: transparent;
+}
+
+.custom-btn.alt:hover {
+  border-color: #1e4c5b;
+  color: #1e4c5b;
+  transition: all ease-in-out 0.3s;
+  background-color: #dee7f4;
+}
+
 .delete-btn {
   background-color: #e54b4b;
   border: none;
