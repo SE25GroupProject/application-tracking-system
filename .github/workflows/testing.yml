@@ -29,7 +29,6 @@ jobs:
 
       - name: Create application.yml
         run: |
-          mkdir -p ./backend  # Ensure the backend directory exists
           echo "GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}" >> ./backend/application.yml
           echo "GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}" >> ./backend/application.yml
           echo "CONF_URL: ${{ secrets.CONF_URL }}" >> ./backend/application.yml
@@ -37,16 +36,18 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd backend
           python -m pip install --upgrade pip
           pip install pytest coverage
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Test with pytest
         run: |
+          cd backend
           coverage run -m pytest
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: coverage.xml
+          path-to-lcov: backend/coverage.xml
