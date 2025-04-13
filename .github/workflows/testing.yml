@@ -2,7 +2,7 @@ name: Run Pytest with Coverage + Coveralls
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Create .env file
         run: |
@@ -31,22 +31,23 @@ jobs:
           echo "CONF_URL: ${{ secrets.CONF_URL }}" >> ./backend/application.yml
           echo "SECRET_KEY: ${{ secrets.SECRET_KEY }}" >> ./backend/application.yml
 
-      - name: Build and start all services with environment variables
-        run: |
-          docker compose -f docker-compose.yaml --env-file .env up -d --build
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9.7"
 
-      - name: Run tests and upload to Coveralls
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      - name: Install dependencies
         run: |
-          docker compose run --rm \
-            -e COVERALLS_REPO_TOKEN=${{ secrets.COVERALLS_REPO_TOKEN }} \
-            api bash -c "
-              pip install coveralls &&
-              pytest --cov=. --cov-report=xml &&
-              coveralls --service=github
-            "
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Shut down services
-        if: always()
-        run: docker compose down
+      - name: Test with pytest
+        run: |
+          python -m pytest --cov=./myapp --cov-report xml
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage.xml
