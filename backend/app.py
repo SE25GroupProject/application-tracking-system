@@ -54,6 +54,7 @@ def create_app():
     flask_app.register_blueprint(applications_bp)
     flask_app.register_blueprint(resume_bp)
     flask_app.register_blueprint(jobs_bp)
+    flask_app.register_blueprint(coverletter_bp)
 
     @flask_app.route("/")
     @cross_origin()
