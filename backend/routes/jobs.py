@@ -85,9 +85,8 @@ def search():
 
         results = scrape_careerbuilder_jobs(keywords, company, location)
         return jsonify(results), 200
-    
-    except Exception as err:
-        print(f"Search error: {err}")
+
+    except TimeoutError as err:
         return jsonify({"error": "Internal server error"}), 500
 
 
