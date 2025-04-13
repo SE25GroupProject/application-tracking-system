@@ -127,7 +127,8 @@ def sign_up():
             resumeFeedbacks=[],
             profiles=[default_profile],  # Initialize with one empty profile
             default_profile=0,
-            email=""
+            email="",
+            coverletters=[]
         )
         user.save()
         return jsonify(user.to_json()), 200

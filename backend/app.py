@@ -16,6 +16,7 @@ from routes.profile import profile_bp
 from routes.applications import applications_bp
 from routes.resume import resume_bp
 from routes.jobs import jobs_bp
+from routes.coverletter import coverletter_bp
 
 
 
