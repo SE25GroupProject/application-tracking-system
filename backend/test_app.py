@@ -284,11 +284,11 @@ def test_resume_pdf(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume.pdf"
     with open(pdf_path, "rb") as f:
@@ -324,7 +324,7 @@ def test_resume_dne(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
@@ -348,14 +348,17 @@ def test_resume_non_pdf(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
 
     # Prepare form data
     data = dict(
-        file=(BytesIO(b"testing resume that is not the expected file type"), "resume.txt"),
+        file=(
+            BytesIO(b"testing resume that is not the expected file type"),
+            "resume.txt",
+        ),
     )
 
     # Send POST request with txt file
@@ -383,7 +386,7 @@ def test_resume_feedback_dne(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
@@ -395,7 +398,7 @@ def test_resume_feedback_dne(client, mocker, user):
     assert len(jdata) == 0
 
 
-# 15. testing resume feedback on a valid instance (note that ollama has to be running for this to work)
+# 15. test resume feedback on a valid instance (note that ollama has to be running for this to work)
 def test_resume_feedback(client, mocker, user):
     """
     Tests that llm produces resume feedback and endpoint works
@@ -409,11 +412,11 @@ def test_resume_feedback(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume.pdf"
     with open(pdf_path, "rb") as f:
@@ -437,7 +440,8 @@ def test_resume_feedback(client, mocker, user):
     assert len(jdata) == 1
 
 
-# 16. testing resume feedback on a valid instance by index (note that ollama has to be running for this to work)
+# 16. testing resume feedback on a valid instance by index
+# (note that ollama has to be running for this to work)
 def test_resume_feedback_by_idx(client, mocker, user):
     """
     Tests that llm produces resume feedback and endpoint works to retrieve by index
@@ -451,11 +455,11 @@ def test_resume_feedback_by_idx(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume.pdf"
     with open(pdf_path, "rb") as f:
@@ -476,8 +480,8 @@ def test_resume_feedback_by_idx(client, mocker, user):
     rv = client.get("/resume-feedback/0", headers=header)
     assert rv.status_code == 200
 
-
-# 17. testing resume feedback on a valid instance by index (note that ollama has to be running for this to work)
+# 17. testing resume feedback on a valid instance by index
+# (note that ollama has to be running for this to work)
 def test_resume_feedback_by_idx_invalid_too_high(client, mocker, user):
     """
     Tests error case where llm produces resume feedback but is retrieved with invalid index
@@ -491,11 +495,11 @@ def test_resume_feedback_by_idx_invalid_too_high(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume.pdf"
     with open(pdf_path, "rb") as f:
@@ -516,8 +520,8 @@ def test_resume_feedback_by_idx_invalid_too_high(client, mocker, user):
     rv = client.get("/resume-feedback/3", headers=header)
     assert rv.status_code == 400
 
-
-# 18. testing resume feedback on a valid instance by index (note that ollama has to be running for this to work)
+# 18. testing resume feedback on a valid instance by index
+# (note that ollama has to be running for this to work)
 def test_resume_feedback_by_idx_invalid_negative(client, mocker, user):
     """
     Tests error case where llm produces resume feedback but is retrieved with invalid index
@@ -531,11 +535,11 @@ def test_resume_feedback_by_idx_invalid_negative(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume.pdf"
     with open(pdf_path, "rb") as f:
@@ -557,7 +561,8 @@ def test_resume_feedback_by_idx_invalid_negative(client, mocker, user):
     assert rv.status_code == 404
 
 
-# 19. testing deleting resume feedback on a valid instance by index (note that ollama has to be running for this to work)
+# 19. testing deleting resume feedback on a valid instance by index
+# (note that ollama has to be running for this to work)
 def test_resume_delete(client, mocker, user):
     """
     Tests the functionality of deleting a resume that exists
@@ -571,11 +576,11 @@ def test_resume_delete(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume.pdf"
     with open(pdf_path, "rb") as f:
@@ -596,8 +601,8 @@ def test_resume_delete(client, mocker, user):
     rv = client.delete("/resume/0", headers=header)
     assert rv.status_code == 200
 
-
-# 20. testing deleting resume feedback on invalid index (note that ollama has to be running for this to work)
+# 20. testing deleting resume feedback on invalid index
+# (note that ollama has to be running for this to work)
 def test_resume_delete_invalid(client, mocker, user):
     """
     Tests error case of deleting resume at wrong index
@@ -611,11 +616,11 @@ def test_resume_delete_invalid(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume.pdf"
     with open(pdf_path, "rb") as f:
@@ -637,7 +642,8 @@ def test_resume_delete_invalid(client, mocker, user):
     assert rv.status_code == 400
 
 
-# 21. testing deleting resume feedback on empty list (note that ollama has to be running for this to work)
+# 21. testing deleting resume feedback on empty list
+# (note that ollama has to be running for this to work)
 def test_resume_delete_dne(client, mocker, user):
     """
     Tests error case of deleting resume that doesn't exist
@@ -651,7 +657,7 @@ def test_resume_delete_dne(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
@@ -660,8 +666,8 @@ def test_resume_delete_dne(client, mocker, user):
     rv = client.delete("/resume/2", headers=header)
     assert rv.status_code == 400
 
-
-# 22. testing resume on an alternate pdf file (note that ollama has to be running for this to work)
+# 22. testing resume on an alternate pdf file
+# (note that ollama has to be running for this to work)
 def test_resume_pdf_2(client, mocker, user):
     """
     Tests that using the resume endpoint accepts data when valid
@@ -675,11 +681,11 @@ def test_resume_pdf_2(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume-2.pdf"
     with open(pdf_path, "rb") as f:
@@ -700,8 +706,8 @@ def test_resume_pdf_2(client, mocker, user):
     rv = client.get("/resume", headers=header)
     assert rv.status_code == 200
 
-
-# 23. testing resume upload with 2 pdf files (note that ollama has to be running for this to work)
+# 23. testing resume upload with 2 pdf files
+# (note that ollama has to be running for this to work)
 def test_resume_pdf_multiple(client, mocker, user):
     """
     Tests that the db can store multiple resumes
@@ -715,16 +721,16 @@ def test_resume_pdf_multiple(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume-2.pdf"
     with open(pdf_path, "rb") as f:
         pdf_bytes = BytesIO(f.read())
-    
+
     pdf_path_2 = "data/sample-resume-2.pdf"
     with open(pdf_path_2, "rb") as f:
         pdf_bytes_2 = BytesIO(f.read())
@@ -754,7 +760,8 @@ def test_resume_pdf_multiple(client, mocker, user):
     assert rv.status_code == 200
 
 
-# 24. testing feedback retrieval with 2 pdf files (note that ollama has to be running for this to work)
+# 24. testing feedback retrieval with 2 pdf files
+# (note that ollama has to be running for this to work)
 def test_resume_pdf_multiple_feedback(client, mocker, user):
     """
     Tests that multiple resumes leads to multiple feedback being stored
@@ -768,16 +775,16 @@ def test_resume_pdf_multiple_feedback(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume-2.pdf"
     with open(pdf_path, "rb") as f:
         pdf_bytes = BytesIO(f.read())
-    
+
     pdf_path_2 = "data/sample-resume-2.pdf"
     with open(pdf_path_2, "rb") as f:
         pdf_bytes_2 = BytesIO(f.read())
@@ -809,7 +816,8 @@ def test_resume_pdf_multiple_feedback(client, mocker, user):
     assert len(jdata) == 2
 
 
-# 25. testing feedback retrieval with 2 pdf files by index (note that ollama has to be running for this to work)
+# 25. testing feedback retrieval with 2 pdf files by index
+# (note that ollama has to be running for this to work)
 def test_resume_pdf_multiple_feedback_by_idx(client, mocker, user):
     """
     Tests feedback retrieval by idx
@@ -823,16 +831,16 @@ def test_resume_pdf_multiple_feedback_by_idx(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume-2.pdf"
     with open(pdf_path, "rb") as f:
         pdf_bytes = BytesIO(f.read())
-    
+
     pdf_path_2 = "data/sample-resume-2.pdf"
     with open(pdf_path_2, "rb") as f:
         pdf_bytes_2 = BytesIO(f.read())
@@ -862,7 +870,8 @@ def test_resume_pdf_multiple_feedback_by_idx(client, mocker, user):
     assert rv.status_code == 200
 
 
-# 26. testing feedback retrieval with 2 pdf files by different index (note that ollama has to be running for this to work)
+# 26. testing feedback retrieval with 2 pdf files by different index
+# (note that ollama has to be running for this to work)
 def test_resume_pdf_multiple_feedback_by_idx_2(client, mocker, user):
     """
     Tests feedback retrieval by idx
@@ -876,16 +885,16 @@ def test_resume_pdf_multiple_feedback_by_idx_2(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume-2.pdf"
     with open(pdf_path, "rb") as f:
         pdf_bytes = BytesIO(f.read())
-    
+
     pdf_path_2 = "data/sample-resume-2.pdf"
     with open(pdf_path_2, "rb") as f:
         pdf_bytes_2 = BytesIO(f.read())
@@ -915,7 +924,8 @@ def test_resume_pdf_multiple_feedback_by_idx_2(client, mocker, user):
     assert rv.status_code == 200
 
 
-# 27. testing deleting first resume from multiple resumes (note that ollama has to be running for this to work)
+# 27. testing deleting first resume from multiple resumes
+# (note that ollama has to be running for this to work)
 def test_resume_delete_first(client, mocker, user):
     """
     Tests deleting a resume
@@ -929,16 +939,16 @@ def test_resume_delete_first(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume-2.pdf"
     with open(pdf_path, "rb") as f:
         pdf_bytes = BytesIO(f.read())
-    
+
     pdf_path_2 = "data/sample-resume-2.pdf"
     with open(pdf_path_2, "rb") as f:
         pdf_bytes_2 = BytesIO(f.read())
@@ -968,7 +978,8 @@ def test_resume_delete_first(client, mocker, user):
     assert rv.status_code == 200
 
 
-# 28. testing deleting last resume from multiple resumes (note that ollama has to be running for this to work)
+# 28. testing deleting last resume from multiple resumes
+# (note that ollama has to be running for this to work)
 def test_resume_delete_last(client, mocker, user):
     """
     Tests deleting a resume
@@ -982,16 +993,16 @@ def test_resume_delete_last(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume-2.pdf"
     with open(pdf_path, "rb") as f:
         pdf_bytes = BytesIO(f.read())
-    
+
     pdf_path_2 = "data/sample-resume-2.pdf"
     with open(pdf_path_2, "rb") as f:
         pdf_bytes_2 = BytesIO(f.read())
@@ -1021,7 +1032,8 @@ def test_resume_delete_last(client, mocker, user):
     assert rv.status_code == 200
 
 
-# 29. testing deleting multiple resumes (note that ollama has to be running for this to work)
+# 29. testing deleting multiple resumes
+# (note that ollama has to be running for this to work)
 def test_delete_multiple_resumes(client, mocker, user):
     """
     Tests deleting multiple resumes
@@ -1035,16 +1047,16 @@ def test_delete_multiple_resumes(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume-2.pdf"
     with open(pdf_path, "rb") as f:
         pdf_bytes = BytesIO(f.read())
-    
+
     pdf_path_2 = "data/sample-resume-2.pdf"
     with open(pdf_path_2, "rb") as f:
         pdf_bytes_2 = BytesIO(f.read())
@@ -1078,7 +1090,8 @@ def test_delete_multiple_resumes(client, mocker, user):
     assert rv.status_code == 200
 
 
-# 30. testing deleting invalid index in multiple resumes (note that ollama has to be running for this to work)
+# 30. testing deleting invalid index in multiple resumes
+# (note that ollama has to be running for this to work)
 def test_resume_delete_multiple_invalid(client, mocker, user):
     """
     Tests deleting invalid index in list of multiple resumes
@@ -1092,16 +1105,16 @@ def test_resume_delete_multiple_invalid(client, mocker, user):
         "models.get_new_user_id",
         return_value=-1,
     )
-    
+
     user, header = user
     user["applications"] = []
     user.save()
-    
+
     # Read the actual PDF file
     pdf_path = "data/sample-resume-2.pdf"
     with open(pdf_path, "rb") as f:
         pdf_bytes = BytesIO(f.read())
-    
+
     pdf_path_2 = "data/sample-resume-2.pdf"
     with open(pdf_path_2, "rb") as f:
         pdf_bytes_2 = BytesIO(f.read())
@@ -1142,9 +1155,9 @@ def test_search_route(client, mocker):
                 "link": "https://www.careerbuilder.com/job/J3R5G06ZWMK43M198Z2",
                 "location": "New York, NY (Onsite)",
                 "title": "Mission Software Engineer, Federal",
-                "type": "Full-Time"
+                "type": "Full-Time",
             }
-        ]
+        ],
     )
     rv = client.get("/search?keywords=engineer&company=Scale AI&location=New York")
     assert rv.status_code == 200
@@ -1154,10 +1167,7 @@ def test_search_route(client, mocker):
 
 # 32. Test search route with no results
 def test_search_route_no_results(client, mocker):
-    mocker.patch(
-        "routes.jobs.scrape_careerbuilder_jobs",
-        return_value=[]
-    )
+    mocker.patch("routes.jobs.scrape_careerbuilder_jobs", return_value=[])
     rv = client.get("/search?keywords=nonexistent&company=Nonexistent&location=Nowhere")
     assert rv.status_code == 200
     data = json.loads(rv.data)
@@ -1181,9 +1191,9 @@ def test_get_recommendations_route(client, mocker, user):
                 "link": "https://www.careerbuilder.com/job/J3R5G06ZWMK43M198Z2",
                 "location": "New York, NY (Onsite)",
                 "title": "Mission Software Engineer, Federal",
-                "type": "Full-Time"
+                "type": "Full-Time",
             }
-        ]
+        ],
     )
     user, header = user
     user.skills.append({"value": "Python"})
@@ -1272,11 +1282,11 @@ def test_get_recommendations_route_multiple_job_levels(client, mocker, user):
                 "link": "https://www.careerbuilder.com/job/J3R5G06ZWMK43M198Z2",
                 "location": "New York, NY (Onsite)",
                 "title": "Mission Software Engineer, Federal",
-                "type": "Full-Time"
+                "type": "Full-Time",
             }
-        ]
+        ],
     )
-    
+
     user, header = user
     user.skills.append({"value": "Python"})
     user.locations.append({"value": "New York"})
@@ -1301,9 +1311,9 @@ def test_search_route_special_characters(client, mocker):
                 "link": "https://www.careerbuilder.com/job/J3R5G06ZWMK43M198Z2",
                 "location": "New York, NY (Onsite)",
                 "title": "Mission Software Engineer, Federal",
-                "type": "Full-Time"
+                "type": "Full-Time",
             }
-        ]
+        ],
     )
     rv = client.get("/search?keywords=engineer&company=Scale AI&location=New+York")
     assert rv.status_code == 200
@@ -1340,9 +1350,9 @@ def test_get_recommendations_route_multiple_skills(client, mocker, user):
                 "link": "https://www.careerbuilder.com/job/J3R5G06ZWMK43M198Z2",
                 "location": "New York, NY (Onsite)",
                 "title": "Mission Software Engineer, Federal",
-                "type": "Full-Time"
+                "type": "Full-Time",
             }
-        ]
+        ],
     )
     user, header = user
     user.skills.append({"value": "JavaScript"})
@@ -1367,9 +1377,9 @@ def test_get_recommendations_route_multiple_locations(client, mocker, user):
                 "link": "https://www.careerbuilder.com/job/J3R5G06ZWMK43M198Z2",
                 "location": "New York, NY (Onsite)",
                 "title": "Mission Software Engineer, Federal",
-                "type": "Full-Time"
+                "type": "Full-Time",
             }
-        ]
+        ],
     )
     user, header = user
     user.skills.append({"value": "Python"})
@@ -1405,12 +1415,14 @@ def test_search_route_long_keywords(client, mocker):
                 "link": "https://www.careerbuilder.com/job/J3R5G06ZWMK43M198Z2",
                 "location": "New York, NY (Onsite)",
                 "title": "Mission Software Engineer, Federal",
-                "type": "Full-Time"
+                "type": "Full-Time",
             }
-        ]
+        ],
     )
     long_keywords = "engineer" * 50
-    rv = client.get(f"/search?keywords={long_keywords}&company=Scale AI&location=New York")
+    rv = client.get(
+        f"/search?keywords={long_keywords}&company=Scale AI&location=New York"
+    )
     assert rv.status_code == 200
     data = json.loads(rv.data)
     assert len(data) > 0
@@ -1427,9 +1439,9 @@ def test_get_recommendations_route_no_user_data(client, mocker):
                 "link": "https://www.careerbuilder.com/job/J3R5G06ZWMK43M198Z2",
                 "location": "New York, NY (Onsite)",
                 "title": "Mission Software Engineer, Federal",
-                "type": "Full-Time"
+                "type": "Full-Time",
             }
-        ]
+        ],
     )
     header = {"Authorization": "Bearer invalid"}
     rv = client.get("/getRecommendations", headers=header)

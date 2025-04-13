@@ -4,9 +4,9 @@ This module defines the database models for the application.
 
 from db import db
 
-
 # Define an EmbeddedDocument for the Profile structure
 class Profile(db.EmbeddedDocument):
+    """This class represents a user profile."""
     profileName = db.StringField(unique=True)
     skills = db.ListField(db.StringField())
     job_levels = db.ListField(db.StringField())
@@ -17,6 +17,7 @@ class Profile(db.EmbeddedDocument):
 
 # Updated Users class
 class Users(db.Document):
+    """This class represents a user in the application."""
     id = db.IntField(primary_key=True)
     fullName = db.StringField()
     username = db.StringField()
@@ -27,11 +28,11 @@ class Users(db.Document):
     resumes = db.ListField(db.FileField())
     coverletters = db.ListField(db.FileField())
     resumeFeedbacks = db.ListField()
-    
+
     # Add a list of profiles
     profiles = db.EmbeddedDocumentListField(Profile)
-    
-    # Add a pointer to the default profile 
+
+    # Add a pointer to the default profile
     default_profile = db.IntField(default=0)
 
     def to_json(self):
