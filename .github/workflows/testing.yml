@@ -30,8 +30,8 @@ jobs:
           echo "CONF_URL: ${{ secrets.CONF_URL }}" >> ./backend/application.yml
           echo "SECRET_KEY: ${{ secrets.SECRET_KEY }}" >> ./backend/application.yml
 
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v3
+      - name: Set up Python 3.9.7
+        uses: actions/setup-python@v4
         with:
           python-version: "3.9.7"
 
