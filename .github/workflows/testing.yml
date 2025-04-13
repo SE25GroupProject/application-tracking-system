@@ -39,7 +39,6 @@ jobs:
           python -m pip install --upgrade pip
           cd backend
           pip install -r requirements.txt
-          pip install pytest coverage
 
       - name: Test with pytest
         run: |
