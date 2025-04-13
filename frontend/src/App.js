@@ -31,8 +31,10 @@ export default class App extends React.Component {
   }
 
   updateProfile = (body, name = "") => {
+    let profileId = this.state.userProfile[CONSTANTS.PROFILE.ID];
+
     axios
-      .post("http://localhost:5000/updateProfile", body, {
+      .post(`http://localhost:5000/updateProfile/${profileId}`, body, {
         headers: {
           userid: localStorage.getItem("userId"),
           Authorization: `Bearer ${localStorage.getItem("userId")}`,
