@@ -13,20 +13,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Compose
-        run: docker compose version
-
-      - name: Build and start all services
-        run: docker compose -f docker-compose.yaml up -d --build
-
-      - name: Wait for services to initialize
-        run: sleep 30
+      - name: Build and start all services with environment variables
+        run: |
+          docker compose -f docker-compose.yml up -d --build
 
       - name: Run tests and upload to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          MONGO_INITDB_ROOT_USERNAME: user
+          MONGO_INITDB_ROOT_PASSWORD: pass
+          CLUSTER_URL: mongodb
+          ME_CONFIG_MONGODB_ADMINUSERNAME: user
+          ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+          ME_CONFIG_MONGODB_URL: mongodb://user:pass@mongodb/
+          ME_CONFIG_BASICAUTH: false
         run: |
-          docker-compose run --rm api bash -c "
+          docker compose run --rm api bash -c "
             pip install coveralls &&
             pytest --cov=. --cov-report=xml &&
             coveralls --service=github
@@ -34,4 +36,4 @@ jobs:
 
       - name: Shut down services
         if: always()
-        run: docker-compose down
+        run: docker compose down
