@@ -25,11 +25,11 @@ def create_app():
     Creates and initializes the Flask application
     """
 
-    app = Flask(__name__)
-    CORS(app)
+    flask_app = Flask(__name__)
+    CORS(flask_app)
 
     # Initialize OAuth
-    oauth = OAuth(app)
+    oauth = OAuth(flask_app)
     auth_bp.oauth = oauth
 
     db_username = os.getenv("MONGO_INITDB_ROOT_USERNAME", "empty")
@@ -37,32 +37,31 @@ def create_app():
     db_cluster_url = os.getenv("CLUSTER_URL", "empty")
 
     # Set configuration
-    app.secret_key = config["SECRET_KEY"]
-    app.config["MONGODB_SETTINGS"] = {
+    flask_app.secret_key = config["SECRET_KEY"]
+    flask_app.config["MONGODB_SETTINGS"] = {
         "db": "appTracker",
         "host": f"mongodb://{db_username}:{db_password}@{db_cluster_url}/",
     }
 
-    db.init_app(app)
+    db.init_app(flask_app)
 
     # Register middleware
-    app.before_request(middleware(["/applications", "/resume"]))
+    flask_app.before_request(middleware(["/applications", "/resume"]))
 
     # Register blueprints
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(profile_bp)
-    app.register_blueprint(applications_bp)
-    app.register_blueprint(resume_bp)
-    app.register_blueprint(jobs_bp)
-    app.register_blueprint(coverletter_bp)
+    flask_app.register_blueprint(auth_bp)
+    flask_app.register_blueprint(profile_bp)
+    flask_app.register_blueprint(applications_bp)
+    flask_app.register_blueprint(resume_bp)
+    flask_app.register_blueprint(jobs_bp)
 
-    @app.route("/")
+    @flask_app.route("/")
     @cross_origin()
     # pylint: disable=unused-variable
     def health_check():
         return jsonify({"message": "Server up and running"}), 200
 
-    return app
+    return flask_app
 
 
 if __name__ == "__main__":
