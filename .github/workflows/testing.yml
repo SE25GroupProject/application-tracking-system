@@ -23,6 +23,14 @@ jobs:
           echo "ME_CONFIG_MONGODB_URL=mongodb://user:pass@mongodb/" >> .env
           echo "ME_CONFIG_BASICAUTH=false" >> .env
 
+      - name: Create application.yml
+        run: |
+          mkdir -p ./backend  # Ensure the backend directory exists
+          echo "GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}" >> ./backend/application.yml
+          echo "GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}" >> ./backend/application.yml
+          echo "CONF_URL: ${{ secrets.CONF_URL }}" >> ./backend/application.yml
+          echo "SECRET_KEY: ${{ secrets.SECRET_KEY }}" >> ./backend/application.yml
+
       - name: Build and start all services with environment variables
         run: |
           docker compose -f docker-compose.yaml --env-file .env up -d --build
