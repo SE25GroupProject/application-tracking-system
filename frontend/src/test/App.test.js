@@ -7,6 +7,53 @@ import {
 } from "@testing-library/react";
 import App from "../App";
 import axios from "axios";
+import { CONSTANTS } from "../data/Constants";
+
+// --- Test Data
+const profile0 = {
+  address: null,
+  email: "person@gmail.com",
+  fullName: "Person",
+  institution: null,
+  job_levels: [],
+  locations: [],
+  phone_number: null,
+  profileName: "Default Profile",
+  profileid: 0,
+  skills: [],
+};
+
+const profile1 = {
+  address: null,
+  email: "person@gmail.com",
+  fullName: "Person",
+  institution: null,
+  job_levels: [],
+  locations: [],
+  phone_number: null,
+  profileName: "Profile 1",
+  profileid: 1,
+  skills: [],
+};
+
+const profile2 = {
+  address: null,
+  email: "person@gmail.com",
+  fullName: "Person",
+  institution: null,
+  job_levels: [],
+  locations: [],
+  phone_number: null,
+  profileName: "Profile 2",
+  profileid: 2,
+  skills: [],
+};
+
+const profileList = [
+  { isDefault: true, profileName: "Default Profile", profileid: 0 },
+  { isDefault: false, profileName: "Profile 1", profileid: 1 },
+  { isDefault: false, profileName: "Profile 2", profileid: 2 },
+];
 
 // --- Mocks for Child Components ---
 // These mocks ensure predictable output in tests.
@@ -44,7 +91,16 @@ jest.mock("../matches/MatchesPage", () => () => (
 // --- Mock axios ---
 jest.mock("axios");
 
-describe("App Component", () => {
+// axios.get.mockImplementation(() =>
+//   Promise.resolve({
+//     data: {
+//       [CONSTANTS.PROFILE.PROFILE_LIST]: profileList,
+//       [CONSTANTS.PROFILE.DEFAULT_PROFILE]: 0,
+//     },
+//   })
+// );
+
+describe("App Component, not logged in", () => {
   beforeEach(() => {
     localStorage.clear();
     jest.clearAllMocks();
@@ -64,22 +120,40 @@ describe("App Component", () => {
     expect(loginPage).toBeInTheDocument();
   });
 
-  // 3. When token exists, axios.get is called and Sidebar is rendered.
-  test("renders Sidebar when token exists and profile is fetched", async () => {
+  // 3. When no token exists, axios.get is not called.
+  test("does not call axios.get when no token exists", () => {
+    render(<App />);
+    expect(axios.get).not.toHaveBeenCalled();
+  });
+});
+
+describe("App Component, logged in", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    jest.clearAllMocks();
+
     localStorage.setItem("token", "dummy-token");
     localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "John Doe" } });
+    axios.get.mockImplementation(() =>
+      Promise.resolve({
+        data: {
+          [CONSTANTS.PROFILE.PROFILE_LIST]: profileList,
+          [CONSTANTS.PROFILE.DEFAULT_PROFILE]: 0,
+        },
+      })
+    );
+  });
+
+  // 4. When token exists, axios.get is called and Sidebar is rendered.
+  test("renders Sidebar when token exists and profile is fetched", async () => {
     render(<App />);
     await waitFor(() => {
       expect(screen.getByTestId("sidebar")).toBeInTheDocument();
     });
   });
 
-  // 4. Clicking "LogOut" displays the logout modal.
+  // 5. Clicking "LogOut" displays the logout modal.
   test("displays logout modal when LogOut is clicked", async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "John Doe" } });
     render(<App />);
     await waitFor(() => {
       const logoutBtn = screen.getByText(/LogOut/i);
@@ -89,12 +163,9 @@ describe("App Component", () => {
     expect(modalHeader).toBeInTheDocument();
   });
 
-  // 5. Confirming logout removes token and hides the Sidebar.
+  // 6. Confirming logout removes token and hides the Sidebar.
   // Modified to scope the "Logout" button search within the modal.
   test("confirming logout removes token and hides sidebar", async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "John Doe" } });
     render(<App />);
     await waitFor(() => {
       const logoutBtn = screen.getByText(/LogOut/i);
@@ -112,11 +183,8 @@ describe("App Component", () => {
     });
   });
 
-  // 6. Canceling logout hides the logout modal.
+  // 7. Canceling logout hides the logout modal.
   test("cancel logout hides the logout modal", async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "John Doe" } });
     render(<App />);
     await waitFor(() => {
       const logoutBtn = screen.getByText(/LogOut/i);
@@ -129,12 +197,9 @@ describe("App Component", () => {
     });
   });
 
-  // 7. Clicking "Profile" sets currentPage to ProfilePage.
+  // 8. Clicking "Profile" sets currentPage to ProfilePage.
   // Modified to use getByRole for the button.
   test('switchPage sets currentPage to ProfilePage when "Profile" is clicked', async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "Jane Doe" } });
     render(<App />);
     await waitFor(() => {
       const profileBtn = screen.getByRole("button", { name: "Profile" });
@@ -144,12 +209,9 @@ describe("App Component", () => {
     expect(profilePage).toBeInTheDocument();
   });
 
-  // 8. Clicking "Search" sets currentPage to SearchPage.
+  // 9. Clicking "Search" sets currentPage to SearchPage.
   // Modified to use getByRole.
   test('switchPage sets currentPage to SearchPage when "Search" is clicked', async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "John Doe" } });
     render(<App />);
     await waitFor(() => {
       const searchBtn = screen.getByRole("button", { name: "Search" });
@@ -159,12 +221,9 @@ describe("App Component", () => {
     expect(searchPage).toBeInTheDocument();
   });
 
-  // 9. Clicking "Applications" sets currentPage to ApplicationPage.
+  // 10. Clicking "Applications" sets currentPage to ApplicationPage.
   // Modified to use getByRole.
   test('switchPage sets currentPage to ApplicationPage when "Applications" is clicked', async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "John Doe" } });
     render(<App />);
     await waitFor(() => {
       const appBtn = screen.getByRole("button", { name: "Applications" });
@@ -174,12 +233,9 @@ describe("App Component", () => {
     expect(applicationPage).toBeInTheDocument();
   });
 
-  // 10. Clicking "Manage" sets currentPage to ManageResumePage.
+  // 11. Clicking "Manage" sets currentPage to ManageResumePage.
   // Modified to use getByRole.
   test('switchPage sets currentPage to ManageResumePage when "Manage" is clicked', async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "John Doe" } });
     render(<App />);
     await waitFor(() => {
       const manageBtn = screen.getByRole("button", { name: "Manage" });
@@ -189,12 +245,9 @@ describe("App Component", () => {
     expect(managePage).toBeInTheDocument();
   });
 
-  // 11. Clicking "Matches" sets currentPage to MatchesPage.
+  // 12. Clicking "Matches" sets currentPage to MatchesPage.
   // Modified to use getByRole.
   test('switchPage sets currentPage to MatchesPage when "Matches" is clicked', async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "John Doe" } });
     render(<App />);
     await waitFor(() => {
       const matchesBtn = screen.getByRole("button", { name: "Matches" });
@@ -204,24 +257,21 @@ describe("App Component", () => {
     expect(matchesPage).toBeInTheDocument();
   });
 
-  // 12. Renders main structure elements with correct classes.
+  // 13. Renders main structure elements with correct classes.
   test("renders main structure elements with correct classes", async () => {
     render(<App />);
     expect(document.querySelector(".main")).toBeInTheDocument();
     expect(document.querySelector(".content")).toBeInTheDocument();
   });
 
-  // 13. Logout modal is not rendered by default.
+  // 14. Logout modal is not rendered by default.
   test("logout modal is not rendered by default", () => {
     render(<App />);
     expect(document.querySelector(".modal-overlay")).toBeNull();
   });
 
-  // 14. updateProfile updates userProfile and renders ProfilePage.
+  // 15. updateProfile updates userProfile and renders ProfilePage.
   test("updateProfile updates userProfile and renders ProfilePage", async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "Jane Doe" } });
     render(<App />);
     await waitFor(() => {
       const profilePage = screen.getByTestId("profile-page");
@@ -229,28 +279,16 @@ describe("App Component", () => {
     });
   });
 
-  // 15. When token exists, axios.get is called in componentDidMount.
+  // 16. When token exists, axios.get is called in componentDidMount.
   test("calls axios.get in componentDidMount when token exists", async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "John Doe" } });
     render(<App />);
     await waitFor(() => {
       expect(axios.get).toHaveBeenCalled();
     });
   });
 
-  // 16. When no token exists, axios.get is not called.
-  test("does not call axios.get when no token exists", () => {
-    render(<App />);
-    expect(axios.get).not.toHaveBeenCalled();
-  });
-
   // 17. sidebarHandler sets sidebar to true and renders Sidebar.
   test("sidebarHandler sets sidebar state to true and renders Sidebar", async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "John Doe" } });
     render(<App />);
     await waitFor(() => {
       expect(screen.getByTestId("sidebar")).toBeInTheDocument();
@@ -267,9 +305,6 @@ describe("App Component", () => {
 
   // 19. Logout modal displays correct content when active.
   test("renders logout modal with proper content when active", async () => {
-    localStorage.setItem("token", "dummy-token");
-    localStorage.setItem("userId", "123");
-    axios.get.mockResolvedValueOnce({ data: { name: "John Doe" } });
     render(<App />);
     await waitFor(() => {
       fireEvent.click(screen.getByText(/LogOut/i));

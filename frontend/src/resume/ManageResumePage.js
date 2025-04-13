@@ -1,91 +1,100 @@
-import React, { Component } from 'react'
-import { Modal } from 'react-bootstrap'
-import $ from 'jquery'
-import '../static/resume.css'
-import CoverLetter from '../Modals/CoverLetter'
-import ResumeFeedback from '../Modals/ResumeFeedback'
+import React, { Component } from "react";
+import { Alert, Modal } from "react-bootstrap";
+import $ from "jquery";
+import "../static/resume.css";
+import CoverLetter from "../Modals/CoverLetter";
+import ResumeFeedback from "../Modals/ResumeFeedback";
 
 export default class ManageResumePage extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       fileNames: [],
       loading: false,
       coverLetterIdx: null,
-      resumeFeedbackIdx: null
-    }
+      resumeFeedbackIdx: null,
+      showSavedAlert: "",
+    };
   }
 
   getFiles() {
     $.ajax({
-      url: 'http://127.0.0.1:5000/resume',
-      method: 'GET',
+      url: "http://127.0.0.1:5000/resume",
+      method: "GET",
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-        'Access-Control-Allow-Credentials': 'true'
+        Authorization: "Bearer " + localStorage.getItem("token"),
+        "Access-Control-Allow-Origin": "http://127.0.0.1:3000",
+        "Access-Control-Allow-Credentials": "true",
       },
-      credentials: 'include',
+      credentials: "include",
       success: (message, textStatus, response) => {
-        console.log(message)
+        console.log(message);
         this.setState({
           fileNames: message.filenames,
-        })
-      }
-    })
+        });
+      },
+    });
   }
 
   openCoverLetterModal = (idx) => {
     this.setState({ coverLetterIdx: idx });
-  }
+  };
 
-  closeCoverLetterModal = () => {
+  closeCoverLetterModal = (savedLetter = "") => {
     this.setState({ coverLetterIdx: null });
-  }
+
+    if (savedLetter) {
+      this.setState({ showSavedAlert: savedLetter });
+
+      setTimeout(() => {
+        this.setState({ showSavedAlert: "false" });
+      }, 2000);
+    }
+  };
 
   openResumeFeedbackModal = (idx) => {
     this.setState({ resumeFeedbackIdx: idx });
-  }
+  };
 
   closeResumeFeedbackModal = () => {
     this.setState({ resumeFeedbackIdx: null });
-  }
+  };
 
   previewResume(resume_idx) {
     $.ajax({
-      url: 'http://127.0.0.1:5000/resume/' + resume_idx,
-      method: 'GET',
+      url: "http://127.0.0.1:5000/resume/" + resume_idx,
+      method: "GET",
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-        'Access-Control-Allow-Credentials': 'true'
+        Authorization: "Bearer " + localStorage.getItem("token"),
+        "Access-Control-Allow-Origin": "http://127.0.0.1:3000",
+        "Access-Control-Allow-Credentials": "true",
       },
-      xhrFields: { responseType: 'blob' },
-      credentials: 'include',
+      xhrFields: { responseType: "blob" },
+      credentials: "include",
       success: (message, textStatus, response) => {
-        console.log(message)
+        console.log(message);
         if (message) {
-          window.open(URL.createObjectURL(message), '_blank');
+          window.open(URL.createObjectURL(message), "_blank");
         }
-      }
-    })
+      },
+    });
   }
 
   deleteResume(resume_idx) {
     $.ajax({
-      url: 'http://127.0.0.1:5000/resume/' + resume_idx,
-      method: 'DELETE',
+      url: "http://127.0.0.1:5000/resume/" + resume_idx,
+      method: "DELETE",
       headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-        'Access-Control-Allow-Credentials': 'true'
+        Authorization: "Bearer " + localStorage.getItem("token"),
+        "Access-Control-Allow-Origin": "http://127.0.0.1:3000",
+        "Access-Control-Allow-Credentials": "true",
       },
       success: (message, textStatus, response) => {
         this.state.fileNames.splice(resume_idx, 1);
         console.log(response.responseJSON.success);
         this.getFiles();
-      }
-    })
+      },
+    });
   }
 
   uploadResume = (e) => {
@@ -101,34 +110,33 @@ export default class ManageResumePage extends Component {
       }
 
       this.setState({ loading: true });
-      let formData = new FormData()
+      let formData = new FormData();
       const file = event.target.files[0];
-      formData.append('file', file);
+      formData.append("file", file);
       $.ajax({
-        url: 'http://127.0.0.1:5000/resume',
-        method: 'POST',
+        url: "http://127.0.0.1:5000/resume",
+        method: "POST",
         headers: {
-          'Authorization': 'Bearer ' + localStorage.getItem('token'),
-          'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
-          'Access-Control-Allow-Credentials': 'true'
+          Authorization: "Bearer " + localStorage.getItem("token"),
+          "Access-Control-Allow-Origin": "http://127.0.0.1:3000",
+          "Access-Control-Allow-Credentials": "true",
         },
         data: formData,
         contentType: false,
         cache: false,
         processData: false,
         success: (msg) => {
-          console.log("Upload successful:", msg)
-          this.setState({ fileNames: [...this.state.fileNames, file.name] })
-        }
-      }).always(() => this.setState({ loading: false }))
-
+          console.log("Upload successful:", msg);
+          this.setState({ fileNames: [...this.state.fileNames, file.name] });
+        },
+      }).always(() => this.setState({ loading: false }));
     });
 
     fileInput.click();
-  }
+  };
 
   componentDidMount() {
-    this.getFiles()
+    this.getFiles();
   }
 
   componentWillUnmount() {
@@ -137,30 +145,34 @@ export default class ManageResumePage extends Component {
     }
   }
 
-
   render() {
     return (
       <div className="pagelayout">
+        {this.state.showSavedAlert && (
+          <Alert variant="success">
+            {this.state.showSavedAlert} was saved successfully!
+          </Alert>
+        )}
 
         <form id="upload-file" method="post" encType="multipart/form-data">
           <button
             id="upload-file-btn"
             onClick={(event) => {
               if (!this.state.loading) {
-                this.uploadResume(event)
+                this.uploadResume(event);
               }
             }}
             disabled={this.state.loading}
             type="button"
             style={{
-              display: 'block',
-              margin: '0 auto'
+              display: "block",
+              margin: "0 auto",
             }}
           >
-            {this.state.loading ? 'Uploading...' : 'Upload New'}
+            {this.state.loading ? "Uploading..." : "Upload New"}
           </button>
 
-          <div style={{ margin: '1.5em' }}></div>
+          <div style={{ margin: "1.5em" }}></div>
           <div>
             <h2>Uploaded Documents</h2>
             <table>
@@ -211,7 +223,7 @@ export default class ManageResumePage extends Component {
           </div>
           {this.state.coverLetterIdx !== null && (
             <CoverLetter
-              setState={this.closeCoverLetterModal}
+              closeModal={this.closeCoverLetterModal}
               idx={this.state.coverLetterIdx}
             />
           )}
@@ -223,6 +235,6 @@ export default class ManageResumePage extends Component {
           )}
         </form>
       </div>
-    )
+    );
   }
 }
