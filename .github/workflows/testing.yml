@@ -13,20 +13,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Create .env file
+        run: |
+          echo "MONGO_INITDB_ROOT_USERNAME=user" >> .env
+          echo "MONGO_INITDB_ROOT_PASSWORD=pass" >> .env
+          echo "CLUSTER_URL=mongodb" >> .env
+          echo "ME_CONFIG_MONGODB_ADMINUSERNAME=user" >> .env
+          echo "ME_CONFIG_MONGODB_ADMINPASSWORD=pass" >> .env
+          echo "ME_CONFIG_MONGODB_URL=mongodb://user:pass@mongodb/" >> .env
+          echo "ME_CONFIG_BASICAUTH=false" >> .env
+
       - name: Build and start all services with environment variables
         run: |
-          docker compose -f docker-compose.yaml up -d --build
+          docker compose -f docker-compose.yaml --env-file .env up -d --build
 
       - name: Run tests and upload to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          MONGO_INITDB_ROOT_USERNAME: user
-          MONGO_INITDB_ROOT_PASSWORD: pass
-          CLUSTER_URL: mongodb
-          ME_CONFIG_MONGODB_ADMINUSERNAME: user
-          ME_CONFIG_MONGODB_ADMINPASSWORD: pass
-          ME_CONFIG_MONGODB_URL: mongodb://user:pass@mongodb/
-          ME_CONFIG_BASICAUTH: false
         run: |
           docker compose run --rm api bash -c "
             pip install coveralls &&
