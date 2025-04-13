@@ -150,7 +150,7 @@ def login():
         user = Users.objects(username=data["username"], password=password_hash).first()
         
         if user is None:
-            return jsonify({"error": "Wrong username or password"})
+            return jsonify({"error": "Wrong username or password"}), 400
         
         token = str(user["id"]) + "." + str(uuid.uuid4())
         expiry = datetime.now() + timedelta(days=1)
