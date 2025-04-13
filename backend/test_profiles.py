@@ -4,8 +4,8 @@ Test module for profile-related endpoints (starting from Test 42)
 
 import hashlib
 
-import pytest
 import json
+import pytest
 from app import create_app
 from models import Users, Profile
 
@@ -363,9 +363,9 @@ def test_get_profile_list(client, user):
     data = json.loads(rv.data)
     assert len(data["profiles"]) == 2
     assert data["profiles"][0]["profileName"] == "Profile 1"
-    assert data["profiles"][0]["isDefault"] == False
+    assert not data["profiles"][0]["isDefault"]
     assert data["profiles"][1]["profileName"] == "Profile 2"
-    assert data["profiles"][1]["isDefault"] == True
+    assert data["profiles"][1]["isDefault"]
     assert data["default_profile"] == 1
 
 

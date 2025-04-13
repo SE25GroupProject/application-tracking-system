@@ -7,6 +7,7 @@ from db import db
 
 # Define an EmbeddedDocument for the Profile structure
 class Profile(db.EmbeddedDocument):
+    """Profile Class"""
     profileName = db.StringField(unique=True)
     skills = db.ListField(db.StringField())
     job_levels = db.ListField(db.StringField())
@@ -17,6 +18,7 @@ class Profile(db.EmbeddedDocument):
 
 # Updated Users class
 class Users(db.Document):
+    """Users Class"""
     id = db.IntField(primary_key=True)
     fullName = db.StringField()
     username = db.StringField()
@@ -27,18 +29,20 @@ class Users(db.Document):
     resumes = db.ListField(db.FileField())
     coverletters = db.ListField()
     resumeFeedbacks = db.ListField()
-    
+
     # Add a list of profiles
     profiles = db.EmbeddedDocumentListField(Profile)
-    
-    # Add a pointer to the default profile 
+
+    # Add a pointer to the default profile
     default_profile = db.IntField(default=0)
 
-    def to_json(self):
+    def to_json(self, *args, **kwargs):
+        """Convert the document to JSON format"""
         return {"id": self.id, "fullName": self.fullName, "username": self.username}
 
 
 def get_new_user_id():
+    """Get the new user ID by checking the existing users in the database."""
     user_objects = Users.objects()
     if len(user_objects) == 0:
         return 1
@@ -48,6 +52,7 @@ def get_new_user_id():
 
 
 def get_new_application_id(user_id):
+    """Get the new application ID by checking the existing applications for the user."""
     user = Users.objects(id=user_id).first()
 
     if len(user["applications"]) == 0:

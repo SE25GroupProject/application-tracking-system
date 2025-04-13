@@ -1,11 +1,12 @@
 """
 This module contains the routes for user authentication.
 """
-
+import hashlib
+import uuid
+import json
+from datetime import datetime, timedelta
 from flask import Blueprint, jsonify, request, redirect, url_for, session
 from authlib.common.security import generate_token
-from datetime import datetime, timedelta
-import hashlib, uuid, json
 from models import Users, get_new_user_id, Profile
 from config import config
 from utils import get_token_from_header, get_userid_from_header
@@ -15,6 +16,7 @@ auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/users/signupGoogle")
 def signup_google():
+    """Handles signing up with google"""
     auth_bp.oauth.register(
         name="google",
         client_id=config["GOOGLE_CLIENT_ID"],
@@ -30,6 +32,7 @@ def signup_google():
 
 @auth_bp.route("/users/signupGoogle/authorized")
 def authorized_google():
+    """Handles the callback from Google after authorization"""
     token = auth_bp.oauth.google.authorize_access_token()
     user = auth_bp.oauth.google.parse_id_token(token, nonce=session["nonce"])
     session["user"] = user
@@ -99,7 +102,7 @@ def sign_up():
         username_exists = Users.objects(username=data["username"])
         if len(username_exists) != 0:
             return jsonify({"error": "Username already exists"}), 400
-        
+
         password = data["password"]
         password_hash = hashlib.md5(password.encode())
         # Create an empty default profile
@@ -146,18 +149,18 @@ def login():
             assert "password" in data
         except:
             return jsonify({"error": "Username or password missing"}), 400
-        
+
         password_hash = hashlib.md5(data["password"].encode()).hexdigest()
         user = Users.objects(username=data["username"], password=password_hash).first()
-        
+
         if user is None:
             return jsonify({"error": "Wrong username or password"})
-        
+
         token = str(user["id"]) + "." + str(uuid.uuid4())
         expiry = datetime.now() + timedelta(days=1)
         expiry_str = expiry.strftime("%m/%d/%Y, %H:%M:%S")
         auth_tokens_new = user["authTokens"] + [{"token": token, "expiry": expiry_str}]
-        
+
         user.update(authTokens=auth_tokens_new)
         default_profile = user.profiles[user.default_profile] if user.profiles else None
         profileInfo = {
@@ -171,10 +174,10 @@ def login():
             "job_levels": default_profile.job_levels if default_profile else [],
             "email": user.email,
         }
-        
+
         return jsonify({"profile": profileInfo, "token": token, "expiry": expiry_str})
-    
-    except Exception as err:
+
+    except json.JSONDecodeError as err:
         print(err)
         return jsonify({"error": "Internal server error"}), 500
 

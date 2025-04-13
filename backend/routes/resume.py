@@ -9,6 +9,7 @@ from db import db
 from config import config
 from langchain_ollama import OllamaLLM
 import pdfplumber
+from pdfminer.pdfparser import PDFSyntaxError
 
 resume_bp = Blueprint("resume", __name__)
 
@@ -28,7 +29,7 @@ def get_resume():
 
     except:
         return jsonify({"error": "resume could not be found"}), 400
-    
+
     filenames = [
         resume.filename or f"resume_{index}.pdf" for index, resume in enumerate(user.resumes)
     ]
@@ -51,7 +52,7 @@ def get_resume_file(resume_idx):
 
     except:
         return jsonify({"error": "resume could not be found"}), 400
-    
+
     resume = user.resumes[resume_idx]
     resume.seek(0)
     filename = resume.filename or f"resume_{resume_idx}.pdf"
@@ -77,7 +78,7 @@ def upload_resume():
     try:
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()
-        
+
         try:
             file = request.files["file"]
         except:
@@ -88,7 +89,7 @@ def upload_resume():
             for page in pdf.pages:
                 text += page.extract_text()
                 text += "\n\n[PAGE BREAK]\n\n"
-        
+
         model = OllamaLLM(base_url=config["OLLAMA_URL"], model="qwen2.5:1.5b")
         prompt = "You are an expert on resume advice. I am going to provide the plaintext of my resume. Your job is to provide tips" + \
                     "on how I can improve my resume. It is imperative that you strictly tailor your response to the following instructions." + \
@@ -97,7 +98,7 @@ def upload_resume():
                     "helpful feedback to improve my resume, and nothing else. Your response must be in markdown." + \
                     "Here is my resume:\n\n" + text
         response = model.invoke(prompt)
-        
+
         # Reset the file pointer in case it has been read
         file.seek(0)
 
@@ -114,10 +115,10 @@ def upload_resume():
         user.save()
         return jsonify({"message": "resume successfully added"}), 200
 
-    except Exception as e:
+    except PDFSyntaxError as e:
         print(e)
         return jsonify({"error": "Internal server error"}), 500
-    
+
 
 @resume_bp.route("/resume-feedback", methods=["GET"])
 def get_resume_feedback():
@@ -147,7 +148,7 @@ def get_resume_feedback_by_idx(feedback_idx):
 
     except:
         return jsonify({"error": "resume feedback could not be found"}), 400
-    
+
     response = user.resumeFeedbacks[feedback_idx]
     return jsonify({"feedback": response}), 200
 
@@ -168,7 +169,7 @@ def delete_resume_feedback(resume_idx):
 
     except:
         return jsonify({"error": "resume feedback could not be found"}), 400
-    
+
     del user.resumes[resume_idx]
     del user.resumeFeedbacks[resume_idx]
     user.save()
@@ -190,7 +191,7 @@ def generate_cover_letter(resume_idx):
 
     except:
         return jsonify({"error": "resume feedback could not be found"}), 400
-    
+
     data = request.json
     job_description = data.get('job_description', 'job description not found')
 

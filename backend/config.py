@@ -2,9 +2,9 @@
 This module loads the application configuration from a YAML file.
 """
 
+import os
 import yaml
 from dotenv import load_dotenv, find_dotenv
-import os
 
 with open("application.yml") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
