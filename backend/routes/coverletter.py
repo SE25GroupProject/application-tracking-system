@@ -5,6 +5,7 @@ This module contains the routes for managing user coverletters.
 from flask import Blueprint, jsonify, request
 from models import Users
 from utils import get_userid_from_header
+from db import db
 
 coverletter_bp = Blueprint("coverletter", __name__)
 
@@ -16,13 +17,21 @@ def create_coverletter():
     try:
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()
-        data = request.json
 
-        if not data or "content" not in data:
-            return jsonify({"error": "Cover letter content is required"}), 400
+        try:
+            file = request.files["file"]
+        except:
+            return jsonify({"error": "No coverletter file found in the input"}), 400
 
-        coverletter = {"content": data["content"], "title": data.get("title", "Untitled")}
-        user.coverletters.append(coverletter)
+        # Create a new GridFSProxy instance and use put() to store the file
+        new_file = db.GridFSProxy()
+        new_file.put(
+            file,
+            filename=file.filename,
+            content_type="application/pdf"
+        )
+
+        user.coverletters.append(new_file)
         user.save()
 
         return jsonify({"message": "Cover letter created successfully"}), 201
