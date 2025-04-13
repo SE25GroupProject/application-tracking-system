@@ -1,0 +1,45 @@
+name: Pytest
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:6-jammy
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build and start services
+        run: docker-compose -f docker-compose.yml up -d --build
+
+      - name: Wait for services to be ready
+        run: sleep 20
+
+      - name: Run tests and upload to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          docker-compose run --rm api bash -c "
+            pip install coveralls &&
+            pytest --cov=. --cov-report=xml &&
+            coveralls --service=github
+          "
+
+      - name: Shut down services
+        if: always()
+        run: docker-compose down
