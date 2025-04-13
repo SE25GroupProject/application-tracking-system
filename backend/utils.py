@@ -2,25 +2,28 @@
 This module contains utility functions for the application.
 """
 
-from flask import request, jsonify
 from functools import wraps
 from datetime import datetime
+from flask import request, jsonify
 from models import Users
 
 
 def get_token_from_header():
+    """Extracts the token from the Authorization header."""
     headers = request.headers
     token = headers["Authorization"].split(" ")[1]
     return token
 
 
 def get_userid_from_header():
+    """Extracts the user ID from the Authorization header."""
     token = get_token_from_header()
     userid = token.split(".")[0]
     return userid
 
 
 def delete_auth_token(token_to_delete, user_id):
+    """Delete the specified auth token from the user's authTokens list."""
     user = Users.objects(id=user_id).first()
     auth_tokens = []
     for token in user["authTokens"]:
@@ -37,13 +40,12 @@ def authorized(f):
 
     @wraps(f)
     def authorized_route(*args, **kwargs):
-        headers = request.headers
         try:
-            userid = get_userid_from_header(headers)
+            userid = get_userid_from_header()
             user = Users.objects(id=id).first()
             assert user is not None
 
-            token = get_token_from_header(headers)
+            token = get_token_from_header()
             valid_flag = False
             for tokens in user["authTokens"]:
                 if tokens["token"] == token:
@@ -63,8 +65,6 @@ def authorized(f):
 
     return authorized_route
 
-
-# TODO: remove
 def middleware(authorized_endpoints):
     """
     Checks for user authorization tokens and returns message
