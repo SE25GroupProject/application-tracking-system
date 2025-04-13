@@ -39,11 +39,13 @@ jobs:
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
-          docker compose run --rm api bash -c "
-            pip install coveralls &&
-            pytest --cov=. --cov-report=xml &&
-            coveralls --service=github
-          "
+          docker compose run --rm \
+            -e COVERALLS_REPO_TOKEN=${{ secrets.COVERALLS_REPO_TOKEN }} \
+            api bash -c "
+              pip install coveralls &&
+              pytest --cov=. --cov-report=xml &&
+              coveralls --service=github
+            "
 
       - name: Shut down services
         if: always()
