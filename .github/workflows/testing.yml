@@ -17,7 +17,7 @@ jobs:
         run: docker compose version
 
       - name: Build and start all services
-        run: docker-compose -f docker-compose.yml up -d --build
+        run: docker compose -f docker-compose.yaml up -d --build
 
       - name: Wait for services to initialize
         run: sleep 30
