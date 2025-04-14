@@ -1,163 +1,167 @@
 /* ----------------------------------
    GLOBAL RESET & DEFAULTS
 ---------------------------------- */
-html, body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-  }
-  *, *::before, *::after {
-    box-sizing: inherit;
-  }
-  
-  /* ----------------------------------
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* ----------------------------------
      MAIN CONTAINER FOR ManageResumePage
   ---------------------------------- */
-  .pagelayout {
-    max-width: 1000px;     /* Limit the container width */
-    margin: 2rem auto;     /* Center horizontally with auto left/right margins */
-    padding: 1rem;
-    background-color: #fff;/* Optional background for contrast */
-    border-radius: 5px;    /* Slight corner rounding */
-    box-shadow: 0px 5px 12px 0px rgba(0,0,0,0.1);
-  }
-  
-  /* If you want subheadings (like "Uploaded Documents") centered: */
-  .pagelayout h2 {
-    text-align: center;
-  }
-  
-  /* ----------------------------------
+.pagelayout {
+  max-width: 1000px; /* Limit the container width */
+  margin: 2rem auto; /* Center horizontally with auto left/right margins */
+  padding: 1rem;
+  background-color: #fff; /* Optional background for contrast */
+  border-radius: 5px; /* Slight corner rounding */
+  box-shadow: 0px 5px 12px 0px rgba(0, 0, 0, 0.1);
+}
+
+/* If you want subheadings (like "Uploaded Documents") centered: */
+.pagelayout h2 {
+  text-align: center;
+}
+
+/* ----------------------------------
      TABLE STYLING
   ---------------------------------- */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    border: 1px solid #ccc;
-    background-color: transparent;
-  }
-  
-  table th,
-  table td {
-    border: 1px solid #ccc;
-    padding: 0.75rem 1rem;
-    text-align: center;
-    vertical-align: middle;
-    font-size: 1rem;
-    white-space: normal; /* Let text wrap on larger screens */
-  }
-  
-  .tablecol1 {
-    width: 60%;
-  }
-  .tablecol2 {
-    width: 40%;
-    text-align: center;
-  }
-  
-  /* ----------------------------------
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+  background-color: transparent;
+}
+
+table th,
+table td {
+  border: 1px solid #ccc;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1rem;
+  white-space: normal; /* Let text wrap on larger screens */
+}
+
+.tablecol1 {
+  width: 60%;
+}
+.tablecol2 {
+  width: 40%;
+  text-align: center;
+}
+
+/* ----------------------------------
      BUTTONS
   ---------------------------------- */
-  #upload-file-btn,
-  #view-file-btn {
-    background-color: #2A6E85;
-    color: #fff;
-    border-radius: 3px;
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-right: 0.5rem; /* Spacing between buttons */
-  }
+.upload-file-btn,
+#view-file-btn {
+  background-color: #2a6e85;
+  color: #fff;
+  border-radius: 3px;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-right: 0.5rem; /* Spacing between buttons */
+}
 
-  #delete-file-btn {
-    background-color: #c41925;
-    color: #fff;
-    border-radius: 3px;
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-top: 1rem;
-    margin-right: 0.5rem; /* Spacing between buttons */
-  }
+#delete-file-btn {
+  background-color: #c41925;
+  color: #fff;
+  border-radius: 3px;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-right: 0.5rem; /* Spacing between buttons */
+}
 
-  #generate-cover-letter-btn {
-    background-color: #0ca465;
-    color: #fff;
-    border-radius: 3px;
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-top: 1rem;
-    margin-right: 0.5rem; /* Spacing between buttons */
-  }
+#generate-cover-letter-btn {
+  background-color: #0ca465;
+  color: #fff;
+  border-radius: 3px;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-right: 0.5rem; /* Spacing between buttons */
+}
 
-  #view-feedback-btn {
-    background-color: #f300be;
-    color: #fff;
-    border-radius: 3px;
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-top: 1rem;
-    margin-right: 0.5rem; /* Spacing between buttons */
-  }
-  
-  #upload-file-btn:hover:not([disabled]),
-  #view-file-btn:hover:not([disabled]) {
-    background-color: #1f5368;
-  }
+#view-feedback-btn {
+  background-color: #f300be;
+  color: #fff;
+  border-radius: 3px;
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-right: 0.5rem; /* Spacing between buttons */
+}
 
-  #delete-file-btn:hover:not([disabled]) {
-    background-color: #8e131b;
-  }
+.upload-file-btn:hover:not([disabled]),
+#view-file-btn:hover:not([disabled]) {
+  background-color: #1f5368;
+}
 
-  #upload-file-btn[disabled],
-  #view-file-btn[disabled] {
-    opacity: 0.65;
-  }
-  
-  /* ----------------------------------
+#delete-file-btn:hover:not([disabled]) {
+  background-color: #8e131b;
+}
+
+.upload-file-btn[disabled],
+#view-file-btn[disabled] {
+  opacity: 0.65;
+}
+
+/* ----------------------------------
      RESPONSIVE ADJUSTMENTS
      (Horizontal scrolling instead of stacking)
   ---------------------------------- */
-  @media (max-width: 768px) {
-    /* Make table scroll horizontally on smaller screens */
-    table {
-      display: block;
-      overflow-x: auto;
-      white-space: nowrap;
-    }
-  
-    /* Slightly smaller text and buttons */
-    table th,
-    table td {
-      font-size: 0.9rem;
-      padding: 0.5rem 0.7rem;
-    }
-  
-    #view-file-btn, #upload-file-btn {
-      font-size: 0.9rem;
-      padding: 0.4rem 0.8rem;
-    }
+@media (max-width: 768px) {
+  /* Make table scroll horizontally on smaller screens */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
-  
-  @media (max-width: 480px) {
-    /* Even smaller adjustments */
-    table th,
-    table td {
-      font-size: 0.85rem;
-      padding: 0.4rem 0.6rem;
-    }
-  
-    #view-file-btn, #upload-file-btn {
-      font-size: 0.8rem;
-      padding: 0.3rem 0.6rem;
-    }
+
+  /* Slightly smaller text and buttons */
+  table th,
+  table td {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.7rem;
   }
-  
+
+  #view-file-btn,
+  .upload-file-btn {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Even smaller adjustments */
+  table th,
+  table td {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  #view-file-btn,
+  .upload-file-btn {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+  }
+}

@@ -13,7 +13,7 @@ import ModalHeader from "react-bootstrap/ModalHeader";
 import axios from "axios";
 import $ from "jquery";
 
-const CoverLetter = (props) => {
+const GenerateCoverLetter = (props) => {
   const [jobDescription, setJobDescription] = useState("");
   const [coverLetterTitle, setCoverLetterTitle] = useState("");
   const [coverLetter, setCoverLetter] = useState("");
@@ -155,4 +155,4 @@ const CoverLetter = (props) => {
   );
 };
 
-export default CoverLetter;
+export default GenerateCoverLetter;
