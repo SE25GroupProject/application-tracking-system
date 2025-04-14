@@ -5,8 +5,8 @@ Test module for resume-related endpoints (Tests 9-29)
 import hashlib
 from io import BytesIO
 
-import pytest
 import json
+import pytest
 from app import create_app
 from models import Users
 

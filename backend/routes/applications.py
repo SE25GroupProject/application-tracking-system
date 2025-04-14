@@ -2,11 +2,11 @@
 This module contains the routes for managing applications.
 """
 
-from flask import Blueprint, jsonify, request
 import json
+from datetime import datetime
+from flask import Blueprint, jsonify, request
 from models import Users, get_new_application_id
 from utils import get_userid_from_header
-from datetime import datetime
 
 applications_bp = Blueprint("applications", __name__)
 
@@ -58,7 +58,7 @@ def add_application():
         applications = user["applications"] + [current_application]
         user.update(applications=applications)
         return jsonify(current_application), 200
-    except Exception as err:
+    except json.JSONDecodeError as err:
         print(err)
         return jsonify({"error": "Internal server error"}), 500
 
