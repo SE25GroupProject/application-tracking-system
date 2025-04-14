@@ -4,8 +4,8 @@ Test module for search and recommendation endpoints (Tests 30-41)
 
 import hashlib
 
-import pytest
 import json
+import pytest
 from app import create_app
 from models import Users, Profile
 

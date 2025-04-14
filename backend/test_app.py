@@ -3,11 +3,10 @@ Test module for the backend
 """
 
 import hashlib
-from io import BytesIO
 
-import pytest
 import json
 import datetime
+import pytest
 from app import create_app
 from models import Users
 
@@ -70,7 +69,7 @@ def user(client):
     )
     user.save()
     rv = client.post("/users/login", json=data)
-    jdata = json.loads(rv.data.decode("utf-8"))
+    jdata = json.loads(rv.data)
     header = {"Authorization": "Bearer " + jdata["token"]}
     yield user, header
     user.delete()
@@ -85,7 +84,8 @@ def test_alive(client):
         client: The Flask test client.
     """
     rv = client.get("/")
-    assert rv.data.decode("utf-8") == '{\n  "message": "Server up and running"\n}\n'
+    
+    assert json.loads(rv.data)["message"] == "Server up and running"
 
 
 # Test 2: Search Endpoint
@@ -99,7 +99,7 @@ def test_search(client, mocker):
     """
     # Mock the Selenium WebDriver
     mock_driver = mocker.patch("selenium.webdriver.Remote")
-    
+
     # Create a mock for div.data-details to handle nested span elements
     mock_details = mocker.Mock()
     mock_details.find_element.side_effect = lambda by, value: mocker.Mock(
@@ -109,7 +109,7 @@ def test_search(client, mocker):
             "span:nth-child(3)": "Full-time",
         }[value]
     )
-    
+
     # Mock a single job listing
     mock_job = mocker.Mock()
     mock_job.find_element.side_effect = lambda by, value: {
@@ -117,19 +117,19 @@ def test_search(client, mocker):
         "div.data-details": mock_details,
         "a.data-results-content": mocker.Mock(get_attribute=lambda *args: "https://www.careerbuilder.com/job/123"),
     }[value]
-    
+
     # Configure find_elements to return the mock job
     mock_driver.return_value.__enter__.return_value.find_elements.return_value = [mock_job]
-    
+
     # Send request with query parameters
     rv = client.get("/search?keywords=engineer&company=Tech&location=New+York")
-    
+
     # Debug response if status is not 200
     if rv.status_code != 200:
         print(f"Response data: {rv.data.decode('utf-8')}")
-    
+
     assert rv.status_code == 200
-    
+
     # Parse and verify response
     data = json.loads(rv.data)
     assert len(data) == 1

@@ -1,0 +1,57 @@
+name: Run Pytest with Coverage + Coveralls
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.9.7
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9.7"
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: "6.0"
+          mongodb-username: user
+          mongodb-password: pass
+
+      - name: Create .env file
+        run: |
+          echo "MONGO_INITDB_ROOT_USERNAME=user" >> .env
+          echo "MONGO_INITDB_ROOT_PASSWORD=pass" >> .env
+          echo "CLUSTER_URL=127.0.0.1" >> .env
+
+      - name: Create application.yml
+        run: |
+          echo "GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}" >> ./backend/application.yml
+          echo "GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}" >> ./backend/application.yml
+          echo "CONF_URL: ${{ secrets.CONF_URL }}" >> ./backend/application.yml
+          echo "SECRET_KEY: ${{ secrets.SECRET_KEY }}" >> ./backend/application.yml
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+
+      - name: Test with pytest
+        run: |
+          cd backend
+          coverage run -m pytest
+          coverage report
+
+      - name: Coveralls
+        env: # Set GITHUB_TOKEN for Coveralls
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd backend
+          pip install coveralls
+          coveralls
