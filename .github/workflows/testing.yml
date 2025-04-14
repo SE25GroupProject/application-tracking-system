@@ -17,15 +17,18 @@ jobs:
         with:
           python-version: "3.9.7"
 
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: "6.0"
+          mongodb-username: user
+          mongodb-password: pass
+
       - name: Create .env file
         run: |
           echo "MONGO_INITDB_ROOT_USERNAME=user" >> .env
           echo "MONGO_INITDB_ROOT_PASSWORD=pass" >> .env
-          echo "CLUSTER_URL=mongodb" >> .env
-          echo "ME_CONFIG_MONGODB_ADMINUSERNAME=user" >> .env
-          echo "ME_CONFIG_MONGODB_ADMINPASSWORD=pass" >> .env
-          echo "ME_CONFIG_MONGODB_URL=mongodb://user:pass@mongodb/" >> .env
-          echo "ME_CONFIG_BASICAUTH=false" >> .env
+          echo "CLUSTER_URL=127.0.0.1" >> .env
 
       - name: Create application.yml
         run: |
