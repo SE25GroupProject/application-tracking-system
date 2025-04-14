@@ -5,6 +5,11 @@
 [![GitHub issues](https://img.shields.io/github/issues/CSC-510-G7/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/issues)
 [![Github closes issues](https://img.shields.io/github/issues-closed-raw/CSC-510-G7/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/issues?q=is%3Aissue%20state%3Aclosed)
 ![GitHub top language](https://img.shields.io/github/languages/top/CSC-510-G7/application-tracking-system)
+![Static Badge](https://img.shields.io/badge/style_checker-pylint-blue)
+![Static Badge](https://img.shields.io/badge/code_formatter-black-blue)
+![Static Badge](https://img.shields.io/badge/syntax_checker-black-blue)
+![Static Badge](https://img.shields.io/badge/coverage_checker-coveralls-blue)
+[![Coverage Status](https://coveralls.io/repos/github/SE25GroupProject/application-tracking-system/badge.svg)](https://coveralls.io/github/SE25GroupProject/application-tracking-system)
 
 <p align="center"><img width="700" src="./resources/ApplicationTrackingAnimation.gif"></p>
 
