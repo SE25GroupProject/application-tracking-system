@@ -68,19 +68,20 @@ def authorized_google():
             unique_id = userSave["id"]
         else:
             unique_id = user_exists["id"]
+    
 
-    userSaved = Users.objects(email=user["email"]).first()
-    expiry = datetime.now() + timedelta(days=1)
-    expiry_str = expiry.strftime("%m/%d/%Y, %H:%M:%S")
-    token_whole = str(unique_id) + "." + token["access_token"]
-    auth_tokens_new = userSaved["authTokens"] + [
-        {"token": token_whole, "expiry": expiry_str}
-    ]
-    userSaved.update(authTokens=auth_tokens_new)
+        userSaved = Users.objects(email=user["email"]).first()
+        expiry = datetime.now() + timedelta(days=1)
+        expiry_str = expiry.strftime("%m/%d/%Y, %H:%M:%S")
+        token_whole = str(unique_id) + "." + token["access_token"]
+        auth_tokens_new = userSaved["authTokens"] + [
+            {"token": token_whole, "expiry": expiry_str}
+        ]
+        userSaved.update(authTokens=auth_tokens_new)
 
-    return redirect(
-        f"http://127.0.0.1:3000/?token={token_whole}&expiry={expiry_str}&userId={unique_id}"
-    )
+        return redirect(
+            f"http://127.0.0.1:3000/?token={token_whole}&expiry={expiry_str}&userId={unique_id}"
+        )
 
 
 @auth_bp.route("/users/signup", methods=["POST"])

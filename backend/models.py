@@ -36,7 +36,7 @@ class Users(db.Document):
     # Add a pointer to the default profile
     default_profile = db.IntField(default=0)
 
-    def to_json(self, *args, **kwargs):
+    def to_json(self):
         """Convert the document to JSON format"""
         return {"id": self.id, "fullName": self.fullName, "username": self.username}
 
