@@ -39,6 +39,22 @@ export default class ManageResumePage extends Component {
     });
   }
 
+  deleteCoverLetter(coverletter_idx) {
+    $.ajax({
+      url: "http://127.0.0.1:5000/coverletters/" + coverletter_idx,
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+        "Access-Control-Allow-Origin": "http://127.0.0.1:3000",
+        "Access-Control-Allow-Credentials": "true",
+      },
+      success: (message, textStatus, response) => {
+        console.log(message);
+        this.updateCoverLetters();
+      },
+    });
+  }
+
   getFiles() {
     $.ajax({
       url: "http://127.0.0.1:5000/resume",
@@ -320,7 +336,7 @@ export default class ManageResumePage extends Component {
                             </button>
                             <button
                               id="delete-file-btn"
-                              // onClick={() => this.deleteCoverLetter(index)}
+                              onClick={() => this.deleteCoverLetter(index)}
                               type="button"
                             >
                               Delete
