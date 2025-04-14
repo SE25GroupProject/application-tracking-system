@@ -19,27 +19,24 @@ The process of applying for jobs and internships is not a cakewalk. Managing job
 
 Our application keeps track of the jobs you've added to your wish list. It also keeps track of the companies you've already applied to and keeps a list of any rejections. Rather than having the user browse each company's site for potential prospects, our application allows the applicant to search for them directly using basic keywords. Any prospective work offers can then be added to the applicant's wishlist.
 
-## New Features in Phase 4
-
-### ⭐ Highlight - LLM Integration ⭐
-Using Ollama, Qwen2.5 (1.5b) has been integrated into the system to support different language-heavy tasks:
-
-1. Resume Tip Generation - Users can now get automated feedback on their resumes
-2. Cover Letter Generation - Users can now get auto-generated cover letters, based on any uploaded resume and tailored to any given job description.
+## New Features
+### Chrome Extension
+Using our Chrome Extension you can now directly fill out your applications using your data from your profile here.
+1. Saves time when filling out multiple applications
+2. Data can be pulled from multiple profiles if you have different data for different applications
+3. Works on multiple websites
 
 ### Other new features
-1. Upload and store multiple resumes for different purposes
-2. Resume Viewer
-3. UI Overhaul - Improved responsiveness, Navbar, Added logout confirmation, Added option to delete resume
-4. Restructuring of backend - the single, massive backend file has been separated and organized by function
-5. Restructured Docker-related files to simplify deployment
-6. +60 More test cases
+1. Cover letter overhaul with new routes and testing
+2. New frontend modals to support a cleaner UI
+3. Increased testing and code coverage throughout
+4. Restructuring of tests from a single file to seperate files designated by catagory
+5. Allowed for multiple unique profiles
 
 #### Bug fixes
-1. Migrated job posting web scraper away from Google Jobs due to an update with Google's system preventing web scraping
-  1a. Integrated headless browser using Selenium and ChromeDriver to scrape CareerBuilder instead
-2. Users now stay logged in when refreshing the page
-3. Support for Google Account logins has been fixed
+1. Issues with resume feedback taking a long time
+2. Issues with database models being incorrect
+3. Issues with exceptions not being properly caught
 
 ---
 
