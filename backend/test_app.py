@@ -84,7 +84,7 @@ def test_alive(client):
         client: The Flask test client.
     """
     rv = client.get("/")
-    
+
     assert json.loads(rv.data)["message"] == "Server up and running"
 
 
