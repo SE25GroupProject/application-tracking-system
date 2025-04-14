@@ -1,10 +1,10 @@
 # J-Tracker - Your Job Tracking Assistant
 
-[![GitHub license](https://img.shields.io/github/license/CSC-510-G7/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/blob/63bc5b12d117220fc678f563f6fa8e6dc0074f1d/LICENSE)
-[![DOI](https://zenodo.org/badge/426259091.svg)](https://zenodo.org/badge/latestdoi/426259091)
-[![GitHub issues](https://img.shields.io/github/issues/CSC-510-G7/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/issues)
-[![Github closes issues](https://img.shields.io/github/issues-closed-raw/CSC-510-G7/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/issues?q=is%3Aissue%20state%3Aclosed)
-![GitHub top language](https://img.shields.io/github/languages/top/CSC-510-G7/application-tracking-system)
+[![GitHub license](https://img.shields.io/github/license/SE25GroupProject/application-tracking-system)](https://github.com/SE25GroupProject/application-tracking-system/blob/main/LICENSE)
+[![DOI](https://zenodo.org/badge/944599867.svg)](https://doi.org/10.5281/zenodo.15212578)
+[![GitHub issues](https://img.shields.io/github/issues/SE25GroupProject/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/issues)
+[![Github closes issues](https://img.shields.io/github/issues-closed-raw/SE25GroupProject/application-tracking-system)](https://github.com/SE25GroupProject/application-tracking-system/issues?q=is%3Aissue%20state%3Aclosed)
+![GitHub top language](https://img.shields.io/github/languages/top/SE25GroupProject/application-tracking-system)
 ![Static Badge](https://img.shields.io/badge/style_checker-pylint-blue)
 ![Static Badge](https://img.shields.io/badge/code_formatter-black-blue)
 ![Static Badge](https://img.shields.io/badge/syntax_checker-black-blue)
