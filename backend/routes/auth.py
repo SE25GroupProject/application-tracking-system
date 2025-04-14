@@ -68,7 +68,6 @@ def authorized_google():
             unique_id = userSave["id"]
         else:
             unique_id = user_exists["id"]
-    
 
         userSaved = Users.objects(email=user["email"]).first()
         expiry = datetime.now() + timedelta(days=1)
