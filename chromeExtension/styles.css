@@ -1,0 +1,27 @@
+body {
+    width: 350px;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+  }
+  input, button, select {
+    margin: 5px;
+    padding: 5px;
+    width: calc(100% - 12px);
+  }
+  button {
+    cursor: pointer;
+  }
+  select {
+    padding: 5px;
+  }
+  p {
+    text-align: center;
+  }
+  a {
+    color: #1a73e8;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  

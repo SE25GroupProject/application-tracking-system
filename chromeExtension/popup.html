@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Application Tracking System</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="auth-section">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button id="login-btn">Login</button>
+    <p><a href="http://127.0.0.1:3000" target="_blank">Visit Website</a></p>
+  </div>
+  <div id="content-section" style="display:none;">
+    <h2>Welcome, <span id="user-name"></span></h2>
+    <label for="profile-select">Select Profile:</label>
+    <select id="profile-select"></select>
+    <label for="resume-select">Select Resume:</label>
+    <select id="resume-select"></select>
+    <button id="autofill-btn">Autofill Job Application</button>
+    <button id="logout-btn">Logout</button>
+    <pre id="api-result"></pre>
+    <p><a href="http://127.0.0.1:3000" target="_blank">Visit Website</a></p>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
