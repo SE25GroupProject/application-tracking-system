@@ -9,6 +9,8 @@
 ![Static Badge](https://img.shields.io/badge/code_formatter-black-blue)
 ![Static Badge](https://img.shields.io/badge/syntax_checker-black-blue)
 ![Static Badge](https://img.shields.io/badge/coverage_checker-coveralls-blue)
+![Static Badge](https://img.shields.io/badge/testing-pytest-lime)
+![Static Badge](https://img.shields.io/badge/pytest-8.3.4-lime)
 [![Coverage Status](https://coveralls.io/repos/github/SE25GroupProject/application-tracking-system/badge.svg?branch=main)](https://coveralls.io/github/SE25GroupProject/application-tracking-system?branch=main)
 
 <p align="center"><img width="700" src="./resources/ApplicationTrackingAnimation.gif"></p>
