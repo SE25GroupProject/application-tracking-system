@@ -175,7 +175,24 @@ export default class App extends React.Component {
     }
   }
 
-  sidebarHandler = (user) => {
+  sidebarHandler = async (user) => {
+    const userId = localStorage.getItem("userId");
+
+    await axios
+      .get("http://localhost:5000/getProfileList", {
+        headers: {
+          userid: userId,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        this.setState({
+          profilesList: res.data[CONSTANTS.PROFILE.PROFILE_LIST],
+          defaultProfile: res.data[CONSTANTS.PROFILE.DEFAULT_PROFILE],
+        });
+      })
+      .catch((err) => console.log(err.message));
+
     this.setState({
       currentPage: CONSTANTS.PAGES.PROFILE.NAME,
       sidebar: true,

@@ -156,7 +156,7 @@ def test_get_all_coverletters_empty(client, user):
 
     response = client.get("/coverletters", headers=header)
     assert response.status_code == 200
-    assert response.json["coverletters"] == []
+    assert response.json["filenames"] == []
 
 
 def test_get_all_coverletters(client, user):
@@ -164,12 +164,12 @@ def test_get_all_coverletters(client, user):
     Gets all the coverletters for a user.
     """
     user, header = user
-    user.coverletters = ["mock_cover_1", "mock_cover_2"]
+    user.coverletters = [{"title": "mock_cover_1", "content": ""},{"title": "mock_cover_2", "content": ""}]
     user.save()
 
     response = client.get("/coverletters", headers=header)
     assert response.status_code == 200
-    assert response.json["coverletters"] == ["mock_cover_1", "mock_cover_2"]
+    assert response.json["filenames"] == ["mock_cover_1", "mock_cover_2"]
 
 
 def test_get_single_coverletter_success(client, user):

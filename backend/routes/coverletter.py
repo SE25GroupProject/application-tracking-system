@@ -40,7 +40,10 @@ def get_all_coverletters():
         userid = get_userid_from_header()
         user = Users.objects(id=userid).first()
 
-        return jsonify({"coverletters": user.coverletters}), 200
+        filenames = [
+            coverletter["title"] or f"coverletter_{index}" for index, coverletter in enumerate(user.coverletters)
+        ]
+        return jsonify({"filenames": filenames})
     except KeyError as e:
         print(e)
         return jsonify({"error": "Internal server error"}), 500
