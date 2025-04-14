@@ -155,7 +155,7 @@ def login():
 
         if user is None:
             return jsonify({"error": "Wrong username or password"}), 400
-        
+
         token = str(user["id"]) + "." + str(uuid.uuid4())
         expiry = datetime.now() + timedelta(days=1)
         expiry_str = expiry.strftime("%m/%d/%Y, %H:%M:%S")
@@ -206,13 +206,16 @@ def logout():
 
 @auth_bp.route("/protected-endpoint", methods=["GET"])
 def protected_endpoint():
+    """
+    An endpoint that only logged in users can access
+    """
     try:
         token = get_token_from_header()
         user_id = get_userid_from_header()
         user = Users.objects(id=user_id).first()
         if not user or not any(t["token"] == token for t in user["authTokens"]):
             return jsonify({"error": "Invalid or expired token"}), 401
-        
+
         return jsonify({
             "message": "Protected data accessed",
             "user": {
