@@ -105,9 +105,10 @@ def sign_up():
 
         password = data["password"]
         password_hash = hashlib.md5(password.encode())
+        
         # Create an empty default profile
         default_profile = Profile(
-            profileName="default",
+            profileName=f"{data['fullName']}'s Default",
             skills=[],
             job_levels=[],
             locations=[],
@@ -131,7 +132,7 @@ def sign_up():
         )
         user.save()
         return jsonify(user.to_json()), 200
-    except:
+    except  Exception as err:
         return jsonify({"error": "Internal server error"}), 500
 
 
