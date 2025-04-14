@@ -70,7 +70,7 @@ def user(client):
     )
     user.save()
     rv = client.post("/users/login", json=data)
-    jdata = json.loads(rv.data.decode("utf-8"))
+    jdata = json.loads(rv.data)
     header = {"Authorization": "Bearer " + jdata["token"]}
     yield user, header
     user.delete()
@@ -85,7 +85,8 @@ def test_alive(client):
         client: The Flask test client.
     """
     rv = client.get("/")
-    assert rv.data.decode("utf-8") == '{\n  "message": "Server up and running"\n}\n'
+    
+    assert json.loads(rv.data)["message"] == "Server up and running"
 
 
 # Test 2: Search Endpoint
