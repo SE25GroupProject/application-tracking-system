@@ -16,12 +16,12 @@ def app():
     Returns:
         Flask: The configured Flask application instance.
     """
-    flask_app = create_app()
-    return flask_app
+    app = create_app()
+    return app
 
 
 @pytest.fixture
-def client(test_app):
+def client(app):
     """
     Fixture to provide a test client for the Flask application.
     Args:
@@ -29,15 +29,15 @@ def client(test_app):
     Yields:
         FlaskClient: The test client for making HTTP requests.
     """
-    test_client = test_app.test_client()
-    ctx = test_app.app_context()
+    client = app.test_client()
+    ctx = app.app_context()
     ctx.push()
-    yield test_client
+    yield client
     ctx.pop()
 
 
 @pytest.fixture
-def user(test_client):
+def user(client):
     """
     Fixture to create a test user and authenticate them.
     Args:
@@ -46,7 +46,7 @@ def user(test_client):
         tuple: A tuple containing the user object and authentication header.
     """
     data = {"username": "testUser", "password": "test", "fullName": "fullName"}
-    test_user = Users(
+    user = Users(
         id=1,
         fullName=data["fullName"],
         username=data["username"],
@@ -60,153 +60,153 @@ def user(test_client):
         profiles=[],
         default_profile=0
     )
-    test_user.save()
-    response = test_client.post("/users/login", json=data)
+    user.save()
+    response = client.post("/users/login", json=data)
     jdata = json.loads(response.data.decode("utf-8"))
     header = {"Authorization": "Bearer " + jdata["token"]}
-    yield test_user, header
-    test_user.delete()
+    yield user, header
+    user.delete()
 
 
-def test_create_coverletter_success(test_client, test_user):
+def test_create_coverletter_success(client, user):
     """
     Test creating a cover letter with valid data and verify it's saved.
     """
-    test_test_user, headers = test_user
+    test_user, headers = user
     payload = {
         "content": "This is my test cover letter.",
         "title": "Job Application Cover Letter"
     }
 
-    response = test_client.post("/coverletters", json=payload, headers=headers)
+    response = client.post("/coverletters", json=payload, headers=headers)
     assert response.status_code == 201
     json_data = response.get_json()
     assert json_data["message"] == "Cover letter created successfully"
 
     # Verify the cover letter was saved
-    updated_test_user = test_user.objects(id=test_test_user.id).first()
-    assert updated_test_user is not None
-    assert len(updated_test_user.coverletters) == 1
-    assert updated_test_user.coverletters[0]["content"] == payload["content"]
-    assert updated_test_user.coverletters[0]["title"] == payload["title"]
+    updated_user = Users.objects(id=test_user.id).first()
+    assert updated_user is not None
+    assert len(updated_user.coverletters) == 1
+    assert updated_user.coverletters[0]["content"] == payload["content"]
+    assert updated_user.coverletters[0]["title"] == payload["title"]
 
 
-def test_create_coverletter_missing_content(test_client, test_user):
+def test_create_coverletter_missing_content(client, user):
     """
     Test creating a cover letter without the required 'content' field.
     """
-    _, headers = test_user
+    _, headers = user
     payload = {"title": "Missing Content"}
 
-    response = test_client.post("/coverletters", json=payload, headers=headers)
+    response = client.post("/coverletters", json=payload, headers=headers)
     assert response.status_code == 400
     assert response.get_json()["error"] == "Cover letter content is required"
 
 
-def test_create_coverletter_empty_payload(test_client, test_user):
+def test_create_coverletter_empty_payload(client, user):
     """
     Test creating a cover letter with an empty JSON payload.
     """
-    _, headers = test_user
-    response = test_client.post("/coverletters", json={}, headers=headers)
+    _, headers = user
+    response = client.post("/coverletters", json={}, headers=headers)
     assert response.status_code == 400
     assert response.get_json()["error"] == "Cover letter content is required"
 
 
-def test_create_coverletter_long_content(test_client, test_user):
+def test_create_coverletter_long_content(client, user):
     """
     Test creating a cover letter with a very large content body.
     """
-    _, headers = test_user
+    _, headers = user
     long_content = "A" * 10000
-    response = test_client.post("/coverletters", json={"content": long_content}, headers=headers)
+    response = client.post("/coverletters", json={"content": long_content}, headers=headers)
     assert response.status_code == 201
     assert "message" in response.get_json()
 
 
-def test_create_coverletter_special_characters(test_client, test_user):
+def test_create_coverletter_special_characters(client, user):
     """
     Test creating a cover letter with special and Unicode characters.
     """
-    _, headers = test_user
+    _, headers = user
     content = "你好，世界! 💼✨"
-    response = test_client.post("/coverletters", json={"content": content}, headers=headers)
+    response = client.post("/coverletters", json={"content": content}, headers=headers)
     assert response.status_code == 201
 
 
-def test_create_duplicate_title(test_client, test_user):
+def test_create_duplicate_title(client, user):
     """
     Test creating multiple cover letters with the same title.
     """
-    test_test_user, headers = test_user
+    test_user, headers = user
     payload = {"content": "CL 1", "title": "Duplicate Title"}
-    test_client.post("/coverletters", json=payload, headers=headers)
-    test_client.post("/coverletters", json=payload, headers=headers)
-    updated_test_user = test_user.objects(id=test_test_user.id).first()
-    assert len(updated_test_user.coverletters) == 2
+    client.post("/coverletters", json=payload, headers=headers)
+    client.post("/coverletters", json=payload, headers=headers)
+    updated_user = Users.objects(id=test_user.id).first()
+    assert len(updated_user.coverletters) == 2
 
 
-def test_get_all_coverletters_empty(test_client, test_user):
+def test_get_all_coverletters_empty(client, user):
     """
-    Test getting all cover letters when test_user has none.
+    Test getting all cover letters when user has none.
     """
-    test_user, header = test_user
-    test_user.coverletters = []
-    test_user.save()
+    user, header = user
+    user.coverletters = []
+    user.save()
 
-    response = test_client.get("/coverletters", headers=header)
+    response = client.get("/coverletters", headers=header)
     assert response.status_code == 200
     assert response.json["coverletters"] == []
 
 
-def test_get_all_coverletters(test_client, test_user):
+def test_get_all_coverletters(client, user):
     """
-    Gets all the coverletters for a test_user.
+    Gets all the coverletters for a user.
     """
-    test_user, header = test_user
-    test_user.coverletters = ["mock_cover_1", "mock_cover_2"]
-    test_user.save()
+    user, header = user
+    user.coverletters = ["mock_cover_1", "mock_cover_2"]
+    user.save()
 
-    response = test_client.get("/coverletters", headers=header)
+    response = client.get("/coverletters", headers=header)
     assert response.status_code == 200
     assert response.json["coverletters"] == ["mock_cover_1", "mock_cover_2"]
 
 
-def test_get_single_coverletter_success(test_client, test_user):
+def test_get_single_coverletter_success(client, user):
     """
-    Gets a single coverletter for a test_user.
+    Gets a single coverletter for a user.
     """
-    test_user, header = test_user
-    test_user.coverletters = ["cover1", "cover2"]
-    test_user.save()
+    user, header = user
+    user.coverletters = ["cover1", "cover2"]
+    user.save()
 
-    response = test_client.get("/coverletters/1", headers=header)
+    response = client.get("/coverletters/1", headers=header)
     assert response.status_code == 200
     assert response.json["coverletter"] == "cover2"
 
 
-def test_get_single_coverletter_not_found(test_client, test_user):
+def test_get_single_coverletter_not_found(client, user):
     """
     Tests getting a single coverletter that does not exist.
     """
-    test_user, header = test_user
-    test_user.coverletters = ["only_one"]
-    test_user.save()
+    user, header = user
+    user.coverletters = ["only_one"]
+    user.save()
 
-    response = test_client.get("/coverletters/3", headers=header)
+    response = client.get("/coverletters/3", headers=header)
     assert response.status_code == 404
     assert "Cover letter not found" in response.json["error"]
 
 
-def test_update_coverletter_success(test_client, test_user):
+def test_update_coverletter_success(client, user):
     """
     Tests updating a coverletter successfully.
     """
-    test_user, header = test_user
-    test_user.coverletters = [{"content": "old", "title": "Old Title"}]
-    test_user.save()
+    user, header = user
+    user.coverletters = [{"content": "old", "title": "Old Title"}]
+    user.save()
 
-    response = test_client.put(
+    response = client.put(
         "/coverletters/0",
         headers=header,
         json={"content": "new", "title": "Updated Title"}
@@ -216,107 +216,107 @@ def test_update_coverletter_success(test_client, test_user):
     assert response.json["message"] == "Cover letter updated successfully"
 
 
-def test_update_coverletter_empty_string(test_client, test_user):
+def test_update_coverletter_empty_string(client, user):
     """
     Test updating a cover letter with empty content.
     """
-    test_user, header = test_user
-    test_user.coverletters = [{"content": "initial", "title": "Title"}]
-    test_user.save()
+    user, header = user
+    user.coverletters = [{"content": "initial", "title": "Title"}]
+    user.save()
 
-    response = test_client.put("/coverletters/0", headers=header, json={"content": ""})
+    response = client.put("/coverletters/0", headers=header, json={"content": ""})
     assert response.status_code == 200
 
 
-def test_update_coverletter_missing_content(test_client, test_user):
+def test_update_coverletter_missing_content(client, user):
     """
     Tests updating a coverletter with missing content.
     """
-    test_user, header = test_user
-    test_user.coverletters = [{"content": "existing"}]
-    test_user.save()
+    user, header = user
+    user.coverletters = [{"content": "existing"}]
+    user.save()
 
-    response = test_client.put("/coverletters/0", headers=header, json={})
+    response = client.put("/coverletters/0", headers=header, json={})
     assert response.status_code == 400
     assert "content is required" in response.json["error"]
 
 
-def test_update_coverletter_out_of_range(test_client, test_user):
+def test_update_coverletter_out_of_range(client, user):
     """
     Tests updating a coverletter that is out of range.
     """
-    test_user, header = test_user
-    test_user.coverletters = [{"content": "only one"}]
-    test_user.save()
+    user, header = user
+    user.coverletters = [{"content": "only one"}]
+    user.save()
 
-    response = test_client.put("/coverletters/5", headers=header, json={"content": "test"})
+    response = client.put("/coverletters/5", headers=header, json={"content": "test"})
     assert response.status_code == 404
     assert "not found" in response.json["error"]
 
 
-def test_update_coverletter_negative_index(test_client, test_user):
+def test_update_coverletter_negative_index(client, user):
     """
     Tests updating a coverletter using a negative index.
     """
-    _, header = test_user
-    response = test_client.put("/coverletters/-1", headers=header, json={"content": "new"})
+    _, header = user
+    response = client.put("/coverletters/-1", headers=header, json={"content": "new"})
     assert response.status_code == 404
 
 
-def test_delete_coverletter_success(test_client, test_user):
+def test_delete_coverletter_success(client, user):
     """
     Tests deleting a coverletter successfully.
     """
-    test_user, header = test_user
-    test_user.coverletters = ["cl1", "cl2"]
-    test_user.save()
+    user, header = user
+    user.coverletters = ["cl1", "cl2"]
+    user.save()
 
-    response = test_client.delete("/coverletters/1", headers=header)
+    response = client.delete("/coverletters/1", headers=header)
     assert response.status_code == 200
     assert response.json["message"] == "Cover letter deleted successfully"
 
 
-def test_delete_coverletter_not_found(test_client, test_user):
+def test_delete_coverletter_not_found(client, user):
     """
     Tests deleting a coverletter that does not exist.
     """
-    test_user, header = test_user
-    test_user.coverletters = ["only one"]
-    test_user.save()
+    user, header = user
+    user.coverletters = ["only one"]
+    user.save()
 
-    response = test_client.delete("/coverletters/3", headers=header)
+    response = client.delete("/coverletters/3", headers=header)
     assert response.status_code == 404
     assert "not found" in response.json["error"]
 
 
-def test_delete_last_coverletter(test_client, test_user):
+def test_delete_last_coverletter(client, user):
     """
     Test deleting the last remaining cover letter.
     """
-    test_user, header = test_user
-    test_user.coverletters = ["only"]
-    test_user.save()
+    user, header = user
+    user.coverletters = ["only"]
+    user.save()
 
-    response = test_client.delete("/coverletters/0", headers=header)
+    response = client.delete("/coverletters/0", headers=header)
     assert response.status_code == 200
-    updated_test_user = test_user.objects(id=test_user.id).first()
-    assert updated_test_user.coverletters == []
+    updated_user = Users.objects(id=user.id).first()
+    assert updated_user.coverletters == []
 
 
-def test_invalid_index_type(test_client, test_user):
+def test_invalid_index_type(client, user):
     """
     Test passing a non-integer index to cover letter routes.
     """
-    _, header = test_user
-    response = test_client.get("/coverletters/abc", headers=header)
+    _, header = user
+    response = client.get("/coverletters/abc", headers=header)
     assert response.status_code == 404
 
 
-def test_script_injection_content(test_client, test_user):
+def test_script_injection_content(client, user):
     """
     Test injecting HTML/script content into a cover letter.
     """
-    _, headers = test_user
+    _, headers = user
     content = "<script>alert('XSS')</script>"
-    response = test_client.post("/coverletters", json={"content": content}, headers=headers)
+    response = client.post("/coverletters", json={"content": content}, headers=headers)
     assert response.status_code == 201
