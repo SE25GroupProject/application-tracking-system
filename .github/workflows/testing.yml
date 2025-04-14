@@ -49,6 +49,9 @@ jobs:
           coverage report
 
       - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env: # Set GITHUB_TOKEN for Coveralls
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd backend
+          pip install coveralls
+          coveralls
