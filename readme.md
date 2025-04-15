@@ -15,11 +15,11 @@
 
 <p align="center"><img width="700" src="./resources/ApplicationTrackingAnimation.gif"></p>
 
-
+## Spring 2025 New Demo Video!
 
 https://github.com/user-attachments/assets/94f32159-13eb-4d70-9844-a001e88fb5fe
 
-
+## Description
 
 The process of applying for jobs and internships is not a cakewalk. Managing job applications is a time-consuming process. Due to the referrals and deadlines, the entire procedure can be stressful. Our application allows you to track and manage your job application process, as well as regulate it, without the use of cumbersome Excel spreadsheets.
 
