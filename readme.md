@@ -238,6 +238,8 @@ Please see our CONTRIBUTING.md for instructions on how to contribute to the repo
 ## Contact Info
 For any questions, please email neerua08@gmail.com.
 
+# Repository Rubric:
+
 ### 📊 Score Card
 
 #### Total Grade: 151
