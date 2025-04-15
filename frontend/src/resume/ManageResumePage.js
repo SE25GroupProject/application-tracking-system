@@ -227,7 +227,7 @@ export default class ManageResumePage extends Component {
 
   render() {
     return (
-      <div className="pagelayout">
+      <div className="pagelayout" data-testid="manage-resume-page">
         {this.state.showCoverLetterCreatedAlert && (
           <Alert variant="success">
             {this.state.showCoverLetterCreatedAlert} was saved successfully!

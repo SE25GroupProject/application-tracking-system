@@ -76,7 +76,11 @@ const ProfilePage = (props) => {
   }
 
   return (
-    <div className="container" style={{ marginTop: "2.5rem" }}>
+    <div
+      className="container"
+      style={{ marginTop: "2.5rem" }}
+      data-testid="profile-page"
+    >
       <Row style={{ alignItems: "center" }}>
         <Col xs="auto" className="my-auto">
           <h3 className="my-0">Profile: </h3>
@@ -88,6 +92,7 @@ const ProfilePage = (props) => {
             readOnly={!editingProfileName}
             value={profileName}
             onChange={onProfileNameChange}
+            id="profileName"
           />
         </Col>
 
@@ -122,7 +127,7 @@ const ProfilePage = (props) => {
         <Col>
           {props.isDefault ? (
             <Button variant="link" className="default-btn">
-              <FontAwesomeIcon icon={faStar} />
+              <FontAwesomeIcon icon={faStar} title="Filled Star" />
             </Button>
           ) : (
             <Button
@@ -130,7 +135,7 @@ const ProfilePage = (props) => {
               className="default-btn"
               onClick={setNewDefaultProfile}
             >
-              <FontAwesomeIcon icon={farStar} />
+              <FontAwesomeIcon icon={farStar} title="Empty Star" />
             </Button>
           )}
         </Col>

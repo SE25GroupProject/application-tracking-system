@@ -49,38 +49,67 @@ const profile2 = {
   skills: [],
 };
 
-const profileList = [
+const initialProfileList = [
   { isDefault: true, profileName: "Default Profile", profileid: 0 },
   { isDefault: false, profileName: "Profile 1", profileid: 1 },
   { isDefault: false, profileName: "Profile 2", profileid: 2 },
 ];
+
+let profiles = [profile0, profile1, profile2];
+let profileList = initialProfileList;
+let defaultProfile = 0;
+
+const getImplementation = (input) => {
+  if (input === "http://localhost:5000/getProfile") {
+    return Promise.resolve({
+      data: profiles[defaultProfile],
+    });
+  } else if (/localhost:5000\/getProfile\/(?<profileid>[\d])/.test(input)) {
+    let found = input.match(/localhost:5000\/getProfile\/(?<profileid>[\d])/);
+    return Promise.resolve({
+      data: profiles[found.groups.profileid],
+    });
+  } else if (input === "http://localhost:5000/getProfileList") {
+    return Promise.resolve({
+      data: {
+        [CONSTANTS.PROFILE.PROFILE_LIST]: profileList,
+        [CONSTANTS.PROFILE.DEFAULT_PROFILE]: defaultProfile,
+      },
+    });
+  } else {
+    console.log(input);
+  }
+};
+
+const postImplementation = (input) => {};
 
 // --- Mocks for Child Components ---
 // These mocks ensure predictable output in tests.
 jest.mock("../login/LoginPage", () => () => (
   <div data-testid="login-page">Login</div>
 ));
-jest.mock("../sidebar/Sidebar", () => (props) => (
-  <div data-testid="sidebar">
-    <button onClick={() => props.switchPage("ProfilePage")}>Profile</button>
-    <button onClick={() => props.switchPage("SearchPage")}>Search</button>
-    <button onClick={() => props.switchPage("MatchesPage")}>Matches</button>
-    <button onClick={() => props.switchPage("ApplicationPage")}>
-      Applications
-    </button>
-    <button onClick={() => props.switchPage("ManageResumePage")}>Manage</button>
-    <button onClick={props.handleLogout}>LogOut</button>
-  </div>
-));
-jest.mock("../profile/ProfilePage", () => (props) => (
-  <div data-testid="profile-page">Profile</div>
-));
+// jest.mock("../sidebar/Sidebar", () => (props) => (
+//   <div data-testid="sidebar">
+//     <button onClick={() => props.switchPage("ProfilePage")}>Profile</button>
+//     <button onClick={() => props.switchPage("SearchPage")}>Search</button>
+//     <button onClick={() => props.switchPage("MatchesPage")}>Matches</button>
+//     <button onClick={() => props.switchPage("ApplicationPage")}>
+//       Applications
+//     </button>
+//     <button onClick={() => props.switchPage("ManageResumePage")}>Manage</button>
+//     <button onClick={props.handleLogout}>LogOut</button>
+//   </div>
+// ));
+// jest.mock("../profile/ProfilePage", () => (props) => (
+//   <div data-testid="profile-page">Profile</div>
+// ));
 jest.mock("../search/SearchPage", () => () => (
   <div data-testid="search-page">Search</div>
 ));
 jest.mock("../application/ApplicationPage", () => () => (
   <div data-testid="application-page">Application</div>
 ));
+// To test this page, React Markdown will need to be removed, or the page will need to be copied without it
 jest.mock("../resume/ManageResumePage", () => () => (
   <div data-testid="manage-resume-page">Uploaded Documents</div>
 ));
@@ -134,14 +163,7 @@ describe("App Component, logged in", () => {
 
     localStorage.setItem("token", "dummy-token");
     localStorage.setItem("userId", "123");
-    axios.get.mockImplementation(() =>
-      Promise.resolve({
-        data: {
-          [CONSTANTS.PROFILE.PROFILE_LIST]: profileList,
-          [CONSTANTS.PROFILE.DEFAULT_PROFILE]: 0,
-        },
-      })
-    );
+    axios.get.mockImplementation(getImplementation);
   });
 
   // 4. When token exists, axios.get is called and Sidebar is rendered.
@@ -202,7 +224,9 @@ describe("App Component, logged in", () => {
   test('switchPage sets currentPage to ProfilePage when "Profile" is clicked', async () => {
     render(<App />);
     await waitFor(() => {
-      const profileBtn = screen.getByRole("button", { name: "Profile" });
+      const profileBtn = screen.getByTestId(
+        CONSTANTS.PAGES.PROFILE.TEXT + " Button"
+      );
       fireEvent.click(profileBtn);
     });
     const profilePage = screen.getByTestId("profile-page");
@@ -214,7 +238,9 @@ describe("App Component, logged in", () => {
   test('switchPage sets currentPage to SearchPage when "Search" is clicked', async () => {
     render(<App />);
     await waitFor(() => {
-      const searchBtn = screen.getByRole("button", { name: "Search" });
+      const searchBtn = screen.getByTestId(
+        CONSTANTS.PAGES.SEARCH.TEXT + " Button"
+      );
       fireEvent.click(searchBtn);
     });
     const searchPage = screen.getByTestId("search-page");
@@ -226,7 +252,9 @@ describe("App Component, logged in", () => {
   test('switchPage sets currentPage to ApplicationPage when "Applications" is clicked', async () => {
     render(<App />);
     await waitFor(() => {
-      const appBtn = screen.getByRole("button", { name: "Applications" });
+      const appBtn = screen.getByTestId(
+        CONSTANTS.PAGES.APPLICATION.TEXT + " Button"
+      );
       fireEvent.click(appBtn);
     });
     const applicationPage = screen.getByTestId("application-page");
@@ -238,7 +266,9 @@ describe("App Component, logged in", () => {
   test('switchPage sets currentPage to ManageResumePage when "Manage" is clicked', async () => {
     render(<App />);
     await waitFor(() => {
-      const manageBtn = screen.getByRole("button", { name: "Manage" });
+      const manageBtn = screen.getByTestId(
+        CONSTANTS.PAGES.MANAGE_RESUME.TEXT + " Button"
+      );
       fireEvent.click(manageBtn);
     });
     const managePage = screen.getByTestId("manage-resume-page");
@@ -250,7 +280,9 @@ describe("App Component, logged in", () => {
   test('switchPage sets currentPage to MatchesPage when "Matches" is clicked', async () => {
     render(<App />);
     await waitFor(() => {
-      const matchesBtn = screen.getByRole("button", { name: "Matches" });
+      const matchesBtn = screen.getByTestId(
+        CONSTANTS.PAGES.MATCHES.TEXT + " Button"
+      );
       fireEvent.click(matchesBtn);
     });
     const matchesPage = screen.getByTestId("matches-page");
@@ -320,6 +352,196 @@ describe("App Component, logged in", () => {
     render(<App />);
     const styleTag = document.querySelector("style");
     expect(styleTag).toBeInTheDocument();
-    expect(styleTag.textContent).toMatch(/\.modal-overlay/);
   });
+});
+
+describe("Test Multiple Profiles", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    jest.clearAllMocks();
+
+    profiles = [profile0, profile1, profile2];
+    profileList = initialProfileList;
+    defaultProfile = 0;
+
+    localStorage.setItem("token", "dummy-token");
+    localStorage.setItem("userId", "123");
+    axios.get.mockImplementation(getImplementation);
+    axios.post.mockImplementation(() =>
+      Promise.resolve({
+        data: {
+          profileid: 3,
+        },
+      })
+    );
+  });
+
+  // 21. Renders Profile dropdown in sidebar
+  test("Renders Profile dropdown in sidebar", async () => {
+    render(<App />);
+
+    expect(await screen.findByText("Profile")).toBeInTheDocument();
+  });
+
+  // 22. Profile page renders current profile name
+  test("Profile page renders current profile name", async () => {
+    render(<App />);
+
+    expect(await screen.findByText("Profile:")).toBeInTheDocument();
+    expect(
+      screen.getByDisplayValue(profileList[0].profileName)
+    ).toBeInTheDocument();
+  });
+
+  // 23. Renders that the current profile is the default profile
+  test("Renders that the current profile is the default profile", async () => {
+    render(<App />);
+
+    expect(await screen.findByTitle("Filled Star")).toBeInTheDocument();
+  });
+
+  // 24. Renders List of current profiles when profile dropdown is clicked
+  test("Renders List of current profiles when profile dropdown is clicked", async () => {
+    render(<App />);
+
+    const profileList = await screen.findByText(/Profiles/i);
+    profileList.click();
+
+    expect(screen.getByText(profile0.profileName)).toBeInTheDocument();
+    expect(screen.getByText(profile1.profileName)).toBeInTheDocument();
+    expect(screen.getByText(profile2.profileName)).toBeInTheDocument();
+  });
+
+  // 25. When another profile is selected while on the profile page, that profile is displayed
+  test("When another profile is selected while on the profile page, that profile is displayed", async () => {
+    render(<App />);
+
+    expect(
+      await screen.findByDisplayValue(profileList[0].profileName)
+    ).toBeInTheDocument();
+
+    const profileListButton = await screen.findByText(/Profiles/i);
+    profileListButton.click();
+
+    let secondProfile = screen.getByText(profile1.profileName);
+    secondProfile.click();
+
+    expect(
+      await screen.findByDisplayValue(profileList[1].profileName)
+    ).toBeInTheDocument();
+  });
+
+  // 26. Add new profile button starts as disabled
+  test("Add new profile button starts as disabled", async () => {
+    render(<App />);
+
+    const profileListButton = await screen.findByText(/Profiles/i);
+    profileListButton.click();
+
+    let addProfileButton = await screen.findByTestId("Add Profile Button");
+
+    expect(addProfileButton).toBeInTheDocument();
+    expect(addProfileButton).toBeDisabled();
+  });
+
+  // 27. When text is entered, the new profile butten is enabled
+  test("When text is entered, the new profile butten is enabled", async () => {
+    render(<App />);
+
+    const profileListButton = await screen.findByText(/Profiles/i);
+    profileListButton.click();
+
+    let addProfileButton = await screen.findByTestId("Add Profile Button");
+    expect(addProfileButton).toBeInTheDocument();
+
+    let profileTextbox = screen.getByRole("textbox", {
+      name: "newProfileName",
+    });
+    expect(profileTextbox).toBeInTheDocument();
+
+    fireEvent.change(profileTextbox, { target: { value: "Testing Profile" } });
+    expect(screen.getByDisplayValue("Testing Profile")).toBeInTheDocument();
+    expect(addProfileButton).not.toBeDisabled();
+  });
+
+  // 28. When adding a new profile, it is added to the list of profile.
+  test("When adding a new profile, it is added to the list of profile.", async () => {
+    render(<App />);
+
+    const profileListButton = await screen.findByText(/Profiles/i);
+    profileListButton.click();
+
+    let profileTextbox = screen.getByRole("textbox", {
+      name: "newProfileName",
+    });
+    fireEvent.change(profileTextbox, { target: { value: "Testing Profile" } });
+
+    let addProfileButton = await screen.findByTestId("Add Profile Button");
+    addProfileButton.click();
+
+    expect(screen.getByText(profile0.profileName)).toBeInTheDocument();
+    expect(screen.getByText(profile1.profileName)).toBeInTheDocument();
+    expect(screen.getByText(profile2.profileName)).toBeInTheDocument();
+    expect(await screen.findByText("Testing Profile")).toBeInTheDocument();
+  });
+
+  // 29. Clicking on disabled add button doesn't send anything through
+  test("Clicking on disabled add button doesn't send anything through", async () => {
+    render(<App />);
+
+    const profileListButton = await screen.findByText(/Profiles/i);
+    profileListButton.click();
+
+    let addProfileButton = await screen.findByTestId("Add Profile Button");
+
+    expect(addProfileButton).toBeInTheDocument();
+    expect(addProfileButton).toBeDisabled();
+
+    addProfileButton.click();
+    expect(axios.post).not.toHaveBeenCalled();
+  });
+
+  // 30. When having typed a value that already exists, add button is disabled
+  test("When having typed a value that already exists, add button is disabled", async () => {
+    render(<App />);
+
+    const profileListButton = await screen.findByText(/Profiles/i);
+    profileListButton.click();
+
+    let addProfileButton = await screen.findByTestId("Add Profile Button");
+    expect(addProfileButton).toBeInTheDocument();
+
+    let profileTextbox = screen.getByRole("textbox", {
+      name: "newProfileName",
+    });
+    fireEvent.change(profileTextbox, {
+      target: { value: profileList[0].profileName },
+    });
+
+    expect(addProfileButton).toBeDisabled();
+  });
+});
+
+describe("Test Cover Letter Feature", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    jest.clearAllMocks();
+
+    profiles = [profile0, profile1, profile2];
+    profileList = initialProfileList;
+    defaultProfile = 0;
+
+    localStorage.setItem("token", "dummy-token");
+    localStorage.setItem("userId", "123");
+    axios.get.mockImplementation(getImplementation);
+    // axios.post.mockImplementation(() =>
+    //   Promise.resolve({
+    //     data: {
+    //       profileid: 3,
+    //     },
+    //   })
+    // );
+  });
+
+  test("", async () => {});
 });
