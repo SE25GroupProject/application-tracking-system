@@ -42,7 +42,7 @@ Using our Chrome Extension you can now directly fill out your applications using
 
 ### Application Demo video
 
-🎥[Phase-4 Demo Video](https://github.com/CSC-510-G7/application-tracking-system/blob/ba6bae11a56878c46ec1d5e70d32e976c29c533d/resources/CSC-510-G7-jTracker.mp4)
+[![Watch the Demo](https://img.youtube.com/vi/-0v_Mtghcqo/0.jpg)](https://youtu.be/-0v_Mtghcqo)
 
 ## Table of contents
 
