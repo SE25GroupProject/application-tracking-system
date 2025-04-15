@@ -105,7 +105,7 @@ def sign_up():
 
         password = data["password"]
         password_hash = hashlib.md5(password.encode())
-    
+
         # Create an empty default profile
         default_profile = Profile(
             profileName=f"{data['fullName']}'s Default",
