@@ -16,23 +16,13 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.9.7"
-          architecture: x64
-
-      - name: Verify Python version
-        run: python --version
-
-      - name: Install MongoDB
-        run: |
-          choco install mongodb --version=6.0.5 --yes
-          $env:Path += ";C:\Program Files\MongoDB\Server\6.0\bin"
-          mongod --version
 
       - name: Start MongoDB
-        run: |
-          New-Item -ItemType Directory -Force -Path "C:\data\db"
-          Start-Process -FilePath "mongod" -ArgumentList "--dbpath C:\data\db --auth --bind_ip 127.0.0.1" -NoNewWindow
-          Start-Sleep -Seconds 10
-          mongo admin --eval 'db.createUser({user: "user", pwd: "pass", roles: [{role: "root", db: "admin"}]})'
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: "6.0"
+          mongodb-username: user
+          mongodb-password: pass
 
       - name: Create .env file
         run: |
@@ -42,26 +32,26 @@ jobs:
 
       - name: Create application.yml
         run: |
-          echo "GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}" >> backend\application.yml
-          echo "GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}" >> backend\application.yml
-          echo "CONF_URL: ${{ secrets.CONF_URL }}" >> backend\application.yml
-          echo "SECRET_KEY: ${{ secrets.SECRET_KEY }}" >> backend\application.yml
+          echo "GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}" >> ./backend/application.yml
+          echo "GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}" >> ./backend/application.yml
+          echo "CONF_URL: ${{ secrets.CONF_URL }}" >> ./backend/application.yml
+          echo "SECRET_KEY: ${{ secrets.SECRET_KEY }}" >> ./backend/application.yml
 
       - name: Install dependencies
         run: |
           cd backend
-          python -m pip install -r requirements.txt
+          pip install -r requirements.txt
 
       - name: Test with pytest
         run: |
           cd backend
-          python -m coverage run -m pytest
-          python -m coverage report
+          coverage run -m pytest
+          coverage report
 
       - name: Coveralls
-        env:
+        env: # Set GITHUB_TOKEN for Coveralls
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd backend
-          python -m pip install coveralls
-          python -m coveralls
+          pip install coveralls
+          coveralls
