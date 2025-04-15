@@ -118,21 +118,11 @@ This page now allows for users to upload multiple resumes, get automated, LLM-po
 
 ## Future Scope:
 
-**Short Term: 3 Months**
-- Include links to university career fairs.
-- Direct connection to Linkedin, allowing for the addition of job opportunities to the wishlist.
-- Add cover letters to database.
-
-**Medium Term: 6 Months**
-- Add a notification system for important application releases and deadlines.
-- Add a feature that allows users to attach these reminders to their Google calendar.
-- An option to maintain separate profiles for job tracking.
-- Use recently added LLM to autofill profile fields.
-
-**Long Term: 12 Months**
-- Integrate the database into docker.
-- Add a chrome extension to track external job search progress.
-- Add Recruiter log-in and home page to interact with job-seekers.
+- **Notification System:** Implement alerts for application deadlines, new job postings, and status updates, with options to sync reminders to Google Calendar for better time management.
+- **LinkedIn Integration:** Enable direct connection to LinkedIn for seamless import of profile details and the ability to add job opportunities to the wish list from LinkedIn postings.
+- **Chrome Extension Enhancements:** Expand the Google Chrome extension to track job search activity across external sites and suggest relevant opportunities based on browsing history.
+- **Recruiter Portal:** Introduce a dedicated recruiter login and interface to connect job seekers with hiring managers, facilitating direct communication and application submissions.
+- **AI-Powered Profile Autofill:** Leverage AI to automatically populate user profiles with skills, experience, and preferences extracted from uploaded resumes or LinkedIn data, reducing manual setup time.
 
 ## Explanation:
 
