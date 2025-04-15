@@ -231,9 +231,9 @@ Please see our CONTRIBUTING.md for instructions on how to contribute to the repo
 
 ## Team Members
 
-- Christopher Elchik
-- Brandon Troy
-- Kanchana Dhana Sadasivan
+- Michael Sanchez
+- Camille Jones
+- Jacob Allard
 
 ## Contact Info
 For any questions, please email neerua08@gmail.com.
