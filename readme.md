@@ -13,7 +13,7 @@
 ![Static Badge](https://img.shields.io/badge/pytest-8.3.4-lime)
 [![Coverage Status](https://coveralls.io/repos/github/SE25GroupProject/application-tracking-system/badge.svg?branch=main)](https://coveralls.io/github/SE25GroupProject/application-tracking-system?branch=main)
 
-<!-- <p align="center"><img width="700" src="./resources/ApplicationTrackingAnimation.gif"></p> -->
+<p align="center"><img width="700" src="./resources/ApplicationTrackingAnimation.gif"></p>
 
 ![Demo Video](./ATS_Demo_S25.mp4)
 
@@ -188,8 +188,7 @@ Currently, we have five fundamental items in our project:
 
 3. **Build Images and Start Program with Docker Compose**
    - Navigate to the project's root directory and build/start the system with the following command:
-     `    docker compose up -d --build
-   `
+     `   docker compose up -d --build`
      _(note: Although supporting Qwen2.5:1.5b doesn't require a GPU, it still occupies lots of memory when running locally, so be sure to minimize other processes for optimal performance)_
 
 ## Hosting the Database:
@@ -248,7 +247,7 @@ Please see our CONTRIBUTING.md for instructions on how to contribute to the repo
 
 ## Contact Info
 
-For any questions, please email neerua08@gmail.com.
+For any questions, please email crjone24@gmail.com.
 
 # Repository Rubric:
 
@@ -258,7 +257,7 @@ For any questions, please email neerua08@gmail.com.
 
 | Factor                                                                                                                                               | Score | Notes                                                                                                              |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------ |
-| Video                                                                                                                                                | 3     | https://www.youtube.com/watch?v=TokbsQ_YMMg                                                                        |
+| Video                                                                                                                                                | 3     | https://youtu.be/-0v_Mtghcqo                                                                                       |
 | Workload                                                                                                                                             | 3     | Distributed                                                                                                        |
 | Number of commits                                                                                                                                    | 3     | 50+                                                                                                                |
 | Number of commits: by different people                                                                                                               | 3     | https://github.com/SE25GroupProject/application-tracking-system/graphs/contributors                                |
@@ -267,7 +266,7 @@ For any questions, please email neerua08@gmail.com.
 | DOI badge                                                                                                                                            | 3     | https://zenodo.org/records/15212579                                                                                |
 | Docs: format                                                                                                                                         | 3     | https://github.com/SE25GroupProject/application-tracking-system/blob/main/.github/workflows/autopep8.yml           |
 | Docs: description                                                                                                                                    | 3     | https://github.com/SE25GroupProject/application-tracking-system                                                    |
-| Docs: short animated video                                                                                                                           | 3     |                                                                                                                    |
+| Docs: short animated video                                                                                                                           | 3     | https://youtu.be/-0v_Mtghcqo                                                                                       |
 | Docs: strong punchlines                                                                                                                              | 3     | https://github.com/SE25GroupProject/application-tracking-system                                                    |
 | Docs: mini tutorials                                                                                                                                 | 3     | https://github.com/SE25GroupProject/BurnoutExtreme/blob/master/Tutorials.md#signup-and-sign-in                     |
 | Use of version control tools                                                                                                                         | 3     | https://github.com/SE25GroupProject/application-tracking-system/blob/main/.github/workflows/autopep8.yml           |
