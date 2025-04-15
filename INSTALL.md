@@ -125,8 +125,11 @@ Do this step after you have completed the prior steps.
 
    - Ensure that Docker is installed on your system. If not, you can download it from the official Docker website.
    - Start the Docker engine on your machine. The command varies based on your operating system.
+2. **Install Npm Packages**
+   - Navigate to the project's frontend directory and install the packages with the following command:
+     `npm install`
 
-2. **Build Images and Start Program with Docker Compose**
+3. **Build Images and Start Program with Docker Compose**
    - Navigate to the project's root directory and build/start the system with the following command:
      `   docker compose up -d --build`
      _(note: Although supporting Qwen2.5:1.5b doesn't require a GPU, it still occupies lots of memory when running locally, so be sure to minimize other processes for optimal performance)_

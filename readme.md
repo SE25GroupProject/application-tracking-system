@@ -1,10 +1,17 @@
 # J-Tracker - Your Job Tracking Assistant
 
-[![GitHub license](https://img.shields.io/github/license/CSC-510-G7/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/blob/63bc5b12d117220fc678f563f6fa8e6dc0074f1d/LICENSE)
-[![DOI](https://zenodo.org/badge/426259091.svg)](https://zenodo.org/badge/latestdoi/426259091)
-[![GitHub issues](https://img.shields.io/github/issues/CSC-510-G7/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/issues)
-[![Github closes issues](https://img.shields.io/github/issues-closed-raw/CSC-510-G7/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/issues?q=is%3Aissue%20state%3Aclosed)
-![GitHub top language](https://img.shields.io/github/languages/top/CSC-510-G7/application-tracking-system)
+[![GitHub license](https://img.shields.io/github/license/SE25GroupProject/application-tracking-system)](https://github.com/SE25GroupProject/application-tracking-system/blob/main/LICENSE)
+[![DOI](https://zenodo.org/badge/944599867.svg)](https://doi.org/10.5281/zenodo.15212578)
+[![GitHub issues](https://img.shields.io/github/issues/SE25GroupProject/application-tracking-system)](https://github.com/CSC-510-G7/application-tracking-system/issues)
+[![Github closes issues](https://img.shields.io/github/issues-closed-raw/SE25GroupProject/application-tracking-system)](https://github.com/SE25GroupProject/application-tracking-system/issues?q=is%3Aissue%20state%3Aclosed)
+![GitHub top language](https://img.shields.io/github/languages/top/SE25GroupProject/application-tracking-system)
+![Static Badge](https://img.shields.io/badge/style_checker-pylint-blue)
+![Static Badge](https://img.shields.io/badge/code_formatter-black-blue)
+![Static Badge](https://img.shields.io/badge/syntax_checker-black-blue)
+![Static Badge](https://img.shields.io/badge/coverage_checker-coveralls-blue)
+![Static Badge](https://img.shields.io/badge/testing-pytest-lime)
+![Static Badge](https://img.shields.io/badge/pytest-8.3.4-lime)
+[![Coverage Status](https://coveralls.io/repos/github/SE25GroupProject/application-tracking-system/badge.svg?branch=main)](https://coveralls.io/github/SE25GroupProject/application-tracking-system?branch=main)
 
 <p align="center"><img width="700" src="./resources/ApplicationTrackingAnimation.gif"></p>
 
@@ -12,27 +19,24 @@ The process of applying for jobs and internships is not a cakewalk. Managing job
 
 Our application keeps track of the jobs you've added to your wish list. It also keeps track of the companies you've already applied to and keeps a list of any rejections. Rather than having the user browse each company's site for potential prospects, our application allows the applicant to search for them directly using basic keywords. Any prospective work offers can then be added to the applicant's wishlist.
 
-## New Features in Phase 4
-
-### ⭐ Highlight - LLM Integration ⭐
-Using Ollama, Qwen2.5 (1.5b) has been integrated into the system to support different language-heavy tasks:
-
-1. Resume Tip Generation - Users can now get automated feedback on their resumes
-2. Cover Letter Generation - Users can now get auto-generated cover letters, based on any uploaded resume and tailored to any given job description.
+## New Features
+### Chrome Extension
+Using our Chrome Extension you can now directly fill out your applications using your data from your profile here.
+1. Saves time when filling out multiple applications
+2. Data can be pulled from multiple profiles if you have different data for different applications
+3. Works on multiple websites
 
 ### Other new features
-1. Upload and store multiple resumes for different purposes
-2. Resume Viewer
-3. UI Overhaul - Improved responsiveness, Navbar, Added logout confirmation, Added option to delete resume
-4. Restructuring of backend - the single, massive backend file has been separated and organized by function
-5. Restructured Docker-related files to simplify deployment
-6. +60 More test cases
+1. Cover letter overhaul with new routes and testing
+2. New frontend modals to support a cleaner UI
+3. Increased testing and code coverage throughout
+4. Restructuring of tests from a single file to seperate files designated by catagory
+5. Allowed for multiple unique profiles
 
 #### Bug fixes
-1. Migrated job posting web scraper away from Google Jobs due to an update with Google's system preventing web scraping
-  1a. Integrated headless browser using Selenium and ChromeDriver to scrape CareerBuilder instead
-2. Users now stay logged in when refreshing the page
-3. Support for Google Account logins has been fixed
+1. Issues with resume feedback taking a long time
+2. Issues with database models being incorrect
+3. Issues with exceptions not being properly caught
 
 ---
 
