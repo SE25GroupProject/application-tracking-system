@@ -138,7 +138,7 @@ Do this step after you have completed the prior steps.
 
 After the application is up and running, you should now set up the autofill extension inside of Google Chrome using the following steps:
 
-1. **Navigate to chrome://extensions**
+1. **Navigate to chrome://extensions**\n
    ![image](https://github.com/user-attachments/assets/7ec1b95e-af37-46a5-8a7b-d45fb5944970)
 
 2. **Turn on Developer Mode**
