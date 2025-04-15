@@ -138,18 +138,18 @@ Do this step after you have completed the prior steps.
 
 After the application is up and running, you should now set up the autofill extension inside of Google Chrome using the following steps:
 
-1. **Navigate to chrome://extensions**\n
+1. **Navigate to chrome://extensions**<br>
    ![image](https://github.com/user-attachments/assets/7ec1b95e-af37-46a5-8a7b-d45fb5944970)
 
-2. **Turn on Developer Mode**
-- This is located in the top right of the page.
+2. **Turn on Developer Mode**<br>
+- This is located in the top right of the page.<br>
 ![image](https://github.com/user-attachments/assets/ff10f4ad-aafc-4ecb-bd1f-8a8f69203f90)
 
-3. **Click "Load unpacked"**
-- This is a button that appears in the top left of the page after developer mode is activated.
+3. **Click "Load unpacked"**<br>
+- This is a button that appears in the top left of the page after developer mode is activated.<br>
 ![image](https://github.com/user-attachments/assets/7c962905-9672-4030-8ff1-aaa1cf546ade)
 
-4. **Navigate to the "chromeExtension" folder in the root of the project, and click "Select Folder"**
+4. **Navigate to the "chromeExtension" folder in the root of the project, and click "Select Folder"**<br>
 ![image](https://github.com/user-attachments/assets/698dd51a-da79-4d86-934e-c06866f26e6c)
 
 You are now ready to autofill applications!
