@@ -158,64 +158,7 @@ Currently, we have five fundamental items in our project:
 
 ## Installation:
 
-### Requirements:
-
-- [Python](https://www.python.org/downloads/) (recommended >= 3.8)
-- [pip](https://pip.pypa.io/en/stable/installation/) (Latest version 21.3 used as of 11/3)
-- [npm](https://nodejs.org/en/) (Latest version 6.14.4 used as of 11/3)
-- [Docker-Desktop](https://www.docker.com/products/docker-desktop/) (Latest version as of 11/27)
-
-### Steps to follow for the installation:
-
-1. **Clone the Repository**
-    - Use the command `git clone https://github.com/jashgopani/application-tracking-system.git` to clone the repository.
-
-2. **Start the Docker Engine**
-    - Ensure that Docker is installed on your system. If not, you can download it from the official Docker website.
-    - Start the Docker engine on your machine. The command varies based on your operating system.
-
-3. **Build Images and Start Program with Docker Compose**
-    - Navigate to the project's root directory and build/start the system with the following command:
-        ```
-        docker compose up -d --build
-        ```
-    _(note: Although supporting Qwen2.5:1.5b doesn't require a GPU, it still occupies lots of memory when running locally, so be sure to minimize other processes for optimal performance)_
-
-## Hosting the Database:
-
-### Local MongoDB:
-
-1. Download [MongoDB Community Server](https://docs.mongodb.com/manual/administration/install-community/)
-2. Follow the [Installion Guide](https://docs.mongodb.com/guides/server/install/)
-3. In app.py set 'host' string to 'localhost'
-4. Run the local database:
-
-mongodb
-
-- Recommended: Use a GUI such as [Studio 3T](https://studio3t.com/download/) to more easily interact with the database
-
-### Hosted database with MongoDB Atlas (RECOMMENDED):
-
-1. [Create account](https://account.mongodb.com/account/register) for MongoDB
-
-- **If current MongoDB Atlas owner adds your username/password to the cluster, skip to step 4** \*
-
-2. Follow MongoDB Atlas [Setup Guide](https://docs.atlas.mongodb.com/getting-started/) to create a database collection for hosting applications
-3. Create application.yml in the backend folder with the following content:
-   ```
-   GOOGLE_CLIENT_ID : <Oauth Google ID>
-   GOOGLE_CLIENT_SECRET : <Oauth Google Secret>
-   CONF_URL : https://accounts.google.com/.well-known/openid-configuration
-   SECRET_KEY : <Any Secret You Want>
-   USERNAME : <MongoDB Atlas Username>
-   PASSWORD : <MongoDB Atlas Password>
-   CLUSTER_URL : <MongoDB Cluster URL>
-   ```
-4. In app.py set 'host' string to your MongoDB Atlas connection string. Replace the username and password with {username} and {password} respectively
-5. For testing through CI to function as expected, repository secrets will need to be added through the settings. Create individual secrets with the following keys/values:
-
-MONGO_USER: <MongoDB Atlas cluster username>
-MONGO_PASS: <MongoDB Atlas cluster password>
+View our up-to-date installation instructions here: https://github.com/SE25GroupProject/application-tracking-system/blob/main/INSTALL.md
 
 ## License
 
