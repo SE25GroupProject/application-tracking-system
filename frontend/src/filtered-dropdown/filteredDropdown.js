@@ -29,12 +29,17 @@ const FilteredDropdown = React.forwardRef(
       >
         <Row className="flex-nowrap mx-2">
           <Col xs="auto" className="my-1 px-0">
+            <Form.Label htmlFor="newProfileName" hidden>
+              New Profile Name
+            </Form.Label>
             <Form.Control
               autoFocus
               className="w-auto"
               placeholder="Type to filter..."
               onChange={(e) => setValue(e.target.value)}
               value={value}
+              id="newProfileName"
+              aria-label="newProfileName"
             />
           </Col>
 
@@ -53,8 +58,9 @@ const FilteredDropdown = React.forwardRef(
                 createNewProfile(value);
                 setValue("");
               }}
+              data-testid="Add Profile Button"
             >
-              <FontAwesomeIcon icon={faPlus} size="sm" />
+              <FontAwesomeIcon icon={faPlus} size="sm" title="Add Profile" />
             </Button>
           </Col>
         </Row>

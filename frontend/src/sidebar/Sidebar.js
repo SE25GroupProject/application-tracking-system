@@ -21,7 +21,7 @@ export default class Sidebar extends Component {
 
   render() {
     return (
-      <div className="left-nav">
+      <div className="left-nav" data-testid="sidebar">
         <div className="left-nav-item">
           {/* --- Profile Dropdown --- */}
           <Dropdown onSelect={this.props.onProfileSelect} size="sm">
@@ -58,6 +58,8 @@ export default class Sidebar extends Component {
                   onClick={() => {
                     this.props.switchPage(page.NAME);
                   }}
+                  data-testid={page.TEXT + " Button"}
+                  key={page.TEXT}
                 >
                   <i className={`fas ${page.ICON} left-nav-icon`}></i>
                   <span className={`left-nav-label `}>{page.TEXT}</span>
