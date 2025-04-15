@@ -134,7 +134,7 @@ Do this step after you have completed the prior steps.
      `   docker compose up -d --build`
      _(note: Although supporting Qwen2.5:1.5b doesn't require a GPU, it still occupies lots of memory when running locally, so be sure to minimize other processes for optimal performance)_
 
-## Installng the Chrome Extension
+## Installing the Chrome Extension
 
 After the application is up and running, you should now set up the autofill extension inside of Google Chrome using the following steps:
 
