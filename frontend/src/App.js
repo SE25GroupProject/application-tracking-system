@@ -191,13 +191,22 @@ export default class App extends React.Component {
           defaultProfile: res.data[CONSTANTS.PROFILE.DEFAULT_PROFILE],
         });
       })
+      .then(() => {
+        return axios.get("http://localhost:5000/getProfile", {
+          headers: {
+            userid: userId,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+      })
+      .then((res) => {
+        this.setState({
+          userProfile: res.data,
+          currentPage: CONSTANTS.PAGES.PROFILE.NAME,
+          sidebar: true,
+        });
+      })
       .catch((err) => console.log(err.message));
-
-    this.setState({
-      currentPage: CONSTANTS.PAGES.PROFILE.NAME,
-      sidebar: true,
-      userProfile: user,
-    });
   };
 
   // ✅ Show Logout Modal
